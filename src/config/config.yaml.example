@@ -5,6 +5,7 @@ bot:
   presence: 
     message: Voldtekt av API-er
     activity: watching
+    type: dnd
 
 # Api keys
 api:

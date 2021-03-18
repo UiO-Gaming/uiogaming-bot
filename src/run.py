@@ -49,6 +49,17 @@ if bot.presence['activity'].lower() in activities:
 else:
     activity_type = 0
 
+status_types = {
+    'online': discord.Status.online,
+    'dnd': discord.Status.dnd,
+    'idle': discord.Status.idle,
+    'offline': discord.Status.offline
+}
+if bot.presence['type'].lower() in status_types:
+    status_type = status_types[bot.presence['type'].lower()]
+else:
+    status_type = discord.Status.online
+
 
 @bot.event
 async def on_ready():
@@ -66,7 +77,7 @@ async def on_ready():
     print('.' * 50 + '\n')
     await bot.change_presence(
         activity=discord.Activity(type=activity_type, name=bot.presence['message']),
-        status=discord.Status.online
+        status=status_type
     )
 
 
