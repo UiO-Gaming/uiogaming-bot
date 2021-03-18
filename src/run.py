@@ -45,7 +45,7 @@ activities = {
     'watching': 3
 }
 if bot.presence['activity'].lower() in activities:
-    activity_type = activities[bot.presence['activity']]
+    activity_type = activities[bot.presence['activity'].lower()]
 else:
     activity_type = 0
 
