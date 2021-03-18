@@ -1,5 +1,6 @@
 from discord.ext import commands
 
+
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -13,7 +14,7 @@ class Fun(commands.Cog):
     @commands.command()
     async def informatikkuio(self, ctx):
         await ctx.send('https://i.imgur.com/ypyK1mi.jpg')
-    
+
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
     async def informatikkuio2(self, ctx):

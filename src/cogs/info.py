@@ -187,7 +187,7 @@ class Info(commands.Cog):
                               f'{self.bot.emoji["dnd"]}{dnd_members} ' +
                               f'{self.bot.emoji["offline"]}{offline_members}')
         embed.add_field(name=f'Roller ({len(ctx.guild.roles) - 1})', value=roles, inline=False)
-        if ctx.guild.premium_tier is not 0:
+        if ctx.guild.premium_tier != 0:
             embed.add_field(name=f'Boosters ({ctx.guild.premium_subscription_count})', value=boosters, inline=False)
 
         if features_string != '':
@@ -215,7 +215,7 @@ class Info(commands.Cog):
             roles = ['**Ingen Roller**']
         roles.reverse()
         roles = ', '.join(roles)
-        
+
         roles = roles.replace(', --', '\n--')
         roles = roles.replace('--, ', '--\n')
 
@@ -322,7 +322,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['userinfo', 'ui', 'brukerinfo', 'user'])
-    async def bruker(self, ctx, *, bruker: discord.Member=None):
+    async def bruker(self, ctx, *, bruker: discord.Member = None):
         """Viser info om en bruker"""
 
         if not bruker:
@@ -417,7 +417,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['userroles'])
-    async def brukerroller(self, ctx, bruker: discord.Member=None):
+    async def brukerroller(self, ctx, bruker: discord.Member = None):
         """Viser rollene til en bruker"""
 
         if not bruker:
@@ -429,7 +429,7 @@ class Info(commands.Cog):
                 roles.append(role.name)
         roles.reverse()
         roles = ', '.join(roles)
-        
+
         if len(roles) > 2048:
             txt_file = discord.File(f'./assets/temp/{ctx.guild.id}_{ctx.author.id}_roles.txt')
             await ctx.send(file=txt_file)
@@ -457,7 +457,7 @@ class Info(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['profilbilde', 'brukeravatar', 'useravatar'])
-    async def avatar(self, ctx, bruker: discord.Member=None):
+    async def avatar(self, ctx, bruker: discord.Member = None):
         """Viser avataren til en bruker"""
 
         if not bruker:
@@ -505,7 +505,7 @@ class Info(commands.Cog):
         rolle_created_date = rolle.created_at.strftime('%d. %b. %Y - %H:%M')
         since_created_days = (ctx.message.created_at - rolle.created_at).days
 
-        if since_created_days is 1:
+        if since_created_days == 1:
             since_created_days_string = 'dag'
         else:
             since_created_days_string = 'dager'
@@ -594,7 +594,7 @@ class Info(commands.Cog):
         embed.add_field(name='Maksgrense', value=limit)
         if kanal.category:
             embed.add_field(name='Kategori', value=kanal.category.name)
-        embed.add_field(name=f'Antall koblet til', value=len(kanal.members))
+        embed.add_field(name='Antall koblet til', value=len(kanal.members))
         embed = embed_templates.default_footer(ctx, embed)
         await ctx.send(embed=embed)
 
@@ -608,7 +608,7 @@ class Info(commands.Cog):
         animated = 'Nei'
         if emoji.animated:
             animated = 'Ja'
-        
+
         emoji = await emoji.guild.fetch_emoji(emoji.id)
         try:
             emoji_creator = f'{emoji.user.mention}\n{emoji.user.name}#{emoji.user.discriminator}'
@@ -617,7 +617,7 @@ class Info(commands.Cog):
 
         embed = discord.Embed(color=ctx.me.color, title=emoji.name, description=f'ID: {emoji.id}')
         embed.set_author(name=emoji.guild.name, icon_url=emoji.guild.icon_url)
-        embed.add_field(name=f'Opprettet', value=emoji.created_at.strftime('%d. %b. %Y - %H:%M'))
+        embed.add_field(name='Opprettet', value=emoji.created_at.strftime('%d. %b. %Y - %H:%M'))
         embed.add_field(name='Animert', value=animated)
         embed.add_field(name='Lagt til av', value=emoji_creator)
         embed.set_image(url=emoji.url)
@@ -658,7 +658,9 @@ class Info(commands.Cog):
         for member in members:
             member_created_date = member.created_at.strftime('%d. %b. %Y - %H:%M')
             member_index = (members.index(member) + 1)
-            formatted_members.append(f'**#{member_index}** {member.name}#{member.discriminator} - {member_created_date}')
+            formatted_members.append(
+                f'**#{member_index}** {member.name}#{member.discriminator} - {member_created_date}'
+            )
 
         page_data = misc_utils.paginator(formatted_members, int(side))
         side = page_data['page']

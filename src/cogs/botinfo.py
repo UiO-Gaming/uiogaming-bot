@@ -80,7 +80,7 @@ class BotInfo(commands.Cog):
                               f'{self.bot.emoji["dnd"]}{len(dnd_members)} ' +
                               f'{self.bot.emoji["offline"]}{len(offline_members)}')
         embed.add_field(name='Lenker', value=f'[Nettside]({self.bot.misc["website"]}) | ' +
-                                            f'[Kildekode]({self.bot.misc["source_code"]})')
+                                             f'[Kildekode]({self.bot.misc["source_code"]})')
         embed_templates.default_footer(ctx, embed)
         await status_msg.edit(embed=embed, content=None)
 

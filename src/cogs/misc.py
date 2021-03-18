@@ -112,7 +112,6 @@ class Misc(commands.Cog):
         else:
             int(aar)
 
-
         data = requests.get(f'https://date.nager.at/api/v2/publicholidays/{aar}/{land}').json()
         if data.status_code != 200:
             embed = embed_templates.error_fatal(ctx, text='Ugyldig land\nHusk å bruke landskoder\n' +
