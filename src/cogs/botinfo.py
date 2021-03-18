@@ -65,16 +65,16 @@ class BotInfo(commands.Cog):
         embed.set_author(name=dev.name, icon_url=dev.avatar_url)
         embed.set_thumbnail(url=self.bot.user.avatar_url)
         embed.add_field(name='Dev', value=f'{dev.mention}\n{dev.name}#{dev.discriminator}')
-        embed.add_field(name='Uptime', value=self.get_uptime())
+        embed.add_field(name='Oppetid', value=self.get_uptime())
         embed.add_field(name='Ping', value=f'Ekte ping: {ping} ms\nWebsocket ping: {int(self.bot.latency * 1000)} ms')
-        embed.add_field(name='Guilds', value=len(self.bot.guilds))
+        embed.add_field(name='Servere', value=len(self.bot.guilds))
         embed.add_field(name='Discord.py', value=discord.__version__)
         embed.add_field(name='Python', value=platform.python_version())
-        embed.add_field(name='Usage', value=f'RAM: {memory_usage} MB')
+        embed.add_field(name='Ressursbruk', value=f'RAM: {memory_usage} MB')
         embed.add_field(name='Kernel', value=f'{platform.system()} {platform.release()}')
         if 'docker' in environ:
             embed.add_field(name='Docker', value='U+FE0F')
-        embed.add_field(name=f'Users ({len(total_members)})',
+        embed.add_field(name=f'Brukere ({len(total_members)})',
                         value=f'{self.bot.emoji["online"]}{len(online_members)} ' +
                               f'{self.bot.emoji["idle"]}{len(idle_members)} ' +
                               f'{self.bot.emoji["dnd"]}{len(dnd_members)} ' +
