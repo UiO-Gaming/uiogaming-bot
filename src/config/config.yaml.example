@@ -6,6 +6,10 @@ bot:
     message: Voldtekt av API-er
     activity: watching
 
+# Api keys
+api:
+  clarifai: 
+
 # Emoji
 emoji:
   online: <:online:516328785910431754>
