@@ -1,8 +1,6 @@
 from discord.ext import commands
 import discord
 
-from math import ceil
-from operator import itemgetter
 from os import remove
 
 from cogs.utils import embed_templates, misc_utils
@@ -231,7 +229,7 @@ class Info(commands.Cog):
 
             try:
                 remove(f'./assets/temp/{ctx.guild.id}_roles.txt')
-            except:
+            except OSError:
                 pass
 
             return
@@ -263,7 +261,7 @@ class Info(commands.Cog):
         boosters = '\n'.join(boosters)
 
         embed = discord.Embed(color=ctx.me.color, description=boosters)
-        embed.set_author(name=f'Boosters ({premium_subscription_count})', icon_url=ctx.guild.icon_url)
+        embed.set_author(name=f'Boosters ({ctx.guild.premium_subscription_count})', icon_url=ctx.guild.icon_url)
         embed.set_footer(text=ctx.guild.name, icon_url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
 
@@ -438,7 +436,7 @@ class Info(commands.Cog):
 
             try:
                 remove(f'./assets/temp/{ctx.guild.id}_{ctx.author.id}_roles.txt')
-            except:
+            except OSError:
                 pass
 
             return

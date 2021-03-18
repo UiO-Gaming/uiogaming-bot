@@ -1,11 +1,8 @@
 from discord.ext import commands
-import discord
-
 
 class FunReplies(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
- 
  
     async def react(self, message):
         if message.author.bot:

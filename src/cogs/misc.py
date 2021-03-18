@@ -43,7 +43,6 @@ class Misc(commands.Cog):
         embed = embed_templates.default_footer(ctx, embed)
         await ctx.send(embed=embed)
 
-
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['clapify'])
@@ -68,7 +67,7 @@ class Misc(commands.Cog):
 
         if ctx.message.attachments != []:
             bilde = ctx.message.attachments[0].url
-        
+
         if bilde is None:
             embed = embed_templates.error_fatal(ctx, text='Du må gi meg et bilde!')
 
@@ -76,7 +75,8 @@ class Misc(commands.Cog):
 
             payload = {'inputs': [{'data': {'image': {'url': bilde}}}]}
             header = {'Authorization': f'Key {self.bot.api_keys["clarifai"]}'}
-            url = 'https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c/versions/aa7f35c01e0642fda5cf400f543e7c40/outputs'
+            url = 'https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c' + \
+                  '/versions/aa7f35c01e0642fda5cf400f543e7c40/outputs'
             data = requests.post(url, data=json.dumps(payload), headers=header).json()
 
             words = []
@@ -88,7 +88,7 @@ class Misc(commands.Cog):
             words = ', '.join(words)
 
             await sleep(2)
-            
+
             embed = discord.Embed(color=ctx.me.color)
             embed.set_author(name='Clarifai AI', icon_url='https://github.com/Clarifai.png')
             embed.description = f'**Ord som beskriver dette bildet:**\n\n{words}'
@@ -112,13 +112,13 @@ class Misc(commands.Cog):
         else:
             int(aar)
 
-        try:
-            data = requests.get(f'https://date.nager.at/api/v2/publicholidays/{aar}/{land}').json()
-        except:
+
+        data = requests.get(f'https://date.nager.at/api/v2/publicholidays/{aar}/{land}').json()
+        if data.status_code != 200:
             embed = embed_templates.error_fatal(ctx, text='Ugyldig land\nHusk å bruke landskoder\n' +
                                                           'For eksempel: `NO`')
             return await ctx.send(embed=embed)
-        
+
         country = data[0]['countryCode'].lower()
         holiday_str = ''
         for day in data:
@@ -131,11 +131,10 @@ class Misc(commands.Cog):
         embed = embed_templates.default_footer(ctx, embed)
         await ctx.send(embed=embed)
 
-
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command()
-    async def match(self, ctx, *, bruker: discord.Member=None):
+    async def match(self, ctx, *, bruker: discord.Member = None):
         """Se hvor mye du matcher med en annen"""
 
         if not bruker:
@@ -163,8 +162,8 @@ class Misc(commands.Cog):
             invoker = invoker.resize((389, 389), Image.ANTIALIAS)
             user = Image.open(f'./src/assets/temp/{bruker.id}_raw.png').convert('RGBA')
             user = user.resize((389, 389), Image.ANTIALIAS)
-            heart = Image.open(f'./src/assets/misc/heart.png')
-            mask = Image.open(f'./src/assets/misc/heart.png', 'r')
+            heart = Image.open('./src/assets/misc/heart.png')
+            mask = Image.open('./src/assets/misc/heart.png', 'r')
 
             image = Image.new('RGBA', (1024, 576))
             image.paste(invoker, (0, 94))
@@ -174,7 +173,7 @@ class Misc(commands.Cog):
             font = ImageFont.truetype('./src/assets/fonts/RobotoMono-Medium.ttf', 86)
             font_size = font.getsize(f'{match_percent}%')
             font_size = ((image.size[0] - font_size[0]) / 2, (image.size[1] - font_size[1]) / 2)
-            draw.text(font_size, f'{match_percent}%', font=font, fill=(255,255,255,255))
+            draw.text(font_size, f'{match_percent}%', font=font, fill=(255, 255, 255, 255))
 
             image.save(f'./src/assets/temp/{ctx.author.id}_{bruker.id}_edit.png')
 
@@ -188,7 +187,7 @@ class Misc(commands.Cog):
                 remove(f'./src/assets/temp/{bruker.id}_raw.png')
                 remove(f'./src/assets/temp/{ctx.author.id}_raw.png')
                 remove(f'./src/assets/temp/{ctx.author.id}_{bruker.id}_edit.png')
-            except:
+            except OSError:
                 pass
 
 
