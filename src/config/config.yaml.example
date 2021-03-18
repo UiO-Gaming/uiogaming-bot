@@ -4,7 +4,7 @@ bot:
   prefix: 'u!'
   presence: 
     message: Diskusjoner om borgerlønn
-    activity: watching
+    activity: listening
     type: dnd
 
 # Api keys
