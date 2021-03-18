@@ -265,9 +265,9 @@ class DevTools(commands.Cog):
             'offline': discord.Status.offline
         }
         if status_type in status_types:
-            status_types = status_types[status_type]
-        else:
             status_type = status_types[status_type]
+        else:
+            status_type = discord.Status.online
 
         await self.bot.change_presence(
             status=status_type,
