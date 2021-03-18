@@ -77,10 +77,12 @@ class Misc(commands.Cog):
             header = {'Authorization': f'Key {self.bot.api_keys["clarifai"]}'}
             url = 'https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c' + \
                   '/versions/aa7f35c01e0642fda5cf400f543e7c40/outputs'
-            data = requests.post(url, data=json.dumps(payload), headers=header).json()
+            data = requests.post(url, data=json.dumps(payload), headers=header)
             if data.status_code != 200:
                 embed = embed_templates.default_footer('API request feilet')
                 return await ctx.send(embed=embed)
+
+            data = data.json()
 
             words = []
             for i, concepts in enumerate(data['outputs'][0]['data']['concepts']):
@@ -115,11 +117,13 @@ class Misc(commands.Cog):
         else:
             int(aar)
 
-        data = requests.get(f'https://date.nager.at/api/v2/publicholidays/{aar}/{land}').json()
+        data = requests.get(f'https://date.nager.at/api/v2/publicholidays/{aar}/{land}')
         if data.status_code != 200:
             embed = embed_templates.error_fatal(ctx, text='Ugyldig land\nHusk å bruke landskoder\n' +
                                                           'For eksempel: `NO`')
             return await ctx.send(embed=embed)
+
+        data = data.json()
 
         country = data[0]['countryCode'].lower()
         holiday_str = ''
