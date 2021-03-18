@@ -3,7 +3,7 @@ bot:
   token: 
   prefix: 'u!'
   presence: 
-    message: Voldtekt av API-er
+    message: Diskusjoner om borgerlønn
     activity: watching
     type: dnd
 
