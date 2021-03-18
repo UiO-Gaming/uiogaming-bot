@@ -78,6 +78,9 @@ class Misc(commands.Cog):
             url = 'https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c' + \
                   '/versions/aa7f35c01e0642fda5cf400f543e7c40/outputs'
             data = requests.post(url, data=json.dumps(payload), headers=header).json()
+            if data.status_code != 200:
+                embed = embed_templates.default_footer('API request feilet')
+                return await ctx.send(embed=embed)
 
             words = []
             for i, concepts in enumerate(data['outputs'][0]['data']['concepts']):
