@@ -1,0 +1,1 @@
+This directory exist in order to store temporary files for the discord bot. This file only exists because I don't want to create the directory within the code. Github needs a file in the directory in order to store it.
