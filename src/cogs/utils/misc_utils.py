@@ -1,6 +1,26 @@
 from typing import Union, Dict
 from math import ceil
+from contextlib import contextmanager
 
+
+@contextmanager
+def ignore_exception(*exceptions) -> None:
+    """
+    Ignores the given exceptions
+
+    Parameters
+    ----------
+    *exceptions: The exceptions you want to ignore
+
+    Returns
+    ----------
+    None
+    """
+
+    try:
+        yield
+    except (exceptions):
+        pass
 
 def paginator(content: list, page: int) -> Dict[str, Union[int, str]]:
     """
