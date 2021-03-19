@@ -15,11 +15,8 @@ with open('./src/config/config.yaml', 'r', encoding='utf8') as f:
     config = yaml.load(f, Loader=yaml.SafeLoader)
 
 intents = discord.Intents.default()
-intents.guilds = True
 intents.members = True
-intents.messages = True
 intents.presences = True
-intents.emojis = True
 
 
 class Bot(commands.Bot):
