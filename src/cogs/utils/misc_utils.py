@@ -22,6 +22,7 @@ def ignore_exception(*exceptions) -> None:
     except (exceptions):
         pass
 
+
 def paginator(content: list, page: int) -> Dict[str, Union[int, str]]:
     """
     Divides content into 10 element pages
