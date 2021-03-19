@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 
 from cogs.utils import embed_templates
+from cogs.utils.misc_utils import ignore_exception
 
 
 class Errors(commands.Cog):
@@ -32,10 +33,8 @@ class Errors(commands.Cog):
         """
 
         # Reset cooldown if command throws an error
-        try:
+        with ignore_exception(AttributeError):
             self.bot.get_command(f'{ctx.command}').reset_cooldown(ctx)
-        except AttributeError:
-            pass
 
         # Ignore command's own error handling
         if hasattr(ctx.command, 'on_error'):

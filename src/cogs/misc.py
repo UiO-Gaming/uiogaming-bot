@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 from os import remove
 
 from cogs.utils import embed_templates
+from cogs.utils.misc_utils import ignore_exception
 
 
 class Misc(commands.Cog):
@@ -189,12 +190,10 @@ class Misc(commands.Cog):
             embed = embed_templates.default_footer(ctx, embed)
             await ctx.send(embed=embed, file=f)
 
-            try:
+            with ignore_exception(OSError):
                 remove(f'./src/assets/temp/{bruker.id}_raw.png')
                 remove(f'./src/assets/temp/{ctx.author.id}_raw.png')
                 remove(f'./src/assets/temp/{ctx.author.id}_{bruker.id}_edit.png')
-            except OSError:
-                pass
 
 
 def setup(bot):

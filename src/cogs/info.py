@@ -227,10 +227,8 @@ class Info(commands.Cog):
             txt_file = discord.File(f'./assets/temp/{ctx.guild.id}_roles.txt')
             await ctx.send(file=txt_file)
 
-            try:
+            with misc_utils.ignore_exception(OSError):
                 remove(f'./assets/temp/{ctx.guild.id}_roles.txt')
-            except OSError:
-                pass
 
             return
 
@@ -434,10 +432,8 @@ class Info(commands.Cog):
             txt_file = discord.File(f'./assets/temp/{ctx.guild.id}_{ctx.author.id}_roles.txt')
             await ctx.send(file=txt_file)
 
-            try:
+            with misc_utils.ignore_exception(OSError):
                 remove(f'./assets/temp/{ctx.guild.id}_{ctx.author.id}_roles.txt')
-            except OSError:
-                pass
 
             return
 
