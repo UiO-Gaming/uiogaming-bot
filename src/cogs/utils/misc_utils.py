@@ -5,10 +5,12 @@ from math import ceil
 def paginator(lst: list, page: int) -> Dict[str, Union[int, str]]:
     """
     Divides content into 10 element pages
+
     Parameters
     -----------
     lst: A list of strings
     page: The page
+
     Returns
     -----------
     (dict): A dictionay containing content and metadata
