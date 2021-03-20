@@ -12,6 +12,9 @@ class FunReplies(commands.Cog):
         if ' borgerlønn ' in message.content.lower():
             await message.channel.send('<@267415183931080715> DE SNAKKER OM BORGERLØNN')
 
+        elif ' olof palme ' in message.content.lower():
+            await message.channel.send('Jeg vet hvem som drepte Olof Palme 👀')
+
 
 def setup(bot):
     bot.add_listener(FunReplies(bot).react, 'on_message')
