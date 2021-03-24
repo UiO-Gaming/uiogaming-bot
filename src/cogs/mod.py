@@ -15,7 +15,7 @@ class Mod(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.guild_only()
     @commands.command()
-    async def hackban(self, ctx, brukerid, *, begrunnelese=None):
+    async def hackban(self, ctx, brukerid, *, begrunnelse=None):
         """
         Bannlys en bruker før de i det hele tatt har blitt med i serveren
         """
@@ -33,15 +33,15 @@ class Mod(commands.Cog):
                 embed = embed_templates.error_warning(ctx, text='Denne brukeren er allerede bannlyst fra serveren!')
                 return await ctx.send(embed=embed)
 
-        if begrunnelese is None:
-            begrunnelese = 'Ingen grunn angitt'
+        if begrunnelse is None:
+            begrunnelse = 'Ingen grunn angitt'
 
         date = datetime.now().strftime('%d. %b. %Y - %H:%M')
 
         try:
             await ctx.guild.ban(
                 user,
-                reason=f'{date} | {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}): {begrunnelese}'
+                reason=f'{date} | {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}): {begrunnelse}'
             )
         except discord.errors.NotFound:
             embed = embed_templates.error_warning(ctx, text='Bruker finnes ikke!')
@@ -50,8 +50,8 @@ class Mod(commands.Cog):
         user_object = self.bot.get_user(brukerid)
 
         embed = discord.Embed(color=discord.Color.red(), title='🔨 Bruker utestengt!')
-        if begrunnelese != 'Ingen grunn angitt':
-            embed.description = f'`{begrunnelese}`'
+        if begrunnelse != 'Ingen grunn angitt':
+            embed.description = f'`{begrunnelse}`'
         if user_object:
             user = user_object
             embed.set_thumbnail(url=user.avatar_url)
