@@ -19,7 +19,7 @@ class FunReplies(commands.Cog):
    
         #  The Ultimate spaghetti
         elif re.match(r'(\W|\s)*lesgo{1}(\s|\W)*', message.clean_content.lower()) or message.clean_content.lower() == 'lesgo':
-            await message.channel.send('https://i.redd.it/3xhpwbakz2361.jpg')
+            await message.channel.send('https://cdn.discordapp.com/attachments/750052141346979850/824764933513281596/3xhpwbakz2361.png')
 
 
 def setup(bot):
