@@ -21,7 +21,9 @@ class Misc(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['owoify', 'uwu'])
     async def owo(self, ctx, *, tekst: str):
-        """Oversetter teksten din til owo"""
+        """
+        Oversetter teksten din til owo
+        """
 
         owo_rules = {
             'r': 'w',
@@ -48,7 +50,9 @@ class Misc(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['clapify'])
     async def klappifiser(self, ctx, *, tekst):
-        """Klapppifiserer teksten din"""
+        """
+        Klapppifiserer teksten din
+        """
 
         if not tekst or len(tekst) >= 1000:
             embed = embed_templates.error_warning(ctx, text='Teksten er for lang')
@@ -64,7 +68,9 @@ class Misc(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['identify'])
     async def identifiser(self, ctx, bilde=None):
-        """Beskriver hva som er på bildet"""
+        """
+        Beskriver hva som er på bildet
+        """
 
         if ctx.message.attachments != []:
             bilde = ctx.message.attachments[0].url
@@ -106,7 +112,9 @@ class Misc(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['holidays', 'fridager', 'ferie'])
     async def helligdager(self, ctx, land=None, aar=None):
-        """Se hellidagene i et land"""
+        """
+        Se hellidagene i et land
+        """
 
         if not land:
             land = 'NO'
@@ -142,7 +150,9 @@ class Misc(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command()
     async def match(self, ctx, *, bruker: discord.Member = None):
-        """Se hvor mye du matcher med en annen"""
+        """
+        Se hvor mye du matcher med en annen
+        """
 
         if not bruker:
             embed = embed_templates.error_warning(ctx, text='Du må gi meg en bruker')

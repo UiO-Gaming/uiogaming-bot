@@ -129,6 +129,7 @@ class BotInfo(commands.Cog):
         ----------
         (str) The bot's uptime in human readable format
         """
+
         now = time()
         diff = int(now - self.bot.uptime)
         days, remainder = divmod(diff, 24 * 60 * 60)

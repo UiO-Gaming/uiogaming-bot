@@ -16,10 +16,12 @@ class FunReplies(commands.Cog):
 
         elif ' olof palme ' in message.content.lower():
             await message.channel.send('Jeg vet hvem som drepte Olof Palme 👀')
-   
+
         #  The Ultimate spaghetti
-        elif re.match(r'(\W|\s)*lesgo{1}(\s|\W)*', message.clean_content.lower()) or message.clean_content.lower() == 'lesgo':
-            await message.channel.send('https://cdn.discordapp.com/attachments/750052141346979850/824764933513281596/3xhpwbakz2361.png')
+        elif re.match(r'(\W|\s)*lesgo{1}(\s|\W)*', message.clean_content.lower()) or \
+            message.clean_content.lower() == 'lesgo':
+            await message.channel.send('https://cdn.discordapp.com/attachments/750052141346979850/' +
+                                       '824764933513281596/3xhpwbakz2361.png')
 
 
 def setup(bot):

@@ -15,7 +15,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['guildinfo', 'server', 'serverinfo', 'si', 'gi'])
     async def guild(self, ctx):
-        """Viser info om guilden"""
+        """
+        Viser info om guilden
+        """
 
         guild_created_date = ctx.guild.created_at.strftime('%d. %b. %Y - %H:%M')
         since_created_days = (ctx.message.created_at - ctx.guild.created_at).days
@@ -205,7 +207,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['serverroller', 'guildroles', 'serverroles'])
     async def guildroller(self, ctx):
-        """Viser rollene i en guild"""
+        """
+        Viser rollene i en guild
+        """
 
         roles = []
         for role in ctx.guild.roles:
@@ -245,7 +249,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['guildboosters', 'serverboosters', 'boosts'])
     async def boosters(self, ctx):
-        """Viser boosters i en guild"""
+        """
+        Viser boosters i en guild
+        """
 
         if len(ctx.guild.premium_subscribers) == 0:
             embed = embed_templates.error_warning(ctx, text='Serveren har ikke noen boosts :(')
@@ -268,7 +274,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['serverikon', 'servericon', 'guildicon', 'icon', 'guildikon'])
     async def ikon(self, ctx):
-        """Viser ikonet til serveren du er i"""
+        """
+        Viser ikonet til serveren du er i
+        """
 
         url = ctx.guild.icon_url_as(static_format='png')
 
@@ -283,7 +291,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['guildsplash', 'serversplash'])
     async def splash(self, ctx):
-        """Viser invite splash til serveren"""
+        """
+        Viser invite splash til serveren
+        """
 
         if not ctx.guild.splash_url:
             embed = embed_templates.error_warning(ctx, text='Serveren har ikke en splash')
@@ -302,7 +312,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['guildbanner', 'serverbanner'])
     async def banner(self, ctx):
-        """Viser invite splash til serveren"""
+        """
+        Viser invite splash til serveren
+        """
 
         if not ctx.guild.banner_url:
             embed = embed_templates.error_warning(ctx, text='Serveren har ikke et banner :(')
@@ -321,7 +333,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['userinfo', 'ui', 'brukerinfo', 'user'])
     async def bruker(self, ctx, *, bruker: discord.Member = None):
-        """Viser info om en bruker"""
+        """
+        Viser info om en bruker
+        """
 
         if not bruker:
             bruker = ctx.author
@@ -416,7 +430,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['userroles'])
     async def brukerroller(self, ctx, bruker: discord.Member = None):
-        """Viser rollene til en bruker"""
+        """
+        Viser rollene til en bruker
+        """
 
         if not bruker:
             bruker = ctx.author
@@ -454,7 +470,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['profilbilde', 'brukeravatar', 'useravatar'])
     async def avatar(self, ctx, bruker: discord.Member = None):
-        """Viser avataren til en bruker"""
+        """
+        Viser avataren til en bruker
+        """
 
         if not bruker:
             bruker = ctx.author
@@ -477,7 +495,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['roleinfo', 'rolleinfo'])
     async def rolle(self, ctx, *, rolle: discord.Role):
-        """Viser info om en rolle"""
+        """
+        Viser info om en rolle
+        """
 
         if rolle.name == '@everyone':
             embed = embed_templates.fatal(ctx, text='Skriv inn en annen rolle enn @everyone')
@@ -537,7 +557,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['kanal', 'channel', 'channelinfo', 'textchannel'])
     async def tekstkanal(self, ctx, *, kanal: discord.TextChannel):
-        """Viser info om en tekstkanal"""
+        """
+        Viser info om en tekstkanal
+        """
 
         nsfw = 'Nei'
         if kanal.is_nsfw():
@@ -576,7 +598,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['talekanalinfo', 'voicechannel'])
     async def talekanal(self, ctx, *, kanal: discord.VoiceChannel):
-        """Viser info om en talekanal"""
+        """
+        Viser info om en talekanal
+        """
 
         if kanal.user_limit == 0:
             limit = '∞ personer'
@@ -599,7 +623,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['emote'])
     async def emoji(self, ctx, emoji: discord.Emoji):
-        """Viser info om en CUSTOM emoji som tilhører serveren"""
+        """
+        Viser info om en CUSTOM emoji som tilhører serveren
+        """
 
         animated = 'Nei'
         if emoji.animated:
@@ -625,7 +651,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['serveremoji', 'serveremotes'])
     async def guildemoji(self, ctx):
-        """Viser alle emoji som serveren har"""
+        """
+        Viser alle emoji som serveren har
+        """
 
         embed = discord.Embed(colour=ctx.me.color)
         embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon_url)
@@ -646,7 +674,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(aliases=['oldest'])
     async def eldst(self, ctx, side=0):
-        """Liste over de eldste brukerene på serveren"""
+        """
+        Liste over de eldste brukerene på serveren
+        """
 
         members = sorted(ctx.guild.members, key=lambda m: m.created_at)
 
@@ -673,7 +703,9 @@ class Info(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command()
     async def joinorder(self, ctx, side=0):
-        """Liste over de første medlemmene av serveren"""
+        """
+        Liste over de første medlemmene av serveren
+        """
 
         members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
 
