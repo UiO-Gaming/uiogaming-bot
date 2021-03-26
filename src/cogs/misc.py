@@ -19,6 +19,16 @@ class Misc(commands.Cog):
 
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def anime(self, ctx):
+        """
+        Kjeft på weebs
+        """
+
+        await ctx.send('<:sven:762725919604473866> Weebs 👉 <#803596668129509417>')
+
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(aliases=['owoify', 'uwu'])
     async def owo(self, ctx, *, tekst: str):
         """
