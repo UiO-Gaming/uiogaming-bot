@@ -20,7 +20,7 @@ class Misc(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
-    async def anime(self, ctx):
+    async def weeb(self, ctx):
         """
         Kjeft på weebs
         """
