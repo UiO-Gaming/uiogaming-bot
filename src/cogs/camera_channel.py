@@ -16,7 +16,7 @@ class CameraChannel(commands.Cog):
 
         if not member.voice.self_video:
             await asyncio.sleep(10)
-            if not member.voice.self_video:
+            if not member.voice.self_video and member.voice.channel.id == 817125310491131949:
                 await member.move_to(channel=None)
 
 
