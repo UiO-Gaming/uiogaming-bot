@@ -8,6 +8,7 @@ import json
 from asyncio import sleep
 from PIL import Image, ImageDraw, ImageFont
 from os import remove
+import urllib
 
 from cogs.utils import embed_templates
 from cogs.utils.misc_utils import ignore_exception
@@ -72,6 +73,50 @@ class Misc(commands.Cog):
 
         embed = discord.Embed(color=ctx.me.color, description=f'**{tekst.upper()}**')
         embed = embed_templates.default_footer(ctx, embed)
+        await ctx.send(embed=embed)
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(aliases=['filmsøk'])
+    async def imdb(self, ctx, *, film):
+        """
+        Se informasjon om en film eller serie
+        """
+
+        url = 'http://www.omdbapi.com/?' + urllib.parse.urlencode({'s': film, 'apikey': self.bot.api_keys['omdb']})
+        search = requests.get(url).json()
+
+        try:
+            best_result_id = search['Search'][0]['imdbID']
+        except KeyError:
+            embed = embed_templates.error_fatal(ctx, text="Fant ikke filmen!")
+            return await ctx.send(embed=embed)
+
+        data = requests.get(f'http://www.omdbapi.com/?i={best_result_id}&apikey={self.bot.api_keys["omdb"]}').json()
+
+        acceptable_media_types = ['movie', 'series', 'episode']
+        if data['Type'] not in acceptable_media_types:
+            embed = embed_templates.error_fatal(ctx, text="Fant ikke filmen!")
+            return await ctx.send(embed=embed)
+
+        embed = discord.Embed(
+            title=f'{data["Title"]} ({data["Year"]})', 
+            color=0xF5C518, 
+            url=f'https://www.imdb.com/title/{data["imdbID"]}/'
+        )
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.add_field(name='Type', value=data['Type'].title())
+        embed.add_field(name='Sjanger', value=data['Genre'])
+        embed.add_field(name='Spilletid', value=data['Runtime'])
+        embed.add_field(name='Vurdering på IMDb', value=f'{data["imdbRating"]}/10')
+        embed.set_footer(text=f'Utgitt: {data["Released"]}')
+
+        if data['Poster'] != 'N/A':
+            embed.set_thumbnail(url=data['Poster'])
+        if data['Director'] != 'N/A':
+            embed.description = data['Director']
+        if data['Plot'] != 'N/A' and len(data['Plot']) < 1024:
+            embed.add_field(name='Sammendrag', value=data['Plot'], inline=False)
+
         await ctx.send(embed=embed)
 
     @commands.bot_has_permissions(embed_links=True)
