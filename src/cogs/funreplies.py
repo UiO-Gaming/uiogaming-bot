@@ -11,10 +11,10 @@ class FunReplies(commands.Cog):
         if message.author.bot:
             return
 
-        if ' borgerlønn ' in message.content.lower():
+        if re.findall(r'(^|\W)borgerlønn(\W|$)', message.clean_content.lower()) != []:
             await message.channel.send('<@267415183931080715> DE SNAKKER OM BORGERLØNN')
 
-        elif ' olof palme ' in message.content.lower():
+        elif re.findall(r'(^|\W)olof palme(\W|$)', message.clean_content.lower()) != []:
             await message.channel.send('Jeg vet hvem som drepte Olof Palme 👀')
 
         #  The Ultimate spaghetti
