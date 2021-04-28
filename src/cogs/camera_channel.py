@@ -21,5 +21,6 @@ class CameraChannel(commands.Cog):
 
 
 def setup(bot):
-    bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
-    bot.add_cog(CameraChannel(bot))
+    #bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
+    #bot.add_cog(CameraChannel(bot))
+    pass
