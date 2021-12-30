@@ -13,7 +13,7 @@ def default_footer(ctx: discord.ext.commands.Context, embed: discord.Embed) -> d
     (discord.Embed): The sent in embed + footer
     """
 
-    return embed.set_footer(icon_url=ctx.author.avatar_url, text=f'{ctx.author.name}#{ctx.author.discriminator}')
+    return embed.set_footer(icon_url=ctx.author.avatar_url, text=f"{ctx.author.name}#{ctx.author.discriminator}")
 
 
 def error_warning(ctx: discord.ext.commands.Context, text: str) -> discord.Embed:
@@ -28,7 +28,7 @@ def error_warning(ctx: discord.ext.commands.Context, text: str) -> discord.Embed
     (discord.Embed): An embed object based on the template with the specified text
     """
 
-    embed = discord.Embed(color=discord.Color.gold(), description=f'⚠️ {text}')
+    embed = discord.Embed(color=discord.Color.gold(), description=f"⚠️ {text}")
     default_footer(ctx, embed)
 
     return embed
@@ -46,7 +46,25 @@ def error_fatal(ctx: discord.ext.commands.Context, text: str) -> discord.Embed:
     (discord.Embed): An embed object based on the template with the specified text
     """
 
-    embed = discord.Embed(color=discord.Color.red(), description=f'❌ {text}')
+    embed = discord.Embed(color=discord.Color.red(), description=f"❌ {text}")
+    default_footer(ctx, embed)
+
+    return embed
+
+
+def success(ctx: discord.ext.commands.Context, text: str) -> discord.Embed:
+    """
+    Creates an embed with a specified message using a template signifying success.
+    Parameters
+    -----------
+    ctx (discord.ext.commands.Context): The current Discord context
+    text (str): The message
+    Returns
+    -----------
+    discord.Embed: An embed object based on the template with the specified text
+    """
+
+    embed = discord.Embed(color=discord.Color.green(), description=f"✅ {text}")
     default_footer(ctx, embed)
 
     return embed
