@@ -4,3 +4,6 @@ requests
 asyncio
 psutil
 pillow
+aiocron
+psycopg2
+mcrcon
