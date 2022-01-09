@@ -2,6 +2,8 @@ from discord.ext import commands
 import discord
 
 import psycopg2
+import aiocron
+import asyncio
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -58,6 +60,27 @@ class Birthday(commands.Cog):
             self.bot.db_connection.rollback()
             self.cursor.execute("UPDATE birthdays SET birthday = %s WHERE discord_id = %s", (birthday, user_id))
             self.bot.db_connection.commit()
+
+    @aiocron.crontab("0 0 * * *")
+    async def _check_birthdays(self):
+        await asyncio.sleep(1)
+        self.cursor.execute(
+            """
+                SELECT *
+                FROM birthdays
+                WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
+                    AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
+            """
+        )
+
+        birthdays = self.cursor.fetchall()
+        if birthdays:
+            guild = self.bot.get_guild(747542543750660178)
+            channel = guild.get_channel(747542544291987597)
+            for birthday in birthdays:
+                user = self.bot.get_user(birthday[0])
+                if user:
+                    await channel.send(f"Gratulrer med dagen {user.mention}!")
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command()
