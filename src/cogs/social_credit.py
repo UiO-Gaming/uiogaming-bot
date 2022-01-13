@@ -117,7 +117,7 @@ class SocialCredit(commands.Cog):
 
         output_list = []
         for i, row in enumerate(result):
-            user = await self.bot.fetch_user(row[0])
+            user = ctx.guild.get_member(row[0])
             if user:
                 output_list.append(f"{i+1}. {user.name}#{user.discriminator} - `{row[1]}` poeng")
 
