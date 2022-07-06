@@ -4,3 +4,4 @@ services:
   uiogaming-bot:
     container_name: uiogaming-bot
     build: .
+    network_mode: "host"
