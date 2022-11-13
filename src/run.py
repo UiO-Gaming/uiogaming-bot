@@ -70,7 +70,7 @@ async def on_ready():
     for file in listdir("./src/cogs"):
         if file.endswith(".py"):
             name = file[:-3]
-            bot.load_extension(f"cogs.{name}")
+            await bot.load_extension(f"cogs.{name}")
 
     print(f"Username:        {bot.user.name}")
     print(f"ID:              {bot.user.id}")
@@ -81,4 +81,4 @@ async def on_ready():
     )
 
 
-bot.run(config["bot"]["token"], bot=True, reconnect=True)
+bot.run(config["bot"]["token"], reconnect=True)

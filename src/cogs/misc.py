@@ -105,7 +105,7 @@ class Misc(commands.Cog):
             color=0xF5C518,
             url=f'https://www.imdb.com/title/{data["imdbID"]}/',
         )
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.add_field(name="Type", value=data["Type"].title())
         embed.add_field(name="Sjanger", value=data["Genre"])
         embed.add_field(name="Spilletid", value=data["Runtime"])
@@ -233,8 +233,8 @@ class Misc(commands.Cog):
             if bruker.id == self.bot.user.id:
                 match_percent = 100
 
-            await ctx.author.avatar_url_as(format="png").save(fp=f"./src/assets/temp/{ctx.author.id}_raw.png")
-            await bruker.avatar_url_as(format="png").save(fp=f"./src/assets/temp/{bruker.id}_raw.png")
+            await ctx.author.display_avatar.save(fp=f"./src/assets/temp/{ctx.author.id}_raw.png")
+            await bruker.display_avatar.save(fp=f"./src/assets/temp/{bruker.id}_raw.png")
 
             invoker = Image.open(f"./src/assets/temp/{ctx.author.id}_raw.png").convert("RGBA")
             invoker = invoker.resize((389, 389), Image.ANTIALIAS)
@@ -267,5 +267,5 @@ class Misc(commands.Cog):
                 remove(f"./src/assets/temp/{ctx.author.id}_{bruker.id}_edit.png")
 
 
-def setup(bot):
-    bot.add_cog(Misc(bot))
+async def setup(bot):
+    await bot.add_cog(Misc(bot))

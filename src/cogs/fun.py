@@ -41,5 +41,5 @@ class Fun(commands.Cog):
         await ctx.send('https://i.imgur.com/h84fknj.jpg')
 
 
-def setup(bot):
-    bot.add_cog(Fun(bot))
+async def setup(bot):
+    await bot.add_cog(Fun(bot))

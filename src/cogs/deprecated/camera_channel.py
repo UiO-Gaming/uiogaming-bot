@@ -20,7 +20,7 @@ class CameraChannel(commands.Cog):
                 await member.move_to(channel=None)
 
 
-def setup(bot):
+async def setup(bot):
     #bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
-    #bot.add_cog(CameraChannel(bot))
+    #await bot.add_cog(CameraChannel(bot))
     pass

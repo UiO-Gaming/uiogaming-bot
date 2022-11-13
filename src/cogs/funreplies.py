@@ -26,6 +26,6 @@ class FunReplies(commands.Cog):
                                        '824764933513281596/3xhpwbakz2361.png')
 
 
-def setup(bot):
+async def setup(bot):
     bot.add_listener(FunReplies(bot).react, 'on_message')
-    bot.add_cog(FunReplies(bot))
+    await bot.add_cog(FunReplies(bot))

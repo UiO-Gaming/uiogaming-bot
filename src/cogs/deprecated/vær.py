@@ -21,7 +21,7 @@ class Vær(commands.Cog):
 
             embed = discord.Embed(title=":white_sun_small_cloud: Værmelding for Oslo :white_sun_small_cloud:")
             embed.description = "*Værmeldingen levert til deg av Petter*"
-            embed.set_author(name=dev.name, icon_url=dev.avatar_url)
+            embed.set_author(name=dev.name, icon_url=dev.display_avatar)
 
             half_hour = False
             klokkeslett = 0
@@ -42,5 +42,5 @@ class Vær(commands.Cog):
             await channel.send("RISE AND SHINE GAMERS!", embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Vær(bot))
+async def setup(bot):
+    await bot.add_cog(Vær(bot))

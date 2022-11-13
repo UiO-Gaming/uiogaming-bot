@@ -27,7 +27,7 @@ class Mod(commands.Cog):
 
         user = discord.Object(id=brukerid)
 
-        for banentry in await ctx.guild.bans():
+        async for banentry in ctx.guild.bans(limit=100):
             if banentry.user.id == user.id:
                 embed = embed_templates.error_warning(ctx, text='Denne brukeren er allerede bannlyst fra serveren!')
                 return await ctx.send(embed=embed)
@@ -53,8 +53,8 @@ class Mod(commands.Cog):
             embed.description = f'`{begrunnelse}`'
         if user_object:
             user = user_object
-            embed.set_thumbnail(url=user.avatar_url)
-            embed.set_author(name=f'{user.name}#{user.discriminator}', icon_url=user.avatar_url)
+            embed.set_thumbnail(url=user.display_avatar)
+            embed.set_author(name=f'{user.name}#{user.discriminator}', icon_url=user.display_avatar)
             embed.add_field(name='Bruker', value=f'{user.name}#{user.discriminator}\n{user.mention}', inline=False)
         else:
             embed.add_field(name='Bruker', value=f'`{user.id}`', inline=False)
@@ -63,5 +63,5 @@ class Mod(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Mod(bot))
+async def setup(bot):
+    await bot.add_cog(Mod(bot))

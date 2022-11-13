@@ -269,5 +269,5 @@ class SocialCredit(commands.Cog):
                 await self.social_punishment(user.id, 25)
 
 
-def setup(bot):
-    bot.add_cog(SocialCredit(bot))
+async def setup(bot):
+    await bot.add_cog(SocialCredit(bot))

@@ -21,5 +21,5 @@ class Wiki(commands.Cog):
         embed_templates.default_footer(ctx,embed)
         await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(Wiki(bot))
+async def setup(bot):
+    await bot.add_cog(Wiki(bot))

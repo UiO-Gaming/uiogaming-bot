@@ -13,7 +13,7 @@ def default_footer(ctx: discord.ext.commands.Context, embed: discord.Embed) -> d
     (discord.Embed): The sent in embed + footer
     """
 
-    return embed.set_footer(icon_url=ctx.author.avatar_url, text=f"{ctx.author.name}#{ctx.author.discriminator}")
+    return embed.set_footer(icon_url=ctx.author.avatar, text=f"{ctx.author.name}#{ctx.author.discriminator}")
 
 
 def error_warning(ctx: discord.ext.commands.Context, text: str) -> discord.Embed:

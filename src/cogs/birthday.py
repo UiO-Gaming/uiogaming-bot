@@ -138,8 +138,8 @@ class Birthday(commands.Cog):
         next_birthday_days = (next_birthday - datetime.now()).days
 
         embed = discord.Embed(description=bruker.mention, color=discord_utils.get_user_color(bruker))
-        embed.set_thumbnail(url=bruker.avatar_url)
-        embed.set_author(name=bruker.name, icon_url=bruker.avatar_url)
+        embed.set_thumbnail(url=bruker.display_avatar)
+        embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.add_field(name="Bursdag", value=f"<t:{int(birthday.timestamp())}:D>")
         embed.add_field(name="Hvor gammel?", value=f"{years_old} år\n({days_old} dager)", inline=False)
         embed.add_field(name="Neste bursdag om", value=f"{next_birthday_days} dager", inline=False)
@@ -169,5 +169,5 @@ class Birthday(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Birthday(bot))
+async def setup(bot):
+    await bot.add_cog(Birthday(bot))

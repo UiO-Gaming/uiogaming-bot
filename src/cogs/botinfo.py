@@ -62,8 +62,8 @@ class BotInfo(commands.Cog):
 
         # Build embed
         embed = discord.Embed(color=ctx.me.color, url=self.bot.misc['website'])
-        embed.set_author(name=dev.name, icon_url=dev.avatar_url)
-        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.set_author(name=dev.name, icon_url=dev.display_avatar)
+        embed.set_thumbnail(url=self.bot.user.display_avatar)
         embed.add_field(name='Dev', value=f'{dev.mention}\n{dev.name}#{dev.discriminator}')
         embed.add_field(name='Oppetid', value=self.get_uptime())
         embed.add_field(name='Ping', value=f'Ekte ping: {ping} ms\nWebsocket ping: {int(self.bot.latency * 1000)} ms')
@@ -139,5 +139,5 @@ class BotInfo(commands.Cog):
         return f'{days}d, {hours}t, {minutes}m, {seconds}s'
 
 
-def setup(bot):
-    bot.add_cog(BotInfo(bot))
+async def setup(bot):
+    await bot.add_cog(BotInfo(bot))
