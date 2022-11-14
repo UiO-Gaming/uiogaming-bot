@@ -1,13 +1,13 @@
+import codecs
 from os import listdir
 from time import time
 
 import discord
 from discord.ext import commands
-
-import codecs
-from logger import BotLogger
 import psycopg2
 import yaml
+
+from logger import BotLogger
 
 
 # Load config file
