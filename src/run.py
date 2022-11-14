@@ -17,6 +17,12 @@ with codecs.open("./src/config/config.yaml", "r", encoding="utf8") as f:
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
+        super().__init__(
+            command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]),
+            case_insensitive=True,
+            intents=discord.Intents.all()
+        )
+    
         self.logger = BotLogger().logger  # Initialize logger
 
         # Connect to database
