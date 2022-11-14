@@ -5,3 +5,5 @@ services:
     container_name: uiogaming-bot
     build: .
     network_mode: "host"
+    environment:
+      - TZ=Europe/Oslo
