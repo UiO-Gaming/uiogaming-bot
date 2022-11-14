@@ -1,36 +1,25 @@
-from discord.ext import commands
-import discord
+from os import listdir
+from time import time
 
-from codecs import open
+import discord
+from discord.ext import commands
+
+import codecs
+from logger import BotLogger
+import psycopg2
 import yaml
 
-from os import listdir
-import locale
-from time import time
-import psycopg2
-from logger import BotLogger
 
-
-locale.setlocale(locale.LC_ALL, "")
-
-with open("./src/config/config.yaml", "r", encoding="utf8") as f:
+# Load config file
+with codecs.open("./src/config/config.yaml", "r", encoding="utf8") as f:
     config = yaml.load(f, Loader=yaml.SafeLoader)
-
-intents = discord.Intents.all()
 
 
 class Bot(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]), case_insensitive=True, intents=intents
-        )
-        self.logger = BotLogger().logger
+    def __init__(self) -> None:
+        self.logger = BotLogger().logger  # Initialize logger
 
-        self.prefix = config["bot"]["prefix"]
-        self.presence = config["bot"].get("presence", {})
-
-        self.api_keys = config.get("api", {})
-
+        # Connect to database
         db = config.get("database", {})
         self.db_connection = psycopg2.connect(
             host=db["host"],
@@ -39,29 +28,26 @@ class Bot(commands.Bot):
             password=db["password"],
         )
 
+        # Fetch misc config values
+        self.presence = config["bot"].get("presence", {})
+        self.api_keys = config.get("api", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
 
+    async def setup_hook(self) -> None:
+        # Load cogs
+        for file in listdir("./src/cogs"):
+            if file.endswith(".py"):
+                name = file[:-3]
+                await bot.load_extension(f"cogs.{name}")
 
+        # Sync slash commands to Discord
+        self.tree.copy_global_to(guild=discord.Object(id=412646636771344395))  # Temporary. Development purposes only.
+        await self.tree.sync()
+
+
+# Create bot instance
 bot = Bot()
-
-
-activities = {"playing": 0, "listening": 2, "watching": 3}
-if bot.presence["activity"].lower() in activities:
-    activity_type = activities[bot.presence["activity"].lower()]
-else:
-    activity_type = 0
-
-status_types = {
-    "online": discord.Status.online,
-    "dnd": discord.Status.dnd,
-    "idle": discord.Status.idle,
-    "offline": discord.Status.offline,
-}
-if bot.presence["type"].lower() in status_types:
-    status_type = status_types[bot.presence["type"].lower()]
-else:
-    status_type = discord.Status.online
 
 
 @bot.event
@@ -69,17 +55,29 @@ async def on_ready():
     if not hasattr(bot, "uptime"):
         bot.uptime = time()
 
-    for file in listdir("./src/cogs"):
-        if file.endswith(".py"):
-            name = file[:-3]
-            await bot.load_extension(f"cogs.{name}")
-
+    # Print bot info
     print(f"Username:        {bot.user.name}")
     print(f"ID:              {bot.user.id}")
     print(f"Version:         {discord.__version__}")
     print("." * 50 + "\n")
+
+    # Set initial presence
+    # Presence status
+    status_types = {
+        "online": discord.Status.online,
+        "dnd": discord.Status.dnd,
+        "idle": discord.Status.idle,
+        "offline": discord.Status.offline,
+    }
+    status_type = status_types.get(bot.presence["status"].lower(), discord.Status.online)
+
+    # Presence actitivity
+    activities = {"playing": 0, "listening": 2, "watching": 3}
+    activity_type = activities.get(bot.presence["activity"].lower(), 0)
+
     await bot.change_presence(
-        activity=discord.Activity(type=activity_type, name=bot.presence["message"]), status=status_type
+        activity=discord.Activity(type=activity_type, name=bot.presence["message"]),
+        status=status_type
     )
 
 
