@@ -49,7 +49,7 @@ class Bot(commands.Bot):
 
         # Sync slash commands to Discord
         self.tree.copy_global_to(guild=discord.Object(id=412646636771344395))  # Temporary. Development purposes only.
-        await self.tree.sync()
+        await self.tree.sync(guild=discord.Object(id=412646636771344395))  # Temporary. Development purposes only.
 
 
 # Create bot instance
