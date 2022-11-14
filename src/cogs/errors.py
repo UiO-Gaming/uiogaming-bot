@@ -19,7 +19,7 @@ class Errors(commands.Cog):
         Prints command execution metadata
         """
 
-        print(
+        self.bot.logger.info(
             f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} | ' +
             f'{"❌ " if ctx.command_failed else "✔ "} {ctx.command} - ' +
             f'{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) | ' +
@@ -92,14 +92,8 @@ class Errors(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text='En ukjent feil oppstod!')
         await ctx.send(embed=embed)
 
-        # Print full exception to console
-        print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
-        traceback.print_exception(
-            type(error),
-            error,
-            error.__traceback__,
-            file=sys.stderr
-        )
+        # Log full exception to file
+        self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
 
 
 async def setup(bot):

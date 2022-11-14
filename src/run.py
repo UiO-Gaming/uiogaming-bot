@@ -8,6 +8,7 @@ from os import listdir
 import locale
 from time import time
 import psycopg2
+from logger import BotLogger
 
 
 locale.setlocale(locale.LC_ALL, "")
@@ -23,6 +24,7 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]), case_insensitive=True, intents=intents
         )
+        self.logger = BotLogger().logger
 
         self.prefix = config["bot"]["prefix"]
         self.presence = config["bot"].get("presence", {})
@@ -81,4 +83,4 @@ async def on_ready():
     )
 
 
-bot.run(config["bot"]["token"], reconnect=True)
+bot.run(config["bot"]["token"], reconnect=True, log_handler=None)
