@@ -13,7 +13,7 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
     -----------
     (discord.Color): The user's displayed color
     """
-    if str(discord_object.color) != '#000000':
+    if hasattr(discord_object, "color") and str(discord_object.color) != '#000000':
         return discord_object.color
 
     return discord.Colour(0x99AAB5)
