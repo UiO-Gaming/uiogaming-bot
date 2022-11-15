@@ -25,7 +25,7 @@ class FunReplies(commands.Cog):
             await message.channel.send('https://cdn.discordapp.com/attachments/750052141346979850/' +
                                        '824764933513281596/3xhpwbakz2361.png')
 
-        elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf)\?*$', message_content, flags=re.IGNORECASE):
+        elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf|kontoret)\?*$', message_content, flags=re.IGNORECASE):
             await message.channel.send('Ja, <@554977854971183125> bor der')
 
         elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
