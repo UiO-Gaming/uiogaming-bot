@@ -1,9 +1,10 @@
-from discord.ext import commands
-import discord
-
-from time import time, perf_counter
+from os import environ, getpid
 import platform
-from os import getpid, environ
+from time import time
+
+import discord
+from discord import app_commands
+from discord.ext import commands
 from psutil import Process
 
 from cogs.utils import embed_templates
@@ -13,36 +14,29 @@ class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.bot_has_permissions(embed_links=True, external_emojis=True)
-    @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command(aliases=['info', 'about', 'om'])
-    async def botinfo(self, ctx):
+    @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command()
+    async def botinfo(self, interaction: discord.Interaction):
         """
         Viser informasjon om bot
         """
-
+        # Dev user info
         dev = await self.bot.fetch_user(170506717140877312)
-
-        # Ping
-        start = perf_counter()
-        status_msg = await ctx.send('Beregner ping...')
-        end = perf_counter()
-        ping = int((end - start) * 1000)
 
         # Memory usage
         process = Process(getpid())
         memory_usage = round(process.memory_info().rss / 1000000, 1)
 
         # Member stats
-        """
-        This is a pretty stupid way of doing things but it's the best I can come up with.
-        Using curly brackets for both dicts and sets is retarded becuase
-        I have to do this shit in order to create a fucking empty set.
-
-        Apparently you can't access user presences, only member presences
-        Because of that I have to use sets instead of ints in order to not count duplicate users.
-        Fucking hell discord...
-        """
+        #
+        # This is a pretty stupid way of doing things but it's the best I can come up with.
+        # Using curly brackets for both dicts and sets is retarded becuase
+        # I have to do this shit in order to create a fucking empty set.
+        #
+        # Apparently you can't access user presences, only member presences
+        # Because of that I have to use sets instead of ints in order to not count duplicate users.
+        # Fucking hell discord...
         total_members = set([])
         online_members = set([])
         idle_members = set([])
@@ -61,12 +55,12 @@ class BotInfo(commands.Cog):
                     offline_members.add(member.id)
 
         # Build embed
-        embed = discord.Embed(color=ctx.me.color, url=self.bot.misc['website'])
+        embed = discord.Embed(color=interaction.client.user.color, url=self.bot.misc['website'])
         embed.set_author(name=dev.name, icon_url=dev.display_avatar)
         embed.set_thumbnail(url=self.bot.user.display_avatar)
         embed.add_field(name='Dev', value=f'{dev.mention}\n{dev.name}#{dev.discriminator}')
-        embed.add_field(name='Oppetid', value=self.get_uptime())
-        embed.add_field(name='Ping', value=f'Ekte ping: {ping} ms\nWebsocket ping: {int(self.bot.latency * 1000)} ms')
+        embed.add_field(name='Oppetid', value=self.__get_uptime())
+        embed.add_field(name='Ping', value=f'Websocket ping: {self.__get_ping()} ms')
         embed.add_field(name='Servere', value=len(self.bot.guilds))
         embed.add_field(name='Discord.py', value=discord.__version__)
         embed.add_field(name='Python', value=platform.python_version())
@@ -81,44 +75,44 @@ class BotInfo(commands.Cog):
                               f'{self.bot.emoji["offline"]}{len(offline_members)}')
         embed.add_field(name='Lenker', value=f'[Nettside]({self.bot.misc["website"]}) | ' +
                                              f'[Kildekode]({self.bot.misc["source_code"]})')
-        embed_templates.default_footer(ctx, embed)
-        await status_msg.edit(embed=embed, content=None)
+        embed_templates.default_footer(interaction, embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
-    @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command(aliases=['uptime'])
-    async def oppetid(self, ctx):
-        """
-        Viser hvor lenge bot har vært kjørende
-        """
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command()
+    async def oppetid(self, interaction: discord.Interaction):
+        """Viser hvor lenge bot har vært kjørende"""
 
-        embed = discord.Embed(color=ctx.me.color)
-        embed.add_field(name='🔌 Oppetid', value=self.get_uptime())
-        embed_templates.default_footer(ctx, embed)
-        await ctx.send(embed=embed)
+        embed = discord.Embed(color=interaction.client.user.color)
+        embed.add_field(name='🔌 Oppetid', value=self.__get_uptime())
+        embed_templates.default_footer(interaction, embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
-    @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command()
-    async def ping(self, ctx):
-        """
-        Viser bot sin ping
-        """
-
-        start = perf_counter()
-        status_msg = await ctx.send('Pinging...')
-        end = perf_counter()
-        ping = int((end - start) * 1000)
-
-        embed = discord.Embed(color=ctx.me.color)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command()
+    async def ping(self, interaction: discord.Interaction):
+        """Viser bot sin ping"""
+        embed = discord.Embed(color=interaction.client.user.color)
         embed.add_field(
             name='📶 Ping',
-            value=f'**Ekte ping:** {ping} ms\n**Websocket ping:** {int(self.bot.latency * 1000)} ms'
+            value=f'**Websocket ping:** {self.__get_ping()} ms'
         )
-        embed_templates.default_footer(ctx, embed)
-        await status_msg.edit(embed=embed, content=None)
+        embed_templates.default_footer(interaction, embed)
+        await interaction.response.send_message(embed=embed, content=None)
 
-    def get_uptime(self) -> str:
+    def __get_ping(self) -> int:
+        """
+        Get the bot's ping in milliseconds
+
+        Returns
+        ----------
+        (int) The bot's ping in milliseconds
+        """
+        return int(self.bot.latency * 1000)
+
+    def __get_uptime(self) -> str:
         """
         Returns the current uptime of the bot in string format
 
