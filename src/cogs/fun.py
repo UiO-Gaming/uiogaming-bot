@@ -12,17 +12,17 @@ class Fun(commands.Cog):
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
-    async def informatikkuio(self, ctx):
+    async def ifi(self, ctx):
         await ctx.send('https://i.imgur.com/ypyK1mi.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
-    async def informatikkuio2(self, ctx):
+    async def ifi2(self, ctx):
         await ctx.send('https://i.imgur.com/ZqgZEEA.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
-    async def informatikkuio3(self, ctx):
+    async def ifi3(self, ctx):
         await ctx.send('https://i.imgur.com/Gx9DQE5.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
