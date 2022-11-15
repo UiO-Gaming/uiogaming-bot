@@ -27,6 +27,9 @@ class FunReplies(commands.Cog):
         elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf)\?*$', message_content, flags=re.IGNORECASE):
             await message.channel.send('Ja, <@554977854971183125> bor der')
 
+        elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
+            await message.channel.send('<:Nei:826593267642662912>')
+
 
 async def setup(bot):
     bot.add_listener(FunReplies(bot).reply_to_triggers, 'on_message')
