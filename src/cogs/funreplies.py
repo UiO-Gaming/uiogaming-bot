@@ -9,6 +9,7 @@ class FunReplies(commands.Cog):
         self.bot = bot
 
     async def reply_to_triggers(self, message: discord.Message):
+        """Replies to messages that trigger certain key words/phrases"""
         if message.author.bot:
             return
 
