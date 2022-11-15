@@ -31,7 +31,7 @@ class MCWhitelist(commands.Cog):
         """Whitelist Minecraftbrukeren din på serveren vår"""
 
         # Fetch minecraft uuid from api
-        data = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{minecraftbrukernavn}")
+        data = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{minecraftbrukernavn}", timeout=10).json()
         if data.status_code != 200:
             return await interaction.response.send_message(
                 embed=embed_templates.error_fatal(interaction, text=f"Brukeren `{minecraftbrukernavn}` finnes ikke på minecraft"),
