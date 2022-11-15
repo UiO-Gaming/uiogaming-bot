@@ -76,7 +76,7 @@ async def on_ready():
         "idle": discord.Status.idle,
         "offline": discord.Status.offline,
     }
-    status_type = status_types.get(bot.presence["status"].lower(), discord.Status.online)
+    status_type = status_types.get(bot.presence["type"].lower(), discord.Status.online)
 
     # Presence actitivity
     activities = {"playing": 0, "listening": 2, "watching": 3}
