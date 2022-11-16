@@ -199,7 +199,7 @@ class Misc(commands.Cog):
         f = discord.File(f"./src/assets/temp/{interaction.user.id}_{bruker.id}_edit.png")
         embed = discord.Embed()
         embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_edit.png")
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed, file=f)
 
         with ignore_exception(OSError):

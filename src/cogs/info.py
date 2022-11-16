@@ -232,7 +232,7 @@ class Info(commands.Cog):
         embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.icon})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_image(url=interaction.guild.icon)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -247,7 +247,7 @@ class Info(commands.Cog):
         embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.discovery_splash})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_image(url=interaction.guild.discovery_splash)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -262,7 +262,7 @@ class Info(commands.Cog):
         embed = discord.Embed(color=interaction.me.guild.color, description=f'[Lenke]({interaction.guild.banner})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_image(url=interaction.guild.banner)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -296,7 +296,7 @@ class Info(commands.Cog):
         if permissions:
             embed.add_field(name='Tillatelser', value=permissions, inline=False)
         embed.add_field(name=f'Brukere med rollen ({len(rolle.members)})', value=members, inline=False)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -317,7 +317,7 @@ class Info(commands.Cog):
         if kanal.category:
             embed.add_field(name='Kategori', value=kanal.category.name)
         embed.add_field(name=f'Antall med tilgang ({len(kanal.members)})', value=members)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -333,7 +333,7 @@ class Info(commands.Cog):
         if kanal.category:
             embed.add_field(name='Kategori', value=kanal.category.name)
         embed.add_field(name='Antall koblet til', value=len(kanal.members))
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     # @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -516,7 +516,7 @@ class Info(commands.Cog):
         embed = discord.Embed(color=discord_utils.get_color(bruker), description=f'[Lenke]({bruker.display_avatar})')
         embed.set_author(name=f'{bruker.name}#{bruker.discriminator}', icon_url=bruker.display_avatar)
         embed.set_image(url=bruker.display_avatar)
-        embed = embed_templates.default_footer(interaction, embed)
+        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
 
