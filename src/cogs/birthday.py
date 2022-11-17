@@ -10,7 +10,7 @@ from cogs.utils import discord_utils, embed_templates
 
 
 class Birthday(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.cursor = self.bot.db_connection.cursor()
 
@@ -213,5 +213,5 @@ class Birthday(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Birthday(bot))

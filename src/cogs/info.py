@@ -8,7 +8,7 @@ from cogs.utils import discord_utils, embed_templates, misc_utils
 
 
 class Info(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     guild_group = app_commands.Group(name="guild", description="Se ting om serveren")
@@ -519,5 +519,5 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Info(bot))

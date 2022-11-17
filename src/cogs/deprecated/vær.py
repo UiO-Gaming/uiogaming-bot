@@ -7,7 +7,7 @@ import json
 
 
 class Vær(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
         @aiocron.crontab("0 6 * * *")
@@ -42,5 +42,5 @@ class Vær(commands.Cog):
             await channel.send("RISE AND SHINE GAMERS!", embed=embed)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Vær(bot))

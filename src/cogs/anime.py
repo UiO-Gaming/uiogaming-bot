@@ -10,7 +10,7 @@ from cogs.utils import embed_templates
 
 
 class Anime(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     anilist = app_commands.Group(name='anilist', description='Hent informasjon fra Anilist')
@@ -198,7 +198,7 @@ class Anime(commands.Cog):
                 pass
         return ' | '.join(favorite_media)
 
-    def __construct_favorite_entity_string(self, entities: list, studio=False) -> str:
+    def __construct_favorite_entity_string(self, entities: list, studio: bool = False) -> str:
         """
         Constructs a string with the user's favorite entities
 
@@ -1145,5 +1145,5 @@ class Anime(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Anime(bot))

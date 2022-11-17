@@ -4,7 +4,7 @@ import asyncio
 
 
 class CameraChannel(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     async def on_voice_state_update(self, member, before, after):
@@ -20,7 +20,7 @@ class CameraChannel(commands.Cog):
                 await member.move_to(channel=None)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     #bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
     #await bot.add_cog(CameraChannel(bot))
     pass

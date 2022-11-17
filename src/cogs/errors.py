@@ -9,7 +9,7 @@ from cogs.utils.misc_utils import ignore_exception
 
 
 class Errors(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         bot.tree.on_error = self.on_app_command_error
 
@@ -130,5 +130,5 @@ class Errors(commands.Cog):
         self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Errors(bot))

@@ -11,7 +11,7 @@ from cogs.utils import embed_templates
 
 
 class BotInfo(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
@@ -130,5 +130,5 @@ class BotInfo(commands.Cog):
         return f'{days}d, {hours}t, {minutes}m, {seconds}s'
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(BotInfo(bot))

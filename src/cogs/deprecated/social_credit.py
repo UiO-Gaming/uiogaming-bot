@@ -47,7 +47,7 @@ class CreditUser:
 
 
 class SocialCredit(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.fuck_uwu.start()
 
@@ -269,5 +269,5 @@ class SocialCredit(commands.Cog):
                 await self.social_punishment(user.id, 25)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(SocialCredit(bot))

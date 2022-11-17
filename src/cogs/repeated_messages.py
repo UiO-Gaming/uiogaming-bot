@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 class RepeatedMessages(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
         self.uiog_server = self.bot.get_guild(747542543750660178)
@@ -32,5 +32,5 @@ class RepeatedMessages(commands.Cog):
             )
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(RepeatedMessages(bot))

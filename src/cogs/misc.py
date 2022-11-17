@@ -14,7 +14,7 @@ from cogs.utils.misc_utils import ignore_exception
 
 
 class Misc(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -222,5 +222,5 @@ https://cdn.discordapp.com/attachments/674726496878723082/1042631569396990004/kw
             remove(f"./src/assets/temp/{interaction.user.id}_{bruker.id}_edit.png")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Misc(bot))

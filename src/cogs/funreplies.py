@@ -7,7 +7,7 @@ from discord.ext import commands
 
 
 class FunReplies(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
         # Cooldowns for trigger words
@@ -61,6 +61,6 @@ class FunReplies(commands.Cog):
                 self.previous_invokations['yeet'] = datetime.now()
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     bot.add_listener(FunReplies(bot).reply_to_triggers, 'on_message')
     await bot.add_cog(FunReplies(bot))

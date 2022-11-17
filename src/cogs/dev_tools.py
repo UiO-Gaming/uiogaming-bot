@@ -9,7 +9,7 @@ from cogs.utils import embed_templates
 
 
 class DevTools(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.is_owner()
@@ -185,5 +185,5 @@ class DevTools(commands.Cog):
         await ctx.send(embed=embed)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(DevTools(bot))
