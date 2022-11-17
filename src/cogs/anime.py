@@ -10,8 +10,7 @@ from cogs.utils import embed_templates
 
 
 class Anime(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
+    """View information about different media on Anilist"""
 
     anilist = app_commands.Group(name='anilist', description='Hent informasjon fra Anilist')
     anilist_profile = app_commands.Group(parent=anilist, name='profil', description='Hent informasjon om en bruker på Anilist')
@@ -22,12 +21,13 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        color: The color string returned from the Anilist API
+        color (str): The color string returned from the Anilist API
 
         Returns
         ----------
         (int): The color in hex for use in discord embeds
         """
+
         colors = {
             'blue': 0x3db4f2,
             'purple': 0xc063ff,
@@ -37,6 +37,7 @@ class Anime(commands.Cog):
             'green': 0x4CCA51,
             'gray': 0x677B94
         }
+
         return colors.get(color, 0x677B94)
 
     def __convert_media_format(self, media_format: str) -> str:
@@ -45,12 +46,13 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        media_format: The english media format name returned from the Anilist API
+        media_format (str): The english media format name returned from the Anilist API
 
         Returns
         ----------
         (str): The media format name in norwegian. If a translation doesn't exist it returns the english name
         """
+
         media_formats = {
             'TV': 'TV-Serie',
             'TV_SHORT': 'Kort TV-Serie',
@@ -69,12 +71,13 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        language_name: The english language name returned from the Anilist API
+        language_name (str): The english language name returned from the Anilist API
 
         Returns
         ----------
         (str): The language name in norwegian. If a translation doesn't exist it returns the english name
         """
+
         languages = {
             'JAPANESE': 'Japansk',
             'ENGLISH': 'Engelsk',
@@ -87,6 +90,7 @@ class Anime(commands.Cog):
             'HEBREW': 'Hebraisk',
             'HUNGARIAN': 'Ungarsk'
         }
+
         return languages.get(language_name, language_name)
 
     def __convert_role_names(self, role_name: str) -> str:
@@ -95,7 +99,7 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        role_name: The english role name returned from the Anilist API
+        role_name (str): The english role name returned from the Anilist API
 
         Returns
         ----------
@@ -118,18 +122,20 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        status: The english status name returned from the Anilist API
+        status (str): The english status name returned from the Anilist API
 
         Returns
         ----------
         (str): The status name in norwegian. If a translation doesn't exist it returns the english name
         """
+
         statuses = {
             'FINISHED': 'Fullt utgitt',
             'RELEASING': 'Pågående',
             'NOT_YET_RELEASED': 'Ikke utgitt enda',
             'CANCELLED': 'Kansellert'
         }
+
         return statuses.get(status, status)
 
     def __remove_html(self, text: str) -> str:
@@ -144,8 +150,10 @@ class Anime(commands.Cog):
         ----------
         (str): The input string without HTML tags
         """
+
         compiled = re.compile(r'<.*?>')
         clean_text = re.sub(compiled, '', text)
+
         return clean_text
 
     async def __request_anilist(self, interaction: discord.Interaction, query: str, variables: dict, key: str) -> tuple[dict, str] | tuple[None, None]:
@@ -154,14 +162,16 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        query: The GraphQL query
-        variables: The variables for the query
-        key: The key to return from the response
+        interaction (discord.Interaction): Slash command context object
+        query (str): The GraphQL query
+        variables (str): The variables for the query
+        key (str): The key to return from the response
 
         Returns
         ----------
-        (dict): The response from the Anilist API
+        (tuple[dict, str] | tuple[None, None]): The response from the Anilist API
         """
+
         try:
             url = 'https://graphql.anilist.co'
             response = requests.post(url, json={'query': query, 'variables': variables}, timeout=10)
@@ -181,12 +191,13 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        media: The list of media returned from the Anilist API
+        media (list): The list of media returned from the Anilist API
 
         Returns
         ----------
         (str): The constructed string
         """
+
         favorite_media = []
         for node in media:
             try:
@@ -196,6 +207,7 @@ class Anime(commands.Cog):
                 favorite_media.append(f'[{anime_name}]({anime_url}){nsfwtag}')
             except KeyError:
                 pass
+
         return ' | '.join(favorite_media)
 
     def __construct_favorite_entity_string(self, entities: list, studio: bool = False) -> str:
@@ -204,23 +216,26 @@ class Anime(commands.Cog):
 
         Parameters
         ----------
-        entity: The list of entities returned from the Anilist API
+        entities (list): The list of entities returned from the Anilist API
+        studio (bool): Whether the entities are studios or not
 
         Returns
         ----------
         (str): The constructed string
         """
+
         favortie_entities = []
         for entity in entities:
             try:
                 if studio:
                     entity_name = entity['name']
                 else:
-                    entity_name = entity['name']["full"]
+                    entity_name = entity['name']['full']
                 entity_url = entity['siteUrl']
                 favortie_entities.append(f'[{entity_name}]({entity_url})')
             except KeyError:
                 pass
+
         return ' | '.join(favortie_entities)
 
     def __construct_release_schedule_string(self, numbers: dict) -> str:
@@ -235,16 +250,17 @@ class Anime(commands.Cog):
         ----------
         (str): The constructed string
         """
+
         # Release and end date formatting
         if numbers['start_day'] != '?' and numbers['start_month'] != '?' and numbers['start_year'] != '?':
             release_date = datetime(numbers['start_year'], numbers['start_month'], numbers['start_day'])
-            release_date = discord.utils.format_dt(release_date, style="d")
+            release_date = discord.utils.format_dt(release_date, style='d')
         else:
             release_date = f'{numbers["start_day"]}.{numbers["start_month"]}.{numbers["start_year"]}'
 
-        if numbers['end_day'] != '?' and numbers['end_month'] != '?' and numbers['end_year'] != '?':
-            end_date = datetime(numbers['end_year'], numbers['end_month'], numbers['end_day'])
-            end_date = discord.utils.format_dt(end_date, style="d")
+        if numbers["end_day"] != '?' and numbers["end_month"] != '?' and numbers["end_year"] != '?':
+            end_date = datetime(numbers["end_year"], numbers["end_month"], numbers["end_day"])
+            end_date = discord.utils.format_dt(end_date, style='d')
         else:
             end_date = f'{numbers["end_day"]}.{numbers["end_month"]}.{numbers["end_year"]}'
 
@@ -259,6 +275,15 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist_profile.command(name='generelt', description='Viser informasjon om en Anilistprofil')
     async def anilist_profile_general(self, interaction: discord.Interaction, bruker: str):
+        """
+        Shows general information about a user's Anilist profile
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (str): The user to get information about
+        """
+
         #  GraphQL
         query = """
         query ($name: String) {
@@ -388,6 +413,15 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist_profile.command(name='anime', description='Se statistikk om animetittingen til en bruker')
     async def anilist_profile_anime_stats(self, interaction: discord.Interaction, bruker: str):
+        """
+        Shows anime viewing statistics from a user's Anilist profile
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (str): The user to get information about
+        """
+
         #  GraphQL
         query = """
         query ($name: String) {
@@ -487,6 +521,15 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist_profile.command(name='manga', description='Se statistikk om mangalesingen til en bruker')
     async def anilist_profile_manga_stats(self, interaction: discord.Interaction, bruker: str):
+        """
+        Shows manga reading statistics from a user's Anilist profile
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (str): The user to get information about
+        """
+
         #  GraphQL
         query = """
         query ($name: String) {
@@ -588,8 +631,17 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist.command(name='anime', description='Hent informasjon om en anime')
     async def anilist_anime(self, interaction: discord.Interaction, navn: str):
+        """
+        Shows information about an anime
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        navn (str): The name of the anime to fetch information about
+        """
+
         #  GraphQL
-        query = '''
+        query = """
         query ($search: String, $isMain: Boolean) {
             Media (search: $search, type: ANIME) {
                 siteUrl
@@ -642,7 +694,7 @@ class Anime(commands.Cog):
                 }
             }
         }
-        '''
+        """
         variables = {
             'search': navn,
             'isMain': True
@@ -747,7 +799,16 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist.command(name='manga', description='Hent informasjon om en manga')
     async def anilist_manga(self, interaction: discord.Interaction, navn: str):
-        query = '''
+        """
+        Shows information about a manga
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        navn (str): The name of the manga to fetch information about
+        """
+
+        query = """
             query ($search: String) {
                 Media (search: $search, type: MANGA) {
                     siteUrl
@@ -794,7 +855,7 @@ class Anime(commands.Cog):
                     }
                 }
             }
-            '''
+            """
         variables = {
             'search': navn
         }
@@ -880,7 +941,16 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist.command(name='karakter', description='Hent informasjon om en karakter')
     async def anilist_character(self, interaction: discord.Interaction, navn: str):
-        query = '''
+        """
+        Shows information about a character
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        navn (str): The name of the character to fetch information about
+        """
+
+        query = """
             query ($search: String) {
                 Character (search: $search) {
                     name {
@@ -915,7 +985,7 @@ class Anime(commands.Cog):
                     }
                 }
             }
-            '''
+            """
         variables = {
             'search': navn
         }
@@ -968,7 +1038,16 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist.command(name='skaper', description='Hent informasjon om en skaper')
     async def anilist_creator(self, interaction: discord.Interaction, navn: str):
-        query = '''
+        """
+        Shows information about a creator
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        navn (str): The name of the creator to fetch information about
+        """
+
+        query = """
             query ($search: String) {
                 Staff(search: $search) {
                     name {
@@ -1007,7 +1086,7 @@ class Anime(commands.Cog):
                     }
                 }
             }
-            '''
+            """
         variables = {
             'search': navn
         }
@@ -1061,7 +1140,16 @@ class Anime(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @anilist.command(name='studio', description='Hent informasjon om et studio')
     async def anilist_studio(self, interaction: discord.Interaction, navn: str):
-        query = '''
+        """
+        Shows information about a studio
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        navn (str): The name of the studio to fetch information about
+        """
+
+        query = """
             query ($search: String) {
                 Studio(search: $search) {
                     name
@@ -1081,7 +1169,7 @@ class Anime(commands.Cog):
                     }
                 }
                 }
-            '''
+            """
         variables = {
             'search': navn
         }
@@ -1101,7 +1189,7 @@ class Anime(commands.Cog):
             popular_media.append(f'- [{media_name}]({media_url}){nsfwtag}')
         popular_media = '\n'.join(popular_media)
 
-        query2 = '''
+        query2 = """
             query ($search: String) {
                 Studio(search: $search) {
                     media(sort: START_DATE_DESC) {
@@ -1116,7 +1204,7 @@ class Anime(commands.Cog):
                     }
                 }
                 }
-            '''
+            """
         data = requests.post('https://graphql.anilist.co', json={'query': query2, 'variables': variables}, timeout=10).json()
         data = data['data']['Studio']
 
@@ -1146,4 +1234,12 @@ class Anime(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     await bot.add_cog(Anime(bot))

@@ -11,14 +11,29 @@ from cogs.utils import embed_templates
 
 
 class BotInfo(commands.Cog):
+    """View information about the bot"""
+
     def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
         self.bot = bot
 
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command()
+    @app_commands.command(name='botinfo', description='Se informajson om botten')
     async def botinfo(self, interaction: discord.Interaction):
-        """Viser informasjon om bot"""
+        """
+        View information about the bot
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         # Dev user info
         dev = await self.bot.fetch_user(170506717140877312)
 
@@ -78,9 +93,15 @@ class BotInfo(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command()
-    async def oppetid(self, interaction: discord.Interaction):
-        """Viser hvor lenge bot har vært kjørende"""
+    @app_commands.command(name='oppetid', description='Se hvor lenge botten har kjørt')
+    async def uptime(self, interaction: discord.Interaction):
+        """
+        View the bot's uptime
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
 
         embed = discord.Embed(color=interaction.client.user.color)
         embed.add_field(name='🔌 Oppetid', value=self.__get_uptime())
@@ -89,9 +110,16 @@ class BotInfo(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command()
+    @app_commands.command(name='ping', description='Se botten sin nåværende ping')
     async def ping(self, interaction: discord.Interaction):
-        """Viser bot sin ping"""
+        """
+        View the bot's ping
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         embed = discord.Embed(color=interaction.client.user.color)
         embed.add_field(
             name='📶 Ping',
@@ -108,19 +136,18 @@ class BotInfo(commands.Cog):
         ----------
         (int) The bot's ping in milliseconds
         """
+
         return int(self.bot.latency * 1000)
 
     def __get_uptime(self) -> str:
         """
         Returns the current uptime of the bot in string format
 
-        Parameters
-        ----------
-
         Returns
         ----------
         (str) The bot's uptime in human readable format
         """
+
         now = time()
         diff = int(now - self.bot.uptime)
         days, remainder = divmod(diff, 24 * 60 * 60)
@@ -131,4 +158,12 @@ class BotInfo(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     await bot.add_cog(BotInfo(bot))

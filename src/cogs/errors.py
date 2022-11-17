@@ -9,13 +9,28 @@ from cogs.utils.misc_utils import ignore_exception
 
 
 class Errors(commands.Cog):
+    """Error handlers for commands"""
+
     def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
         self.bot = bot
-        bot.tree.on_error = self.on_app_command_error
+        bot.tree.on_error = self.on_app_command_error  # Set error handler for slash commands
 
     @commands.Cog.listener()
     async def on_command(self, ctx: commands.Context):
-        """Logs prefix command execution metadata"""
+        """
+        Logs prefix command execution metadata
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
         self.bot.logger.info(
             f'{"❌ " if ctx.command_failed else "✔ "} {ctx.command} | ' +
             f'{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) | ' +
@@ -24,7 +39,15 @@ class Errors(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_completion(self, interaction: discord.Interaction, command: app_commands.Command | app_commands.ContextMenu):
-        """Logs slash command execution metadata"""
+        """
+        Logs slash command execution metadata
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        command (app_commands.Command | app_commands.ContextMenu): Command object
+        """
+
         self.bot.logger.info(
             f'{"❌ " if interaction.command_failed else "✔ "} {command.name} | ' +
             f'{interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}) | ' +
@@ -33,7 +56,15 @@ class Errors(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
-        """Handle prefix command errors"""
+        """
+        Handle prefix command errors
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        error (commands.CommandError): Eror context object
+        """
+
         # Reset cooldown if command throws AttributeError
         with ignore_exception(AttributeError):
             self.bot.get_command(f'{ctx.command}').reset_cooldown(ctx)
@@ -83,7 +114,7 @@ class Errors(commands.Cog):
                 text = 'Denne kommandoen kan bare utføres i servere'
                 return await ctx.send(text)
             except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
-                print("DM Blocked!")
+                print('DM Blocked!')
 
         elif isinstance(error, commands.DisabledCommand):
             pass
@@ -98,7 +129,15 @@ class Errors(commands.Cog):
         self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
 
     async def on_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
-        """Handle slash command errors"""
+        """
+        Handle slash command errors
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        error (app_commands.AppCommandError): Eror context object
+        """
+
         # Log command usage, just in case
         await self.on_app_command_completion(interaction, interaction.command)
 
@@ -131,4 +170,12 @@ class Errors(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     await bot.add_cog(Errors(bot))

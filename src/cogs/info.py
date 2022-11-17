@@ -8,24 +8,55 @@ from cogs.utils import discord_utils, embed_templates, misc_utils
 
 
 class Info(commands.Cog):
+    """View information about Discord object such as guilds, users, roles and channels"""
+
     def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
         self.bot = bot
 
-    guild_group = app_commands.Group(name="guild", description="Se ting om serveren")
-    user_group = app_commands.Group(name="bruker", description="Se ting om brukeren")
+    guild_group = app_commands.Group(name='guild', description='Se ting om serveren')
+    user_group = app_commands.Group(name='bruker', description='Se ting om brukeren')
 
     def __construct_role_string(self, roles: list[discord.Role]) -> str:
-        """Puts all roles except @everyone into a list and joins them to a string"""
-        if not roles:
-            return "**Ingen roller**"
+        """
+        Puts all roles except @everyone into a list and joins them to a string
 
-        roles = [role.name for role in roles if role.name != "@everyone"]
+        Parameters
+        ----------
+        roles (list[discord.Role]): List of roles
+
+        Returns
+        -------
+        (str): String of roles
+        """
+
+        if not roles:
+            return '**Ingen roller**'
+
+        roles = [role.name for role in roles if role.name != '@everyone']
         roles.reverse()
 
         return ', '.join(roles)
 
     def __construct_booster_string(self, interaction: discord.Interaction, join_method: callable = ', '.join) -> str:
-        """Joins all boosters into a string"""
+        """
+        Joins all boosters into a string
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        join_method (callable): Function to join the boosters with
+
+        Returns
+        -------
+        (str): String of boosters
+        """
+
         if not interaction.guild.premium_subscribers:
             return '**Ingen boostere**'
 
@@ -39,7 +70,18 @@ class Info(commands.Cog):
         return join_method(boosters)
 
     def __construct_member_string(self, members: list[discord.Member]) -> str:
-        """Joins all name#discrim into a string"""
+        """
+        Joins all name#discrim into a string
+
+        Parameters
+        ----------
+        members (list[discord.Member]): List of members
+
+        Returns
+        -------
+        (str): String of members
+        """
+
         if not members:
             return '**Ingen**'
 
@@ -48,7 +90,16 @@ class Info(commands.Cog):
         return ', '.join(members)
 
     async def __send_as_txt_file(self, interaction: discord.Interaction, content: str, file_path: str):
-        """Sends a string as a txt file and deletes the file afterwards"""
+        """
+        Sends a string as a txt file and deletes the file afterwards
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        content (str): String that's too long to send
+        file_path (str): Path to file
+        """
+
         # Create file
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(content)
@@ -64,10 +115,18 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="info", description="Hent informasjon om en server")
+    @guild_group.command(name='info', description='Hent informasjon om en server')
     async def guild_info(self, interaction: discord.Interaction):
+        """
+        Sends general information about the guild
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         # Days since guild was created
-        creation_date_timestamp = discord.utils.format_dt(interaction.guild.created_at, style="F")
+        creation_date_timestamp = discord.utils.format_dt(interaction.guild.created_at, style='F')
         since_created_days = (interaction.created_at - interaction.guild.created_at).days
         days_ago = f'{since_created_days} dager' if since_created_days != 1 else f'{since_created_days} dag'
 
@@ -195,8 +254,16 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="roller", description="Se rollene på serveren")
+    @guild_group.command(name='roller', description='Se rollene på serveren')
     async def guild_roles(self, interaction: discord.Interaction):
+        """
+        List all roles in the guild
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         roles = self.__construct_role_string(interaction.guild.roles)
 
         # IF roles list is longer than 2048, create text file and send it
@@ -211,8 +278,16 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="boosters", description="Se boostere på serveren")
+    @guild_group.command(name='boosters', description='Se boostere på serveren')
     async def guild_boosters(self, interaction: discord.Interaction):
+        """
+        List all boosters in the guild
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         if len(interaction.guild.premium_subscribers) == 0:
             embed = embed_templates.error_warning(interaction, text='Serveren har ikke noen boosts :(')
             return await interaction.response.send_message(embed=embed)
@@ -227,8 +302,16 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="ikon", description="Hent serverens ikon")
+    @guild_group.command(name='ikon', description='Hent serverens ikon')
     async def guild_icon(self, interaction: discord.Interaction):
+        """
+        Get the guild icon
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.icon})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_image(url=interaction.guild.icon)
@@ -238,8 +321,16 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="splash", description="Hent serverens splash (bakgrunnsbilde på invitasjonsside)")
+    @guild_group.command(name='splash', description='Hent serverens splash (bakgrunnsbilde på invitasjonsside)')
     async def guild_splash(self, interaction: discord.Interaction):
+        """
+        Get the guild splash
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         if not interaction.guild.discovery_splash:
             embed = embed_templates.error_warning(interaction, text='Serveren har ikke en splash')
             return await interaction.response.send_message(embed=embed)
@@ -253,8 +344,16 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="banner", description="Hen serverens banner")
+    @guild_group.command(name='banner', description='Hen serverens banner')
     async def guild_banner(self, interaction: discord.Interaction):
+        """
+        Get the guild banner
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         if not interaction.guild.banner:
             embed = embed_templates.error_warning(interaction, text='Serveren har ikke et banner :(')
             return await interaction.response.send_message(embed=embed)
@@ -268,14 +367,23 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="rolle", description="Hent informasjon om en rolle på serveren")
+    @guild_group.command(name='rolle', description='Hent informasjon om en rolle på serveren')
     async def guild_role(self, interaction: discord.Interaction, rolle: discord.Role):
+        """
+        Get information about a role
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        rolle (discord.Role): Role to fetch information about
+        """
+
         if rolle.name == '@everyone':
             embed = embed_templates.error_fatal(interaction, text='Skriv inn en annen rolle enn @everyone')
             return await interaction.response.send_message(embed=embed)
 
         # Timestamp and days since creation
-        created_at_timestamp = discord.utils.format_dt(rolle.created_at, style="F")
+        created_at_timestamp = discord.utils.format_dt(rolle.created_at, style='F')
         since_created_days = (interaction.created_at - rolle.created_at).days
 
         # List of members with the role
@@ -302,8 +410,17 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="tekstkanal", description="Hent informasjon om en tekstkanal")
+    @guild_group.command(name='tekstkanal', description='Hent informasjon om en tekstkanal')
     async def guild_text_channel(self, interaction: discord.Interaction, kanal: discord.TextChannel):
+        """
+        Get information about a text channel
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        kanal (discord.TextChannel): Text channel to fetch information about
+        """
+
         members = self.__construct_member_string(kanal.members)
         if len(members) > 1024:
             members = 'For mange for å vise her'
@@ -323,8 +440,17 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @guild_group.command(name="talekanal", description="Hent informasjon om en talekanal")
+    @guild_group.command(name='talekanal', description='Hent informasjon om en talekanal')
     async def guild_voice_channel(self, interaction: discord.Interaction, kanal: discord.VoiceChannel):
+        """
+        Get information about a voice channel
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        kanal (discord.VoiceChannel): Voice channel to fetch information about
+        """
+
         embed = discord.Embed(color=interaction.guild.me.color, title=kanal.name, description=f'ID: {kanal.id}')
         embed.set_author(name=kanal.guild.name, icon_url=kanal.guild.icon)
         embed.add_field(name='Opprettet', value=discord.utils.format_dt(kanal.created_at, style='F'))
@@ -352,17 +478,25 @@ class Info(commands.Cog):
 
     #     embed = discord.Embed(color=interaction.guild.me.color, title=emoji.name, description=f'ID: {emoji.id}')
     #     embed.set_author(name=emoji.guild.name, icon_url=emoji.guild.icon)
-    #     embed.add_field(name='Opprettet', value=discord.utils.format_dt(emoji.created_at, style="F"))
+    #     embed.add_field(name='Opprettet', value=discord.utils.format_dt(emoji.created_at, style='F'))
     #     embed.add_field(name='Animert', value='Ja' if emoji.animated else 'Nei')
     #     embed.add_field(name='Lagt til av', value=emoji_creator)
     #     embed.set_image(url=emoji.url)
     #     embed_templates.default_footer(interaction, embed)
     #     await interaction.response.send_message(embed=embed)
 
-    guild_oldest_group = app_commands.Group(name="eldst", description="Viser de eldste medlemmene på serveren", parent=guild_group)
+    guild_oldest_group = app_commands.Group(name='eldst', description='Viser de eldste medlemmene på serveren', parent=guild_group)
 
     def __construct_oldest_embed(self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed) -> discord.Embed:
-        """Constructs the embed for the oldest commands"""
+        """
+        Constructs the embed for the oldest commands
+
+        Parameters
+        ----------
+        paginator (misc_utils.Paginator): Paginator dataclass
+        page (list): List of members to display
+        embed (discord.Embed): Embed to add fields to
+        """
         embed.description = '\n'.join(page)
         embed.set_footer(text=f'Side {paginator.current_page}/{paginator.total_page_count}')
         return embed
@@ -370,8 +504,16 @@ class Info(commands.Cog):
     @commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @guild_oldest_group.command(name="lagd", description="Liste over de eldste brukerene på serveren basert på når de ble lagd")
+    @guild_oldest_group.command(name='lagd', description='Liste over de eldste brukerene på serveren basert på når de ble lagd')
     async def guild_user_created_oldest(self, interaction: discord.Interaction):
+        """
+        List the oldest users on the server based on when they were created
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         # Sort members by creation date
         members = sorted(interaction.guild.members, key=lambda m: m.created_at)
 
@@ -392,8 +534,16 @@ class Info(commands.Cog):
     @commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @guild_oldest_group.command(name="joined", description="Liste over de eldste brukerene på serveren basert på når de ble med")
+    @guild_oldest_group.command(name='joined', description='Liste over de eldste brukerene på serveren basert på når de ble med')
     async def guild_user_joined_oldest(self, interaction: discord.Interaction):
+        """
+        List the oldest users on the server based on when they joined
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
         # Sort members by creation date
         members = sorted(interaction.guild.members, key=lambda m: m.joined_at)
 
@@ -414,8 +564,17 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
-    @user_group.command(name="info", description="Hent informasjon om en bruker")
+    @user_group.command(name='info', description='Hent informasjon om en bruker')
     async def user_info(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
+        """
+        Get information about a user
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (discord.Member, optional): User to get information about. Defaults to None (invoker).
+        """
+
         if not bruker:
             bruker = interaction.user
 
@@ -489,8 +648,17 @@ class Info(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @user_group.command(name="roller", description="Hent roller til en bruker")
+    @user_group.command(name='roller', description='Hent roller til en bruker')
     async def user_roles(self, interaction: discord.Interaction, bruker: discord.Member | None = None):
+        """
+        Get roles of a user
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (discord.Member, optional): User to get roles of. Defaults to None (invoker).
+        """
+
         if not bruker:
             bruker = interaction.user
 
@@ -507,8 +675,17 @@ class Info(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @user_group.command(name="avatar", description="Hent avatar til en bruker")
+    @user_group.command(name='avatar', description='Hent avatar til en bruker')
     async def user_avatar(self, interaction: discord.Interaction, bruker: discord.User | discord.Member | None = None):
+        """
+        Get avatar of a user
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (discord.User, optional): User to get avatar of. Defaults to None (invoker).
+        """
+
         if not bruker:
             bruker = interaction.user
 
@@ -520,4 +697,12 @@ class Info(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     await bot.add_cog(Info(bot))

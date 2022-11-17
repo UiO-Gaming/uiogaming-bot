@@ -69,7 +69,7 @@ class SocialCredit(commands.Cog):
     def add_new_citizen(func):
         async def wrapper(*args, **kwargs):
             self = args[0]
-            self.cursor.execute("SELECT user_id FROM social_credit WHERE user_id = %s", (args[1],))
+            self.cursor.execute('SELECT user_id FROM social_credit WHERE user_id = %s', (args[1],))
             if not self.cursor.fetchone():
                 self._add_citizen(args[1])
             await func(*args, **kwargs)
@@ -100,9 +100,9 @@ class SocialCredit(commands.Cog):
     async def get_leaderboard(self, ctx, page, worst=False):
 
         if worst:
-            keyword = "ASC"
+            keyword = 'ASC'
         else:
-            keyword = "DESC"
+            keyword = 'DESC'
 
         self.cursor.execute(
             f"""
@@ -113,13 +113,13 @@ class SocialCredit(commands.Cog):
         result = self.cursor.fetchall()
 
         if not result:
-            return await ctx.send(embed=embed_templates.error_fatal(ctx, "Ingen brukere er registrert i databasen"))
+            return await ctx.send(embed=embed_templates.error_fatal(ctx, 'Ingen brukere er registrert i databasen'))
 
         output_list = []
         for i, row in enumerate(result):
             user = ctx.guild.get_member(row[0])
             if user:
-                output_list.append(f"{i+1}. {user.name}#{user.discriminator} - `{row[1]}` poeng")
+                output_list.append(f'{i+1}. {user.name}#{user.discriminator} - `{row[1]}` poeng')
 
         return misc_utils.paginator(output_list, int(page))
 
@@ -134,7 +134,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_punishment(self, user_id, points):
-        print(f"{points} points deducted from {user_id}")
+        print(f'{points} points deducted from {user_id}')
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -147,7 +147,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_reward(self, user_id, points):
-        print(f"{points} points given to {user_id}")
+        print(f'{points} points given to {user_id}')
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -164,17 +164,17 @@ class SocialCredit(commands.Cog):
         if not bruker:
             bruker = ctx.author
 
-        self.cursor.execute("SELECT * FROM social_credit WHERE user_id = %s", (bruker.id,))
+        self.cursor.execute('SELECT * FROM social_credit WHERE user_id = %s', (bruker.id,))
         result = self.cursor.fetchone()
 
         if not result:
             return await ctx.send(
-                embed=embed_templates.error_fatal(ctx, f"{bruker.mention} er ikke registrert i databasen")
+                embed=embed_templates.error_fatal(ctx, f'{bruker.mention} er ikke registrert i databasen')
             )
 
         db_user = CreditUser(*result)
 
-        embed = discord.Embed(description=(f"{bruker.mention} har `{db_user.credit_score}` social credits"))
+        embed = discord.Embed(description=(f'{bruker.mention} har `{db_user.credit_score}` social credits'))
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -185,13 +185,13 @@ class SocialCredit(commands.Cog):
             page = 0
 
         page_data = await self.get_leaderboard(ctx, page)
-        output_content = "\n".join(page_data["page_content"])
+        output_content = '\n'.join(page_data['page_content'])
 
-        embed = discord.Embed(title="Social credit leaderboard", description=output_content)
-        embed.set_footer(text=f"Side {page_data['page']}/{page_data['pagecount']}")
+        embed = discord.Embed(title='Social credit leaderboard', description=output_content)
+        embed.set_footer(text=f'Side {page_data['page']}/{page_data['pagecount']}')
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=["skammeliste"])
+    @commands.command(aliases=['skammeliste'])
     async def shamelist(self, ctx, page=0):
         try:
             page = int(page)
@@ -199,13 +199,13 @@ class SocialCredit(commands.Cog):
             page = 0
 
         page_data = await self.get_leaderboard(ctx, page, worst=True)
-        output_content = "\n".join(page_data["page_content"])
+        output_content = '\n'.join(page_data['page_content'])
 
-        embed = discord.Embed(title="Social credit skammeliste", description=output_content)
-        embed.set_footer(text=f"Side {page_data['page']}/{page_data['pagecount']}")
+        embed = discord.Embed(title='Social credit skammeliste', description=output_content)
+        embed.set_footer(text=f'Side {page_data['page']}/{page_data['pagecount']}')
         await ctx.send(embed=embed)
 
-    @commands.Cog.listener("on_message")
+    @commands.Cog.listener('on_message')
     async def on_message(self, message):
         if message.author.bot:
             return
@@ -246,12 +246,12 @@ class SocialCredit(commands.Cog):
                 for mention in message.mentions:
                     await self.social_punishment(mention.id, 10)
 
-    @commands.Cog.listener("on_reaction_add")
+    @commands.Cog.listener('on_reaction_add')
     async def on_star_add(self, reaction, user):
         if user.bot:
             return
 
-        if reaction.emoji == "⭐":
+        if reaction.emoji == '⭐':
             if reaction.message.author == user:
                 await self.social_punishment(user.id, 100)
             else:
@@ -259,12 +259,12 @@ class SocialCredit(commands.Cog):
                     await self.social_punishment(user.id, (len(reaction.message.reactions) - 1) * 25)
                     await self.social_reward(user.id, 25 * len(reaction.message.reactions))
 
-    @commands.Cog.listener("on_reaction_remove")
+    @commands.Cog.listener('on_reaction_remove')
     async def on_star_remove(self, reaction, user):
         if user.bot:
             return
 
-        if reaction.emoji == "⭐":
+        if reaction.emoji == '⭐':
             if len(reaction.message.reactions) >= 3:
                 await self.social_punishment(user.id, 25)
 

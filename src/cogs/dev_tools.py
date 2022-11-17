@@ -9,14 +9,31 @@ from cogs.utils import embed_templates
 
 
 class DevTools(commands.Cog):
+    """Commands for developers to mangage cogs and other functionality of the bot"""
+
     def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
         self.bot = bot
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.command()
+    @commands.command(name='custommsg', description='Send en melding til hvilken som helst kanal på hvilken som helst server botten er i')
     async def custommsg(self, ctx: commands.Context, channel: int, *text: tuple[str]):
-        """Send a message to a specified channel"""
+        """
+        Send a message to any channel on any server the bot is in
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        channel (int): The channel ID to send the message to
+        text (tuple[str]): The text to send
+        """
+
         # Send message to the requested channel
         channel = self.bot.get_channel(channel)
         custommessage = ' '.join(text)
@@ -30,9 +47,19 @@ class DevTools(commands.Cog):
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
-    @commands.command()
+    @commands.command(name='changepresence', description='Endre botten sin nåværende status')
     async def changepresence(self, ctx: commands.Context, activity_type: str, message: str, status_type: str):
-        """Changes the bot's presence status"""
+        """
+        Change the bot's presence status
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        activity_type (str): The type of activity to set the bot's status to
+        message (str): The message to set the bot's status to
+        status_type (str): The type of status to set the bot's status to
+        """
+
         activities = {
             'playing': 0,
             'listening': 2,
@@ -52,14 +79,23 @@ class DevTools(commands.Cog):
             status=status_type,
             activity=discord.Activity(type=activity_type, name=message)
         )
+
         embed = discord.Embed(color=ctx.me.color, description='Endret Presence!')
         await ctx.send(embed=embed)
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
-    @commands.command()
+    @commands.command(name='leave', description='Forlater en server. Om ingen er gitt, forlat der det ble sendt fra')
     async def leave(self, ctx: commands.Context, *guild_id: int):
-        """Leaves a specified guild"""
+        """
+        Make bot leave a specified guild. If no guild is specified, leave the guild the command was sent from
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        guild_id (int): The ID of the guild to leave
+        """
+
         # If no guild id is specified, leave the current guild
         guild_id = guild_id if guild_id else ctx.guild.id
 
@@ -75,7 +111,7 @@ class DevTools(commands.Cog):
         await confirmation_msg.add_reaction('✅')
 
         # Check confirmation
-        def comfirm(reaction, user):
+        def comfirm(reaction: discord.Reaction, user: discord.Member):
             return user == ctx.author and str(reaction.emoji) == '✅'
 
         try:
@@ -93,9 +129,16 @@ class DevTools(commands.Cog):
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.command()
+    @commands.command(name='publicip', description='Hent den offentlige IP-adressen til serveren botten kjører på')
     async def publicip(self, ctx: commands.Context):
-        """Sends WAN IP-address. inb4 I leak my IP-address"""
+        """
+        Sends WAN IP-address. Inb4 I leak my IP-address
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
         data = requests.get('https://wtfismyip.com/json', timeout=10).json()
         ip = data['YourFuckingIPAddress']
         location = data['YourFuckingLocation']
@@ -107,15 +150,30 @@ class DevTools(commands.Cog):
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.group()
+    @commands.group(name='cogs', description='Administrer cogs')
     async def cogs(self, ctx: commands.Context):
-        """Cog management commands"""
+        """
+        Cog management commands
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
-    @cogs.command()
-    async def unload(self, ctx: commands.Context, cog: str):
-        """Disables a specified cog"""
+    @cogs.command(name='unload', description='Avslutt en cog')
+    async def cogs_unload(self, ctx: commands.Context, cog: str):
+        """
+        Disables a specified cog
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        cog (str): The name of the cog to disable
+        """
+
         for file in listdir('./src/cogs'):
             if file.endswith('.py'):
                 name = file[:-3]
@@ -127,9 +185,17 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @cogs.command()
-    async def load(self, ctx: commands.Context, cog: str):
-        """Enables a speicifed cog"""
+    @cogs.command(name='load', description='Aktiver en cog')
+    async def cogs_load(self, ctx: commands.Context, cog: str):
+        """
+        Enables a speicifed cog
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        cog (str): The name of the cog to enable
+        """
+
         for file in listdir('./src/cogs'):
             if file.endswith('.py'):
                 name = file[:-3]
@@ -141,9 +207,16 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @cogs.command()
-    async def reload(self, ctx: commands.Context, cog: str):
-        """Reloads a specified cog"""
+    @cogs.command(name='reload', description='Last inn en cog på nytt')
+    async def cogs_reload(self, ctx: commands.Context, cog: str):
+        """
+        Reloads a specified cog
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        cog (str): The name of the cog to reload
+        """
         for file in listdir('./src/cogs'):
             if file.endswith('.py'):
                 name = file[:-3]
@@ -155,9 +228,16 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @cogs.command()
-    async def reloadunloaded(self, ctx: commands.Context):
-        """Reloads all cogs, including previously disabled ones"""
+    @cogs.command(name='reloadunloaded', description='Last inn alle cogs på nytt, selv de som ikke er lastet inn')
+    async def cogs_reloadunloaded(self, ctx: commands.Context):
+        """
+        Reloads all cogs, including previously disabled ones
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
         # Unload all cogs
         for file in listdir('./src/cogs'):
             if file.endswith('.py'):
@@ -173,9 +253,16 @@ class DevTools(commands.Cog):
         embed = discord.Embed(color=ctx.me.color, description='Reloaded all cogs')
         await ctx.send(embed=embed)
 
-    @cogs.command()
-    async def reloadall(self, ctx: commands.Context):
-        """Reloads all previously enabled cogs"""
+    @cogs.command(name='reloadall', description='Last inn alle cogs på nytt')
+    async def cogs_reloadall(self, ctx: commands.Context):
+        """
+        Reloads all previously enabled cogs
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
         for file in listdir('./src/cogs'):
             if file.endswith('.py'):
                 name = file[:-3]
@@ -186,4 +273,12 @@ class DevTools(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     await bot.add_cog(DevTools(bot))

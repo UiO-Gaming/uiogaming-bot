@@ -3,6 +3,8 @@ import logging.handlers
 
 
 class BotLogger:
+    """Logging config for the bot"""
+
     def __init__(self):
         logger = logging.getLogger('discord')
         logger.setLevel(logging.INFO)

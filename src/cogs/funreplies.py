@@ -7,7 +7,15 @@ from discord.ext import commands
 
 
 class FunReplies(commands.Cog):
+    """Reply to messages that trigger certain key words/phrases"""
+
     def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
         self.bot = bot
 
         # Cooldowns for trigger words
@@ -24,7 +32,14 @@ class FunReplies(commands.Cog):
         }
 
     async def reply_to_triggers(self, message: discord.Message):
-        """Replies to messages that trigger certain key words/phrases"""
+        """
+        Replies to messages that trigger certain key words/phrases
+
+        Parameters
+        ----------
+        message (discord.Message): Message object to check for triggers to
+        """
+
         if message.author.bot:
             return
 
@@ -62,5 +77,13 @@ class FunReplies(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+
     bot.add_listener(FunReplies(bot).reply_to_triggers, 'on_message')
     await bot.add_cog(FunReplies(bot))
