@@ -1,3 +1,5 @@
+config_mode: dev
+
 # Bot settings
 bot:
   token: 

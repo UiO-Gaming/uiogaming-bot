@@ -40,6 +40,7 @@ class Bot(commands.Bot):
         self.api_keys = config.get("api", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
+        self.config_mode = config.get("mode")
 
     async def setup_hook(self) -> None:
         # Load cogs
@@ -49,8 +50,11 @@ class Bot(commands.Bot):
                 await bot.load_extension(f"cogs.{name}")
 
         # Sync slash commands to Discord
-        self.tree.copy_global_to(guild=discord.Object(id=412646636771344395))  # Temporary. Development purposes only.
-        await self.tree.sync(guild=discord.Object(id=412646636771344395))  # Temporary. Development purposes only.
+        if self.config_mode == 'prod':
+            await self.tree.sync()
+        else:
+            self.tree.copy_global_to(guild=discord.Object(id=412646636771344395))
+            await self.tree.sync(guild=discord.Object(id=412646636771344395))
 
 
 # Create bot instance
