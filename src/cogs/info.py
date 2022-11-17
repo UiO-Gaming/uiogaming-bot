@@ -61,8 +61,8 @@ class Info(commands.Cog):
         with misc_utils.ignore_exception(OSError):
             remove(file_path)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="info", description="Hent informasjon om en server")
     async def guild_info(self, interaction: discord.Interaction):
@@ -192,8 +192,8 @@ class Info(commands.Cog):
             embed.add_field(name='Bilder', value=photos_string)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="roller", description="Se rollene på serveren")
     async def guild_roles(self, interaction: discord.Interaction):
@@ -208,8 +208,8 @@ class Info(commands.Cog):
             embed.set_footer(text=interaction.guild.name, icon_url=interaction.guild.icon)
             await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="boosters", description="Se boostere på serveren")
     async def guild_boosters(self, interaction: discord.Interaction):
@@ -224,8 +224,8 @@ class Info(commands.Cog):
         embed.set_footer(text=interaction.guild.name, icon_url=interaction.guild.icon)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="ikon", description="Hent serverens ikon")
     async def guild_icon(self, interaction: discord.Interaction):
@@ -235,8 +235,8 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="splash", description="Hent serverens splash (bakgrunnsbilde på invitasjonsside)")
     async def guild_splash(self, interaction: discord.Interaction):
@@ -250,8 +250,8 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="banner", description="Hen serverens banner")
     async def guild_banner(self, interaction: discord.Interaction):
@@ -265,8 +265,8 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="rolle", description="Hent informasjon om en rolle på serveren")
     async def guild_role(self, interaction: discord.Interaction, rolle: discord.Role):
@@ -299,8 +299,8 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="tekstkanal", description="Hent informasjon om en tekstkanal")
     async def guild_text_channel(self, interaction: discord.Interaction, kanal: discord.TextChannel):
@@ -320,8 +320,8 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="talekanal", description="Hent informasjon om en talekanal")
     async def guild_voice_channel(self, interaction: discord.Interaction, kanal: discord.VoiceChannel):
@@ -367,8 +367,8 @@ class Info(commands.Cog):
         embed.set_footer(text=f'Side {paginator.current_page}/{paginator.total_page_count}')
         return embed
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(name="lagd", description="Liste over de eldste brukerene på serveren basert på når de ble lagd")
     async def guild_user_created_oldest(self, interaction: discord.Interaction):
@@ -389,8 +389,8 @@ class Info(commands.Cog):
         embed = self.__construct_oldest_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(name="joined", description="Liste over de eldste brukerene på serveren basert på når de ble med")
     async def guild_user_joined_oldest(self, interaction: discord.Interaction):
@@ -411,8 +411,8 @@ class Info(commands.Cog):
         embed = self.__construct_oldest_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
     @user_group.command(name="info", description="Hent informasjon om en bruker")
     async def user_info(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
@@ -486,8 +486,8 @@ class Info(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @user_group.command(name="roller", description="Hent roller til en bruker")
     async def user_roles(self, interaction: discord.Interaction, bruker: discord.Member | None = None):

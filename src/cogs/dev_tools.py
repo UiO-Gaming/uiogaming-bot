@@ -12,8 +12,8 @@ class DevTools(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.bot_has_permissions(embed_links=True)
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command()
     async def custommsg(self, ctx: commands.Context, channel: int, *text: tuple[str]):
         """Send a message to a specified channel"""
@@ -27,8 +27,8 @@ class DevTools(commands.Cog):
         embed.add_field(name='Sent', value=custommessage)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command()
     async def changepresence(self, ctx: commands.Context, activity_type: str, message: str, status_type: str):
@@ -55,8 +55,8 @@ class DevTools(commands.Cog):
         embed = discord.Embed(color=ctx.me.color, description='Endret Presence!')
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
     @commands.command()
     async def leave(self, ctx: commands.Context, *guild_id: int):
         """Leaves a specified guild"""
@@ -91,8 +91,8 @@ class DevTools(commands.Cog):
             except discord.errors.Forbidden:
                 pass
 
-    @commands.bot_has_permissions(embed_links=True)
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command()
     async def publicip(self, ctx: commands.Context):
         """Sends WAN IP-address. inb4 I leak my IP-address"""
@@ -105,8 +105,8 @@ class DevTools(commands.Cog):
         embed.add_field(name='WAN IP-address', value=f'{ip}\n{location}\n{isp}')
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
     @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.group()
     async def cogs(self, ctx: commands.Context):
         """Cog management commands"""

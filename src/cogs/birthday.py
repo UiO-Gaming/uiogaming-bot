@@ -110,6 +110,7 @@ class Birthday(commands.Cog):
                     await channel.send(f"Gratulrer med dagen {user.mention}!")
     '''
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def settbursdag(self, interaction: discord.Interaction, dag: int, måned: int, år: int):
@@ -139,6 +140,7 @@ class Birthday(commands.Cog):
         embed = embed_templates.success(interaction, text=f"Bursdag satt til {discord.utils.format_dt(date, style='D')}")
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def fjernbursdag(self, interaction: discord.Interaction):
@@ -149,6 +151,7 @@ class Birthday(commands.Cog):
         embed = embed_templates.success(interaction, text="Bursdag fjernet")
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def bursdag(self, interaction: discord.Interaction, bruker: discord.Member | discord.User | None = None):
@@ -182,6 +185,7 @@ class Birthday(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def kommendebursdager(self, interaction: discord.Interaction):

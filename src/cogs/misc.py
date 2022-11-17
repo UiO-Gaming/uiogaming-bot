@@ -94,6 +94,7 @@ https://cdn.discordapp.com/attachments/674726496878723082/1042631569396990004/kw
         embed_templates.default_footer(interation, embed)
         await interation.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def imdb(self, interaction: discord.Interaction, tittel: str):
