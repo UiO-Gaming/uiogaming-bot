@@ -1,4 +1,5 @@
 import re
+import random
 
 import discord
 from discord.ext import commands
@@ -26,7 +27,11 @@ class FunReplies(commands.Cog):
                                        '824764933513281596/3xhpwbakz2361.png')
 
         elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf|kontoret)\?*$', message_content, flags=re.IGNORECASE):
-            await message.channel.send('Ja, <@554977854971183125> bor der')
+            # Choose a random user to ping
+            pingable = ["<@554977854971183125>", "<@276061121776058370>"]
+            to_be_pinged = random.choice(pingable)
+
+            await message.channel.send(f'Ja, {to_be_pinged} bor der')
 
         elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
             await message.channel.send('<:Nei:826593267642662912>')
