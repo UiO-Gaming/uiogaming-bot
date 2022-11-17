@@ -367,7 +367,7 @@ class Info(commands.Cog):
         embed.set_footer(text=f'Side {paginator.current_page}/{paginator.total_page_count}')
         return embed
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @commands.guild_only()
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(name="lagd", description="Liste over de eldste brukerene på serveren basert på når de ble lagd")
@@ -389,7 +389,7 @@ class Info(commands.Cog):
         embed = self.__construct_oldest_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @commands.guild_only()
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(name="joined", description="Liste over de eldste brukerene på serveren basert på når de ble med")

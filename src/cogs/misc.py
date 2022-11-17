@@ -17,14 +17,14 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def weeb(self, interaction: discord.Interaction):
         """Kjeft på weebs"""
         await interaction.response.send_message("<:sven:762725919604473866> Weebs 👉 <#803596668129509417>")
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def kweeb(self, interaction: discord.Interaction):
@@ -35,7 +35,7 @@ class Misc(commands.Cog):
             """
         )
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def owo(self, interaction: discord.Interaction, tekst: str):
@@ -64,7 +64,7 @@ class Misc(commands.Cog):
 
         await interaction.response.send_message(data.json()["info"]["name"])
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def klappifiser(self, interation: discord.Interaction, tekst: str):
@@ -123,7 +123,7 @@ class Misc(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def helligdager(self, interaction: discord.Interaction, *, land: str = "NO", år: int = None):
@@ -153,7 +153,7 @@ class Misc(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    @commands.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def match(self, interaction: discord.Interaction, bruker: discord.Member):
