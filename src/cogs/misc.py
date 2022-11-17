@@ -157,9 +157,7 @@ class Misc(commands.Cog):
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command()
     async def match(self, interaction: discord.Interaction, bruker: discord.Member):
-        """
-        Se hvor mye du matcher med en annen
-        """
+        """Se hvor mye du matcher med en annen"""
         if bruker == interaction.user:
             embed = embed_templates.error_warning(
                 interaction, text="Jeg vet du er ensom, men du kan " "ikke matche med deg selv"

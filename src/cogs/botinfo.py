@@ -18,9 +18,7 @@ class BotInfo(commands.Cog):
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def botinfo(self, interaction: discord.Interaction):
-        """
-        Viser informasjon om bot
-        """
+        """Viser informasjon om bot"""
         # Dev user info
         dev = await self.bot.fetch_user(170506717140877312)
 
@@ -123,7 +121,6 @@ class BotInfo(commands.Cog):
         ----------
         (str) The bot's uptime in human readable format
         """
-
         now = time()
         diff = int(now - self.bot.uptime)
         days, remainder = divmod(diff, 24 * 60 * 60)
