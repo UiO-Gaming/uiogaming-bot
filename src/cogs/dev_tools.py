@@ -127,7 +127,7 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @cogs.command()
     async def load(self, ctx: commands.Context, cog: str):
         """Enables a speicifed cog"""
         for file in listdir('./src/cogs'):
@@ -141,7 +141,7 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @cogs.command()
     async def reload(self, ctx: commands.Context, cog: str):
         """Reloads a specified cog"""
         for file in listdir('./src/cogs'):
@@ -155,7 +155,7 @@ class DevTools(commands.Cog):
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @cogs.command()
     async def reloadunloaded(self, ctx: commands.Context):
         """Reloads all cogs, including previously disabled ones"""
         # Unload all cogs
@@ -173,7 +173,7 @@ class DevTools(commands.Cog):
         embed = discord.Embed(color=ctx.me.color, description='Reloaded all cogs')
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @cogs.command()
     async def reloadall(self, ctx: commands.Context):
         """Reloads all previously enabled cogs"""
         for file in listdir('./src/cogs'):
