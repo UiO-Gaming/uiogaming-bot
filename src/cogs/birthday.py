@@ -85,30 +85,28 @@ class Birthday(commands.Cog):
             self.cursor.execute("UPDATE birthdays SET birthday = %s WHERE discord_id = %s", (birthday, user_id))
             self.bot.db_connection.commit()
 
-    '''
-    @aiocron.crontab("0 0 * * *")
-    async def __check_birthdays(self):
-        """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
-        await asyncio.sleep(1)  # Prevent sending message before date has really changed
-
-        self.cursor.execute(
-            """
-                SELECT *
-                FROM birthdays
-                WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
-                    AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
-            """
-        )
-
-        birthdays = self.cursor.fetchall()
-        if birthdays:
-            guild = self.bot.get_guild(747542543750660178)
-            channel = guild.get_channel(747542544291987597)
-            for birthday in birthdays:
-                user = self.bot.get_user(birthday[0])
-                if user:
-                    await channel.send(f"Gratulrer med dagen {user.mention}!")
-    '''
+    # @aiocron.crontab("0 0 * * *")
+    # async def __check_birthdays(self):
+    #     """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
+    #     await asyncio.sleep(1)  # Prevent sending message before date has really changed
+    #
+    #     self.cursor.execute(
+    #         """
+    #             SELECT *
+    #             FROM birthdays
+    #             WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
+    #                 AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
+    #         """
+    #     )
+    #
+    #     birthdays = self.cursor.fetchall()
+    #     if birthdays:
+    #         guild = self.bot.get_guild(747542543750660178)
+    #         channel = guild.get_channel(747542544291987597)
+    #         for birthday in birthdays:
+    #             user = self.bot.get_user(birthday[0])
+    #             if user:
+    #                 await channel.send(f"Gratulrer med dagen {user.mention}!")
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
