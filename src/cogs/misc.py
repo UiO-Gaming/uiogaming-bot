@@ -28,10 +28,25 @@ class Misc(commands.Cog):
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command()
     async def kweeb(self, interaction: discord.Interaction):
-        """Kjeft på weebs"""
+        """김정운, 최고도"""
         await interaction.response.send_message(
             """
-            TBD
+Melding du nettopp sendte ga muligens følgende vibber for brukeren som brukte denne kommandoen:
+
+> KOREA NUMBER ONE!
+> OMG I LUUUUV JUNGKOK!!! 🥰😍🥰 STAN JUNGKOOK! 🤞🤞🤞 사랑해!!! ♥♥♥
+> JEG EEEEELSKER 김치
+> OP OP OP OPPAN GANGNAM STYLE!
+
+Så da kan man spørre seg selv? Hva faen skjedde med god gammeldags weebdom?
+Til vår skuffelse finnes den fortsatt, men ble det for mainstream å være weeb.
+Så da beveger massen seg til det neste hyperkapitalistiske øst-asiatiske staten med økonomisk boom.
+Så hvor ble da av weebsa? Denne videoen svarer ganske godt på det
+https://cdn.discordapp.com/attachments/448502155184439297/1027355652059832351/THEY_WENT_TO_KOREA.mp4
+
+Du har nå blitt kalt en kweeb. Det er over for deg.
+Våkne!
+https://cdn.discordapp.com/attachments/674726496878723082/1042631569396990004/kweeb_er_den_nye_weeb.png
             """
         )
 
