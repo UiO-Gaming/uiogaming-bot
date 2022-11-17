@@ -20,6 +20,7 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
 
     return discord.Colour(0x99AAB5)
 
+
 class ScrollerButton(discord.ui.Button):
     def __init__(self, paginator: Paginator, button_action: callable, content_constructor: callable, label: str, disabled: bool = False):
         super().__init__(label=label, disabled=disabled)
@@ -31,6 +32,7 @@ class ScrollerButton(discord.ui.Button):
         await interaction.response.defer()
         content = self.content_constructor(self.paginator, self.button_action(), interaction.message.embeds[0])
         await interaction.message.edit(embed=content, view=Scroller(self.paginator, self.content_constructor))
+
 
 class Scroller(discord.ui.View):
     def __init__(self, paginatior: Paginator, content_constructor: callable):

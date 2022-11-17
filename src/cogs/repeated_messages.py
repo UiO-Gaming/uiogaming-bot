@@ -12,7 +12,7 @@ class RepeatedMessages(commands.Cog):
         async def fredag():
             channel = await self.uiog_server.fetch_channel(747542544291987597)
             await channel.send(
-                "NU ÄR DET FREDAG!\n" + \
+                "NU ÄR DET FREDAG!\n" +
                 "https://cdn.discordapp.com/attachments/750052141346979850/851216786259181578/video0.mp4"
             )
 
@@ -20,7 +20,7 @@ class RepeatedMessages(commands.Cog):
         async def mandag():
             channel = await self.uiog_server.fetch_channel(747542544291987597)
             await channel.send(
-                "ENDELIG MANDAG!\n\n" + \
+                "ENDELIG MANDAG!\n\n" +
                 "https://cdn.discordapp.com/attachments/678396498089738250/862853827278929940/hvorfor_de_rike_br_spises.mp4"
             )
 

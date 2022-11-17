@@ -97,7 +97,6 @@ class Errors(commands.Cog):
         # Log full exception to file
         self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
 
-
     async def on_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         """Handle slash command errors"""
         # Log command usage, just in case
@@ -106,13 +105,13 @@ class Errors(commands.Cog):
         if isinstance(error, commands.BotMissingPermissions):
             permissions = ', '.join(error.missing_perms)
             embed = embed_templates.error_warning(interaction, text='Jeg mangler følgende tillatelser:\n\n' +
-                                                            f'```\n{permissions}\n```')
+                                                                    f'```\n{permissions}\n```')
             return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, commands.MissingPermissions):
             permissions = ', '.join(error.missing_perms)
             embed = embed_templates.error_warning(interaction, text='Du mangler følgende tillatelser\n\n' +
-                                                            f'```\n{permissions}\n```')
+                                                                    f'```\n{permissions}\n```')
             return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, commands.NotOwner):
@@ -121,7 +120,7 @@ class Errors(commands.Cog):
 
         elif isinstance(error, commands.CommandOnCooldown):
             embed = embed_templates.error_warning(interaction, text='Kommandoen har nettopp blitt brukt' +
-                                                               f'Prøv igjen om `{error.retry_after:.1f}` sekunder.')
+                                                                    f'Prøv igjen om `{error.retry_after:.1f}` sekunder.')
             return await interaction.response.send_message(embed=embed)
 
         embed = embed_templates.error_fatal(interaction, text='En ukjent feil oppstod!')

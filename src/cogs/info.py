@@ -159,9 +159,9 @@ class Info(commands.Cog):
         content = content_filter[str(interaction.guild.explicit_content_filter)]
 
         embed = discord.Embed(color=interaction.guild.me.color, description=f'**Verifiseringskrav:** {verification}\n' +
-                                                              f'**Innholdsfilter:** {content}\n' +
-                                                              f'**Boost Tier:** {interaction.guild.premium_tier}\n' +
-                                                              f'**Emoji:** {len(interaction.guild.emojis)}')
+                                                                            f'**Innholdsfilter:** {content}\n' +
+                                                                            f'**Boost Tier:** {interaction.guild.premium_tier}\n' +
+                                                                            f'**Emoji:** {len(interaction.guild.emojis)}')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_thumbnail(url=interaction.guild.icon)
         embed.add_field(name='ID', value=interaction.guild.id)

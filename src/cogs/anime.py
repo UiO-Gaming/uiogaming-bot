@@ -247,7 +247,7 @@ class Anime(commands.Cog):
             end_date = discord.utils.format_dt(end_date, style="d")
         else:
             end_date = f'{numbers["end_day"]}.{numbers["end_month"]}.{numbers["end_year"]}'
-        
+
         if release_date == end_date:
             date = release_date
         else:
@@ -346,8 +346,8 @@ class Anime(commands.Cog):
         chapters_read = data['statistics']['manga']['chaptersRead']
         color = self.__convert_color(data['options']['profileColor'])
 
-        anime_statuses = {status['status']: { 'count': status['count'] } for status in data['statistics']['anime']['statuses']}
-        manga_statuses = {status['status']: { 'count': status['count'] } for status in data['statistics']['manga']['statuses']}
+        anime_statuses = {status['status']: {'count': status['count']} for status in data['statistics']['anime']['statuses']}
+        manga_statuses = {status['status']: {'count': status['count']} for status in data['statistics']['manga']['statuses']}
 
         try:
             anime_completed = anime_statuses['COMPLETED']['count']
@@ -438,7 +438,7 @@ class Anime(commands.Cog):
         episodes_watched = data['statistics']['anime']['episodesWatched']
         color = self.__convert_color(data['options']['profileColor'])
 
-        statuses = {status['status']: { 'count': status['count'], 'minutes': status['minutesWatched'] } for status in data['statistics']['anime']['statuses']}
+        statuses = {status['status']: {'count': status['count'], 'minutes': status['minutesWatched']} for status in data['statistics']['anime']['statuses']}
 
         try:
             completed = statuses['COMPLETED']['count']
@@ -539,7 +539,7 @@ class Anime(commands.Cog):
         volumes_read = data['statistics']['manga']['volumesRead']
         color = self.__convert_color(data['options']['profileColor'])
 
-        statuses = {status['status']: { 'count': status['count'], 'minutes': status['chaptersRead'] } for status in data['statistics']['manga']['statuses']}
+        statuses = {status['status']: {'count': status['count'], 'minutes': status['chaptersRead']} for status in data['statistics']['manga']['statuses']}
 
         try:
             completed = statuses['COMPLETED']['count']
@@ -655,7 +655,7 @@ class Anime(commands.Cog):
         nsfw = data['isAdult']
         if nsfw:
             embed = embed_templates.error_fatal(interaction, text='Animen du søkte på er NSFW. ' +
-                                                            'Gjør kommandoen i en NSFW-kanal i stedet')
+                                                                  'Gjør kommandoen i en NSFW-kanal i stedet')
             return await interaction.response.send_message(embed=embed)
 
         cover_image = data['coverImage']['large']
@@ -683,7 +683,7 @@ class Anime(commands.Cog):
                 director_native_name = staff_member['node']['name']['native']
                 director_url = staff_member['node']['siteUrl']
                 director_string += f'[{director_first_name} {director_last_name} ' +\
-                                    f'({director_native_name})]({director_url})'
+                                   f'({director_native_name})]({director_url})'
 
         episodes = data['episodes']
         duration = data['duration']
@@ -720,7 +720,7 @@ class Anime(commands.Cog):
         media_format = self.__convert_media_format(media_format)
 
         embed = discord.Embed(color=color, title=title_romaji, url=url,
-                                description=f'{title_native}\n{title_english}')
+                              description=f'{title_native}\n{title_english}')
         embed.set_thumbnail(url=cover_image)
         embed.add_field(name='Format', value=media_format)
         embed.add_field(name='Status', value=status)
@@ -806,7 +806,7 @@ class Anime(commands.Cog):
         nsfw = data['isAdult']
         if nsfw:
             embed = embed_templates.error_fatal(interaction, text='Mangaen du søkte på er NSFW. ' +
-                                                            'Gjør kommandoen i en NSFW-kanal i stedet')
+                                                                  'Gjør kommandoen i en NSFW-kanal i stedet')
             return await interaction.response.send_message(embed=embed)
 
         cover_image = data['coverImage']['large']
@@ -832,7 +832,7 @@ class Anime(commands.Cog):
             staff_native_name = staff_member['node']['name']['native']
             staff_url = staff_member['node']['siteUrl']
             staff_string += f'[{staff_first_name} {staff_last_name} ({staff_native_name})]({staff_url})\n'
-        
+
         numbers = {
             'chapters': data['chapters'],
             'volumes': data['volumes'],
@@ -858,7 +858,7 @@ class Anime(commands.Cog):
         media_format = self.__convert_media_format(media_format)
 
         embed = discord.Embed(color=color, title=title_romaji, url=url,
-                                description=f'{title_native}\n{title_english}')
+                              description=f'{title_native}\n{title_english}')
         embed.set_thumbnail(url=cover_image)
         embed.add_field(name='Format', value=media_format)
         embed.add_field(name='Status', value=status)

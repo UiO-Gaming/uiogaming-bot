@@ -43,7 +43,7 @@ class FunReplies(commands.Cog):
         elif re.search(r'(\W|\s)*le+s+go+(\s|\W)*', message_content):
             if (datetime.now() - self.previous_invokations['lesgo']).seconds > self.cooldown_seconds:
                 await message.channel.send('https://cdn.discordapp.com/attachments/750052141346979850/' +
-                                       '824764933513281596/3xhpwbakz2361.png')
+                                           '824764933513281596/3xhpwbakz2361.png')
                 self.previous_invokations['lesgo'] = datetime.now()
 
         elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf|kontoret)\?*$', message_content, flags=re.IGNORECASE):
@@ -58,7 +58,7 @@ class FunReplies(commands.Cog):
         elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations['yeet']).seconds > self.cooldown_seconds:
                 await message.channel.send('<:Nei:826593267642662912>')
-                self.previous_invokations['yeet'] = datetime.now()            
+                self.previous_invokations['yeet'] = datetime.now()
 
 
 async def setup(bot):

@@ -22,7 +22,7 @@ class Bot(commands.Bot):
             case_insensitive=True,
             intents=discord.Intents.all()
         )
-    
+
         self.logger = BotLogger().logger  # Initialize logger
 
         # Connect to database

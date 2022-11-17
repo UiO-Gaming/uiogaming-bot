@@ -20,6 +20,7 @@ def ignore_exception(*exceptions) -> None:
     except exceptions:
         pass
 
+
 class Paginator:
     def __init__(self, content: list):
         self.content = content
