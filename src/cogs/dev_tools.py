@@ -96,7 +96,7 @@ class DevTools(commands.Cog):
     @commands.command()
     async def publicip(self, ctx: commands.Context):
         """Sends WAN IP-address. inb4 I leak my IP-address"""
-        data = requests.get('https://wtfismyip.com/json').json()
+        data = requests.get('https://wtfismyip.com/json', timeout=10).json()
         ip = data['YourFuckingIPAddress']
         location = data['YourFuckingLocation']
         isp = data['YourFuckingISP']
