@@ -64,7 +64,6 @@ class Info(commands.Cog):
         # Use map instead of list comprehension because I can divide the code into 2 lines
         boosters = list(map(lambda booster: f'{booster.name}#{booster.discriminator} - {discord.utils.format_dt(booster.premium_since)}',
                             sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since)))
-        boosters = [f'{booster.name}#{booster.discriminator}' for booster in boosters]
         boosters.reverse()
 
         return join_method(boosters)
