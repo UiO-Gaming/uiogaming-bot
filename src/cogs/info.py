@@ -240,7 +240,7 @@ class Info(commands.Cog):
         if interaction.guild.premium_tier != 0:
             embed.add_field(name=f'Boosters ({interaction.guild.premium_subscription_count})', value=boosters, inline=False)
 
-        if not features_string:
+        if features_string:
             embed.add_field(name='Tillegsfunksjoner', value=features_string)
 
         if photos:
