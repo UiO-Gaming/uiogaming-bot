@@ -238,7 +238,7 @@ class Info(commands.Cog):
                               f'{self.bot.emoji["offline"]}{offline_members}')
         embed.add_field(name=f'Roller ({len(interaction.guild.roles) - 1})', value=roles, inline=False)
         if interaction.guild.premium_tier != 0:
-            embed.add_field(name=f'Boosters ({interaction.guild.premium_subscription_count})', value=boosters, inline=False)
+            embed.add_field(name=f'Boosts ({interaction.guild.premium_subscription_count})', value=boosters, inline=False)
 
         if features_string:
             embed.add_field(name='Tillegsfunksjoner', value=features_string)
@@ -294,7 +294,7 @@ class Info(commands.Cog):
         boosters = self.__construct_booster_string(interaction, '\n'.join)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=boosters)
-        embed.set_author(name=f'Boosters ({interaction.guild.premium_subscription_count})', icon_url=interaction.guild.icon)
+        embed.set_author(name=f'Boosts ({interaction.guild.premium_subscription_count})', icon_url=interaction.guild.icon)
         embed.set_footer(text=interaction.guild.name, icon_url=interaction.guild.icon)
         await interaction.response.send_message(embed=embed)
 
