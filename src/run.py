@@ -42,7 +42,7 @@ class Bot(commands.Bot):
         self.api_keys = config.get('api', {})
         self.emoji = config.get('emoji', {})
         self.misc = config.get('misc', {})
-        self.config_mode = config.get('mode')
+        self.config_mode = config.get('config_mode')
 
     async def setup_hook(self):
         # Load cogs
