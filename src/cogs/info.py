@@ -150,11 +150,11 @@ class Info(commands.Cog):
 
         # Roles
         roles = self.__construct_role_string(interaction.guild.roles)
-        roles = roles if len(roles) < 1024 else f'Bruk /{self.bot.tree.get_command("guild").get_command("roller").qualified_name} for å se rollene'
+        roles = roles if len(roles) < 1024 else f'Bruk `/{self.bot.tree.get_command("guild").get_command("roller").qualified_name}` for å se rollene'
 
         # Boosts
         boosters = self.__construct_booster_string(interaction)
-        boosters = boosters if len(boosters) < 1024 else f'Bruk /{self.bot.tree.get_command("guild").get_command("boosters").qualified_name} for å se boostere'
+        boosters = boosters if len(boosters) < 1024 else f'Bruk `/{self.bot.tree.get_command("guild").get_command("boosters").qualified_name}` for å se boostere'
 
         # Channels counts
         text_channels = len(interaction.guild.text_channels)
@@ -614,7 +614,7 @@ class Info(commands.Cog):
         # Get user roles
         roles = self.__construct_role_string(bruker.roles)
 
-        roles = roles if len(roles) < 1024 else f'Bruk /{self.bot.tree.get_command("bruker").get_command("roller").qualified_name} for å se rollene'
+        roles = roles if len(roles) < 1024 else f'Bruk `/{self.bot.tree.get_command("bruker").get_command("roller").qualified_name}` for å se rollene'
 
         statuses = {
             'online': f'{self.bot.emoji["online"]} Pålogget',
