@@ -195,8 +195,8 @@ class Info(commands.Cog):
                     features_string += f'{translation}\n'
 
         photos = {}
-        if interaction.guild.discovery_splash:
-            photos['Invitasjonsbilde'] = interaction.guild.discovery_splash
+        if interaction.guild.splash:
+            photos['Invitasjonsbilde'] = interaction.guild.splash
         if interaction.guild.banner:
             photos['Banner'] = interaction.guild.banner
 
