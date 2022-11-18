@@ -153,7 +153,7 @@ class Info(commands.Cog):
         roles = roles if len(roles) < 1024 else f'Bruk `/{self.bot.tree.get_command("guild").get_command("roller").qualified_name}` for å se rollene'
 
         # Boosts
-        boosters = self.__construct_booster_string(interaction)
+        boosters = self.__construct_booster_string(interaction, join_method='\n'.join)
         boosters = boosters if len(boosters) < 1024 else f'Bruk `/{self.bot.tree.get_command("guild").get_command("boosters").qualified_name}` for å se boostere'
 
         # Channels counts
