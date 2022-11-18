@@ -331,13 +331,13 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        if not interaction.guild.discovery_splash:
+        if not interaction.guild.splash:
             embed = embed_templates.error_warning(interaction, text='Serveren har ikke en splash')
             return await interaction.response.send_message(embed=embed)
 
-        embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.discovery_splash})')
+        embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.splash})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
-        embed.set_image(url=interaction.guild.discovery_splash)
+        embed.set_image(url=interaction.guild.splash)
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
