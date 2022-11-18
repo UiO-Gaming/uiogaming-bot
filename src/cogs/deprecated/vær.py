@@ -7,10 +7,10 @@ import json
 
 
 class Vær(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-        @aiocron.crontab("0 6 * * *")
+        @aiocron.crontab('0 6 * * *')
         async def forecast():
 
             dev = await self.bot.fetch_user(162337748781367296)
@@ -19,9 +19,9 @@ class Vær(commands.Cog):
 
             weather = Yr(location_name='Norway/Oslo/Oslo/Oslo', forecast_link='forecast_hour_by_hour')
 
-            embed = discord.Embed(title=":white_sun_small_cloud: Værmelding for Oslo :white_sun_small_cloud:")
-            embed.description = "*Værmeldingen levert til deg av Petter*"
-            embed.set_author(name=dev.name, icon_url=dev.avatar_url)
+            embed = discord.Embed(title=':white_sun_small_cloud: Værmelding for Oslo :white_sun_small_cloud:')
+            embed.description = '*Værmeldingen levert til deg av Petter*'
+            embed.set_author(name=dev.name, icon_url=dev.display_avatar)
 
             half_hour = False
             klokkeslett = 0
@@ -35,12 +35,12 @@ class Vær(commands.Cog):
                 rain = data['precipitation']
                 regn = rain['@value']
                 temperatur = temp['@value']
-                embed.add_field(name=f"kl {klokkeslett}", value=f"{temperatur}°C - {regn}mm")
+                embed.add_field(name=f'kl {klokkeslett}', value=f'{temperatur}°C - {regn}mm')
                 klokkeslett += 1
                 half_hour = True
 
-            await channel.send("RISE AND SHINE GAMERS!", embed=embed)
+            await channel.send('RISE AND SHINE GAMERS!', embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Vær(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Vær(bot))

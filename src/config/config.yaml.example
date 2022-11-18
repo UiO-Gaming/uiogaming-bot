@@ -1,3 +1,5 @@
+config_mode: dev
+
 # Bot settings
 bot:
   token: 
@@ -6,6 +8,17 @@ bot:
     message: Diskusjoner om borgerlønn
     activity: listening
     type: dnd
+
+# Database
+database:
+  host:
+  dbname:
+  username:
+  password:
+
+# Minecraft server
+minecraft:
+  rcon_password:
 
 # Api keys
 api:
