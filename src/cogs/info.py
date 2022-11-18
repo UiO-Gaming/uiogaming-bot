@@ -358,7 +358,7 @@ class Info(commands.Cog):
             embed = embed_templates.error_warning(interaction, text='Serveren har ikke et banner :(')
             return await interaction.response.send_message(embed=embed)
 
-        embed = discord.Embed(color=interaction.me.guild.color, description=f'[Lenke]({interaction.guild.banner})')
+        embed = discord.Embed(color=interaction.guild.me.color, description=f'[Lenke]({interaction.guild.banner})')
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_image(url=interaction.guild.banner)
         embed_templates.default_footer(interaction, embed)
