@@ -67,7 +67,7 @@ class Scroller(discord.ui.View):
         super().__init__()
         self.paginator = paginatior
 
-        self.add_item(ScrollerButton(self.paginator, self.paginator.first_page, content_constructor, label='<<', disabled=True if self.paginator.current_page == 1 else False))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.previous_page, content_constructor, label='<', disabled=True if self.paginator.current_page == 1 else False))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.next_page, content_constructor, label='>', disabled=True if self.paginator.current_page == self.paginator.total_page_count else False))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.last_page, content_constructor, label='>>', disabled=True if self.paginator.current_page == self.paginator.total_page_count else False))
+        self.add_item(ScrollerButton(self.paginator, self.paginator.first_page, content_constructor, label='<<', disabled=self.paginator.current_page == 1))
+        self.add_item(ScrollerButton(self.paginator, self.paginator.previous_page, content_constructor, label='<', disabled=self.paginator.current_page == 1))
+        self.add_item(ScrollerButton(self.paginator, self.paginator.next_page, content_constructor, label='>', disabled=self.paginator.current_page == self.paginator.total_page_count))
+        self.add_item(ScrollerButton(self.paginator, self.paginator.last_page, content_constructor, label='>>', disabled=self.paginator.current_page == self.paginator.total_page_count))
