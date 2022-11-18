@@ -489,7 +489,7 @@ class Info(commands.Cog):
         embed.add_field(name='Animert', value='Ja' if emoji.animated else 'Nei')
         embed.add_field(name='Lagt til av', value=emoji_creator)
         embed.set_image(url=emoji.url)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     guild_oldest_group = app_commands.Group(name='eldst', description='Viser de eldste medlemmene på serveren', parent=guild_group)
 

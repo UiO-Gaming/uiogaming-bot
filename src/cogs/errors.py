@@ -92,27 +92,27 @@ class Errors(commands.Cog):
             permissions = ', '.join(error.missing_perms)
             text = 'Jeg mangler følgende tillatelser:\n\n' + \
                    f'```\n{permissions}\n```'
-            return await ctx.send(text)
+            return await ctx.reply(text)
 
         elif isinstance(error, commands.MissingPermissions):
             permissions = ', '.join(error.missing_perms)
             text = 'Du mangler følgende tillatelser\n\n' + \
                    f'```\n{permissions}\n```'
-            return await ctx.send(text)
+            return await ctx.reply(text)
 
         elif isinstance(error, commands.NotOwner):
             text = 'Bare boteieren kan gjøre dette'
-            return await ctx.send(text)
+            return await ctx.reply(text)
 
         elif isinstance(error, commands.CommandOnCooldown):
             text = 'Kommandoen har nettopp blitt brukt' + \
                    f'Prøv igjen om `{error.retry_after:.1f}` sekunder.'
-            return await ctx.send(text)
+            return await ctx.reply(text)
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
                 text = 'Denne kommandoen kan bare utføres i servere'
-                return await ctx.send(text)
+                return await ctx.reply(text)
             except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
                 print('DM Blocked!')
 
@@ -123,7 +123,7 @@ class Errors(commands.Cog):
             return
 
         embed = embed_templates.error_fatal(ctx, text='En ukjent feil oppstod!')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
         # Log full exception to file
         self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))

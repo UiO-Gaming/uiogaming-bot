@@ -42,7 +42,7 @@ class DevTools(commands.Cog):
         # Send confirmation message to the invoker
         embed = discord.Embed(color=ctx.me.color)
         embed.add_field(name='Sent', value=custommessage)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
@@ -81,7 +81,7 @@ class DevTools(commands.Cog):
         )
 
         embed = discord.Embed(color=ctx.me.color, description='Endret Presence!')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True, add_reactions=True)
@@ -104,10 +104,10 @@ class DevTools(commands.Cog):
             guild = await self.bot.fetch_guild(guild_id)
         except discord.errors.Forbidden:
             embed = embed_templates.error_fatal(ctx, text='Bot is not a member of this guild')
-            return await ctx.send(embed=embed)
+            return await ctx.reply(embed=embed)
 
         # Send confirmation message for leaving
-        confirmation_msg = await ctx.send(f'Do you want to leave {guild.name} (`{guild.id}`)?')
+        confirmation_msg = await ctx.reply(f'Do you want to leave {guild.name} (`{guild.id}`)?')
         await confirmation_msg.add_reaction('✅')
 
         # Check confirmation
@@ -123,7 +123,7 @@ class DevTools(commands.Cog):
             await guild.leave()
             try:
                 embed = discord.Embed(color=ctx.me.color, description='Guild left!')
-                await ctx.send(embed=embed)
+                await ctx.reply(embed=embed)
             except discord.errors.Forbidden:
                 pass
 
@@ -146,7 +146,7 @@ class DevTools(commands.Cog):
 
         embed = discord.Embed(color=ctx.me.color)
         embed.add_field(name='WAN IP-address', value=f'{ip}\n{location}\n{isp}')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
@@ -161,7 +161,7 @@ class DevTools(commands.Cog):
         """
 
         if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
+            await ctx.reply_help(ctx.command)
 
     @cogs.command(name='unload', description='Avslutt en cog')
     async def cogs_unload(self, ctx: commands.Context, cog: str):
@@ -180,10 +180,10 @@ class DevTools(commands.Cog):
                 if name == cog:
                     await self.bot.unload_extension(f'cogs.{name}')
                     embed = discord.Embed(color=ctx.me.color, description=f'{cog} has been disabled')
-                    return await ctx.send(embed=embed)
+                    return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @cogs.command(name='load', description='Aktiver en cog')
     async def cogs_load(self, ctx: commands.Context, cog: str):
@@ -202,10 +202,10 @@ class DevTools(commands.Cog):
                 if name == cog:
                     await self.bot.load_extension(f'cogs.{name}')
                     embed = discord.Embed(color=ctx.me.color, description=f'{cog} loaded')
-                    return await ctx.send(embed=embed)
+                    return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @cogs.command(name='reload', description='Last inn en cog på nytt')
     async def cogs_reload(self, ctx: commands.Context, cog: str):
@@ -223,10 +223,10 @@ class DevTools(commands.Cog):
                 if name == cog:
                     await self.bot.reload_extension(f'cogs.{name}')
                     embed = discord.Embed(color=ctx.me.color, description=f'{cog} has been reloaded')
-                    return await ctx.send(embed=embed)
+                    return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_fatal(ctx, text=f'{cog} does not exist')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @cogs.command(name='reloadunloaded', description='Last inn alle cogs på nytt, selv de som ikke er lastet inn')
     async def cogs_reloadunloaded(self, ctx: commands.Context):
@@ -251,7 +251,7 @@ class DevTools(commands.Cog):
                 await self.bot.load_extension(f'cogs.{name}')
 
         embed = discord.Embed(color=ctx.me.color, description='Reloaded all cogs')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
     @cogs.command(name='reloadall', description='Last inn alle cogs på nytt')
     async def cogs_reloadall(self, ctx: commands.Context):
@@ -269,7 +269,7 @@ class DevTools(commands.Cog):
                 await self.bot.reload_extension(f'cogs.{name}')
 
         embed = discord.Embed(color=ctx.me.color, description='Reloaded all previously enabled cogs')
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
 
 async def setup(bot: commands.Bot):

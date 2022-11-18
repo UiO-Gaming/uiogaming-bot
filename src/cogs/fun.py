@@ -15,7 +15,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('<https://imgur.com/a/uGopaSq>')
+        await ctx.reply('<https://imgur.com/a/uGopaSq>')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(name='ifi')
@@ -28,7 +28,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://i.imgur.com/ypyK1mi.jpg')
+        await ctx.reply('https://i.imgur.com/ypyK1mi.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command(name='ifi2')
@@ -41,7 +41,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://i.imgur.com/ZqgZEEA.jpg')
+        await ctx.reply('https://i.imgur.com/ZqgZEEA.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -54,7 +54,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://i.imgur.com/Gx9DQE5.jpg')
+        await ctx.reply('https://i.imgur.com/Gx9DQE5.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -67,7 +67,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://i.imgur.com/188MoIV.jpg')
+        await ctx.reply('https://i.imgur.com/188MoIV.jpg')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -80,7 +80,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://twitter.com/NTNU/status/970667413564993536')
+        await ctx.reply('https://twitter.com/NTNU/status/970667413564993536')
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -93,7 +93,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.send('https://i.imgur.com/h84fknj.jpg')
+        await ctx.reply('https://i.imgur.com/h84fknj.jpg')
 
 
 async def setup(bot: commands.Bot):
