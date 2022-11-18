@@ -224,8 +224,7 @@ class Info(commands.Cog):
         embed.set_thumbnail(url=interaction.guild.icon)
         embed.add_field(name='ID', value=interaction.guild.id)
         embed.add_field(name='Eier', value=interaction.guild.owner.mention)
-        embed.add_field(name='Opprettet', value=f'{creation_date_timestamp}\n{since_created_days} ' +
-                                                f'{days_ago} siden')
+        embed.add_field(name='Opprettet', value=f'{creation_date_timestamp}\n{days_ago} siden')
         embed.add_field(name=f'Kanaler ({total_channels})', value=f'💬 Tekst: **{text_channels}**\n' +
                                                                   f'🔊 Tale: **{voice_channels}**\n' +
                                                                   f'🗃️ Kategorier: **{categories}**')
