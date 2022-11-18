@@ -462,28 +462,36 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
-    # @app_commands.checks.bot_has_permissions(embed_links=True)
-    # @app_commands.guild_only()
-    # @app_commands.checks.cooldown(1, 2)
-    # @app_commands.command()
-    # async def emoji(self, interaction: discord.Interaction, emoji: discord.Emoji):
-    #     """
-    #     Viser info om en CUSTOM emoji som tilhører serveren
-    #     """
-    #     emoji = await emoji.guild.fetch_emoji(emoji.id)
-    #     try:
-    #         emoji_creator = f'{emoji.user.mention}\n{emoji.user.name}#{emoji.user.discriminator}'
-    #     except AttributeError:
-    #         emoji_creator = 'Jeg trenger `manage_emojis`-tillatelsen på serveren den er fra for å hente dette'
+    # NOTE: This command is implemented using the old command framework
+    # This is due to lack of emoji support in the new framework
+    # TODO: take a look at this command when/if the new framework supports emojis
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.cooldown(1, 2)
+    @commands.command(name='emoji', description='Hent informasjon om en emoji i serveren')
+    async def emoji(self, ctx: commands.Context, emoji: discord.Emoji):
+        """
+        Get information about an emoji in the server
 
-    #     embed = discord.Embed(color=interaction.guild.me.color, title=emoji.name, description=f'ID: {emoji.id}')
-    #     embed.set_author(name=emoji.guild.name, icon_url=emoji.guild.icon)
-    #     embed.add_field(name='Opprettet', value=discord.utils.format_dt(emoji.created_at, style='F'))
-    #     embed.add_field(name='Animert', value='Ja' if emoji.animated else 'Nei')
-    #     embed.add_field(name='Lagt til av', value=emoji_creator)
-    #     embed.set_image(url=emoji.url)
-    #     embed_templates.default_footer(interaction, embed)
-    #     await interaction.response.send_message(embed=embed)
+        Parameters
+        ----------
+        ctx (commands.Context): Command context object
+        emoji (discord.Emoji): Emoji to fetch information about
+        """
+
+        emoji = await emoji.guild.fetch_emoji(emoji.id)
+        try:
+            emoji_creator = f'{emoji.user.mention}\n{emoji.user.name}#{emoji.user.discriminator}'
+        except AttributeError:
+            emoji_creator = 'Jeg trenger `manage_emojis`-tillatelsen på serveren den er fra for å hente dette'
+
+        embed = discord.Embed(color=ctx.me.color, title=emoji.name, description=f'ID: {emoji.id}')
+        embed.set_author(name=emoji.guild.name, icon_url=emoji.guild.icon)
+        embed.add_field(name='Opprettet', value=discord.utils.format_dt(emoji.created_at, style='F'))
+        embed.add_field(name='Animert', value='Ja' if emoji.animated else 'Nei')
+        embed.add_field(name='Lagt til av', value=emoji_creator)
+        embed.set_image(url=emoji.url)
+        await ctx.send(embed=embed)
 
     guild_oldest_group = app_commands.Group(name='eldst', description='Viser de eldste medlemmene på serveren', parent=guild_group)
 
