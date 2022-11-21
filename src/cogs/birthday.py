@@ -101,12 +101,14 @@ class Birthday(commands.Cog):
         results = self.cursor.fetchall()
 
         # Convert date objects to datetime objects
+        birthdays = []
         for result in results:
-            _, birthday, next_birthday = result
+            discord_id, birthday, next_birthday = result
             birthday = datetime(birthday.year, birthday.month, birthday.day)
             next_birthday = datetime(next_birthday.year, next_birthday.month, next_birthday.day)
+            birthdays.append((discord_id, birthday, next_birthday))
 
-        return results
+        return birthdays
 
     def __set_user_birthday(self, user_id: int, birthday: datetime):
         """
