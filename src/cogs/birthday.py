@@ -250,7 +250,7 @@ class Birthday(commands.Cog):
         embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.add_field(name='Bursdag', value=discord.utils.format_dt(birthday, style='D'))
         embed.add_field(name='Hvor gammel?', value=f'{years_old} år\n({days_old} dager)', inline=False)
-        embed.add_field(name='Neste bursdag om', value=f'{next_birthday_days} dager', inline=False)
+        embed.add_field(name='Neste bursdag om', value=f'{next_birthday_days} {"dager" if next_birthday_days != 1 else "dag"}', inline=False)
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
