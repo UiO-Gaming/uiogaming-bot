@@ -1,9 +1,10 @@
+import asyncio
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 import discord
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 import psycopg2
 
 from cogs.utils import discord_utils, embed_templates
@@ -21,6 +22,45 @@ class Birthday(commands.Cog):
 
         self.bot = bot
         self.cursor = self.bot.db_connection.cursor()
+
+    @tasks.loop(hours=24)
+    async def birthday_check(self):
+        """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
+
+        await asyncio.sleep(1) # Prevent sending message before date has really changed
+
+        self.cursor.execute(
+            """
+                SELECT *
+                FROM birthdays
+                WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
+                    AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
+            """
+        )
+
+        birthdays = self.cursor.fetchall()
+        if birthdays:
+            guild = self.bot.get_guild(747542543750660178)
+            channel = guild.get_channel(747542544291987597)
+            for birthday in birthdays:
+                user = self.bot.get_user(birthday[0])
+                if user:
+                    await channel.send(f'Gratulrer med dagen {user.mention}!')
+
+    @birthday_check.before_loop
+    async def before_birthday_check(self):
+        """Syncs loop with the time of day"""
+
+        await self.bot.wait_until_ready()
+
+        now = datetime.datetime.now()
+        if now.hour > 0:
+            sleep_until = now + datetime.timedelta(days=1)
+            sleep_until = sleep_until.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            sleep_until = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        await discord.utils.sleep_until(sleep_until)
 
     def init_db(self):
         """Create the necessary tables for the birthday cog to work"""
@@ -131,29 +171,6 @@ class Birthday(commands.Cog):
             self.bot.db_connection.rollback()
             self.cursor.execute('UPDATE birthdays SET birthday = %s WHERE discord_id = %s', (birthday, user_id))
             self.bot.db_connection.commit()
-
-    # @aiocron.crontab('0 0 * * *')
-    # async def __check_birthdays(self):
-    #     """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
-    #     await asyncio.sleep(1)  # Prevent sending message before date has really changed
-    #
-    #     self.cursor.execute(
-    #         """
-    #             SELECT *
-    #             FROM birthdays
-    #             WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
-    #                 AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
-    #         """
-    #     )
-    #
-    #     birthdays = self.cursor.fetchall()
-    #     if birthdays:
-    #         guild = self.bot.get_guild(747542543750660178)
-    #         channel = guild.get_channel(747542544291987597)
-    #         for birthday in birthdays:
-    #             user = self.bot.get_user(birthday[0])
-    #             if user:
-    #                 await channel.send(f'Gratulrer med dagen {user.mention}!')
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
