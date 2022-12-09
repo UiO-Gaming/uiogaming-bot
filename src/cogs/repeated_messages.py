@@ -8,6 +8,15 @@ class RepeatedMessages(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+        @aiocron.crontab('37 13 * * *')
+        async def leet():
+            """Sends a message at leet gamer hours"""
+
+            guild = self.bot.get_guild(747542543750660178)
+            channel = guild.get_channel(747542544291987597)
+            sticker = await guild.fetch_sticker(1050761884300755005)
+            await channel.send(stickers=[sticker])
+
         @aiocron.crontab('0 0 * * 5')
         async def fredag():
             """Sends a message on Friday at 00:00"""
