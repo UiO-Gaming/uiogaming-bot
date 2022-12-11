@@ -15,7 +15,7 @@ class RepeatedMessages(commands.Cog):
 
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
-            sticker = await guild.fetch_sticker(1050761884300755005)
+            sticker = await guild.fetch_sticker(1046948904471633951)
             await asyncio.sleep(1)
             await channel.send(stickers=[sticker])
 
