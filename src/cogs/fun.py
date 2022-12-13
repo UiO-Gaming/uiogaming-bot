@@ -95,6 +95,19 @@ class Fun(commands.Cog):
 
         await ctx.reply('https://i.imgur.com/h84fknj.jpg')
 
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def erna(self, ctx: commands.Context):
+        """
+        erna, vil ikke
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply('https://twitter.com/erna_solberg/status/1075333228779765760')
+
 
 async def setup(bot: commands.Bot):
     """
