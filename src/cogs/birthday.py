@@ -22,6 +22,20 @@ class Birthday(commands.Cog):
 
         self.bot = bot
         self.cursor = self.bot.db_connection.cursor()
+        self.init_db()
+
+    def init_db(self):
+        """Create the necessary tables for the birthday cog to work"""
+
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS birthdays (
+                discord_id BIGINT PRIMARY KEY,
+                birthday DATE
+            );
+            """
+        )
+        self.bot.db_connection.commit()
 
     @tasks.loop(hours=24)
     async def birthday_check(self):
