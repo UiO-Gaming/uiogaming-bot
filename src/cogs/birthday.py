@@ -23,6 +23,7 @@ class Birthday(commands.Cog):
         self.bot = bot
         self.cursor = self.bot.db_connection.cursor()
         self.init_db()
+        self.birthday_check.start()
 
     def init_db(self):
         """Create the necessary tables for the birthday cog to work"""
@@ -76,18 +77,8 @@ class Birthday(commands.Cog):
 
         await discord.utils.sleep_until(sleep_until)
 
-    def init_db(self):
-        """Create the necessary tables for the birthday cog to work"""
-
-        self.cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS birthdays (
-                discord_id BIGINT PRIMARY KEY,
-                birthday DATE
-            );
-            """
-        )
-        self.bot.db_connection.commit()
+    def cog_unload(self):
+        self.birthday_check.cancel()
 
     def __fetch_user_birthday(self, user_id: int) -> datetime | None:
         """
