@@ -41,14 +41,14 @@ class Birthday(commands.Cog):
     async def birthday_check(self):
         """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
 
-        await asyncio.sleep(1) # Prevent sending message before date has really changed
+        await asyncio.sleep(1)  # Prevent sending message before date has really changed
 
         self.cursor.execute(
             """
-                SELECT *
-                FROM birthdays
-                WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
-                    AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
+            SELECT *
+            FROM birthdays
+            WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM current_date)
+                AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM current_date);
             """
         )
 
