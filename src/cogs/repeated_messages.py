@@ -1,5 +1,7 @@
-import aiocron
 import asyncio
+import random
+
+import aiocron
 from discord.ext import commands
 
 
@@ -25,9 +27,22 @@ class RepeatedMessages(commands.Cog):
 
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
+
+            videos = [
+                'https://cdn.discordapp.com/attachments/750052141346979850/851216786259181578/video0.mp4',
+                'https://cdn.discordapp.com/attachments/878368386671849582/1043133798512070666/durk_durk_fredag.mp4',
+                'https://cdn.discordapp.com/attachments/878368386671849582/1043133820079177808/finfredag.png',
+                'https://cdn.discordapp.com/attachments/878368386671849582/1043133832360120340/fredag_1.mp4',
+                'https://cdn.discordapp.com/attachments/878368386671849582/1043133914316816424/shutup_friday.mp4',
+                'https://cdn.discordapp.com/attachments/878368386671849582/1043133934915031040/uboot_fredag.mp4',
+                'https://cdn.discordapp.com/attachments/747542544291987597/1037864063901909043/fredag_whole_store4.mp4',
+                'https://cdn.discordapp.com/attachments/747542544291987597/1037864293154168863/fredag_wholesome.mp4',
+                'https://cdn.discordapp.com/attachments/747542544291987597/1037866542328713256/fredag_i_norge.mp4'
+            ]
+
             await channel.send(
                 'NU ÄR DET FREDAG!\n' +
-                'https://cdn.discordapp.com/attachments/750052141346979850/851216786259181578/video0.mp4'
+                random.choice(videos)
             )
 
         @aiocron.crontab('0 0 * * 1')
