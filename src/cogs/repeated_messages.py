@@ -37,6 +37,7 @@ class RepeatedMessages(commands.Cog):
                 'https://cdn.discordapp.com/attachments/878368386671849582/1043133934915031040/uboot_fredag.mp4',
                 'https://cdn.discordapp.com/attachments/747542544291987597/1037864063901909043/fredag_whole_store4.mp4',
                 'https://cdn.discordapp.com/attachments/747542544291987597/1037864293154168863/fredag_wholesome.mp4',
+                'https://cdn.discordapp.com/attachments/747542544291987597/1055835511366877244/received_914083109578582.gif',
                 'https://cdn.discordapp.com/attachments/747542544291987597/1037866542328713256/fredag_i_norge.mp4'
             ]
 
