@@ -608,7 +608,7 @@ class Info(commands.Cog):
         # Boost date & days ago
         if bruker.premium_since:
             premium_since = discord.utils.format_dt(bruker.premium_since, style='F')
-            premium_since_days = (interaction.message.created_at - bruker.premium_since).days
+            premium_since_days = (interaction.created_at - bruker.premium_since).days
 
         # Get user roles
         roles = self.__construct_role_string(bruker.roles)
