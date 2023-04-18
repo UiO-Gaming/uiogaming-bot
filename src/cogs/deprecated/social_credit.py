@@ -64,7 +64,6 @@ class SocialCredit(commands.Cog):
             );
             """
         )
-        self.bot.db_connection.commit()
 
     def add_new_citizen(func):
         async def wrapper(*args, **kwargs):
@@ -95,7 +94,6 @@ class SocialCredit(commands.Cog):
             """,
             (user_id, self.START_POINTS),
         )
-        self.bot.db_connection.commit()
 
     async def get_leaderboard(self, ctx, page, worst=False):
 
@@ -143,7 +141,6 @@ class SocialCredit(commands.Cog):
             """,
             (points, user_id),
         )
-        self.bot.db_connection.commit()
 
     @add_new_citizen
     async def social_reward(self, user_id, points):
@@ -156,7 +153,6 @@ class SocialCredit(commands.Cog):
             """,
             (points, user_id),
         )
-        self.bot.db_connection.commit()
 
     @commands.command()
     async def credits(self, ctx, *, bruker: discord.Member = None):

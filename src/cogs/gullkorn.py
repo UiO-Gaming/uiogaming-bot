@@ -47,7 +47,6 @@ class Gullkorn(commands.Cog):
             ORDER BY citations_posted DESC;
             """
         )
-        self.bot.db_connection.commit()
 
     def __construct_data_string(self, data: list[tuple[int, int, int]]) -> str:
         """
@@ -99,8 +98,6 @@ class Gullkorn(commands.Cog):
             DO UPDATE SET citations_posted = gullkorn.citations_posted + 1;
             """, (message.author.id,)
         )
-
-        self.bot.db_connection.commit()
 
     gullkorn_group = app_commands.Group(name='gullkorn', description='Se statistikk for gullkorn')
 

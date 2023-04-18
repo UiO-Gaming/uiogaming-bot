@@ -35,6 +35,7 @@ class Bot(commands.Bot):
             user=db['username'],
             password=db['password'],
         )
+        self.db_connection.autocommit = True
 
         # Fetch misc config values
         self.mc_rcon_password = config['minecraft']['rcon_password']

@@ -31,7 +31,6 @@ class Streak(commands.Cog):
             );
             """
         )
-        self.bot.db_connection.commit()
 
     @commands.command()
 

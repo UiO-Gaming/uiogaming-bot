@@ -32,7 +32,6 @@ class MCWhitelist(commands.Cog):
             );
             """
         )
-        self.bot.db_connection.commit()
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
@@ -87,7 +86,6 @@ class MCWhitelist(commands.Cog):
             """,
             (interaction.user.id, data['id']),
         )
-        self.bot.db_connection.commit()
 
         await interaction.response.send_message(
             embed=embed_templates.success(

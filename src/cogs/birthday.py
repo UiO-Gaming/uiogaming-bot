@@ -36,7 +36,6 @@ class Birthday(commands.Cog):
             );
             """
         )
-        self.bot.db_connection.commit()
 
     @tasks.loop(hours=24)
     async def birthday_check(self):
@@ -171,11 +170,9 @@ class Birthday(commands.Cog):
                 INSERT INTO birthdays (discord_id, birthday)
                 VALUES (%s, %s)
                 """, (user_id, birthday))
-            self.bot.db_connection.commit()
         except psycopg2.errors.UniqueViolation:
             self.bot.db_connection.rollback()
             self.cursor.execute('UPDATE birthdays SET birthday = %s WHERE discord_id = %s', (birthday, user_id))
-            self.bot.db_connection.commit()
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
@@ -230,7 +227,6 @@ class Birthday(commands.Cog):
         """
 
         self.cursor.execute('DELETE FROM birthdays WHERE discord_id = (%s)', (interaction.user.id,))
-        self.bot.db_connection.commit()
 
         embed = embed_templates.success(interaction, text='Bursdag fjernet')
         await interaction.response.send_message(embed=embed)
