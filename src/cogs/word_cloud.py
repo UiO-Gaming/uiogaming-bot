@@ -392,12 +392,12 @@ class WordCloud(commands.Cog):
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 30)
     @wordcloud_generate_group.command(
-        name='siste1000',
-        description='Generer en ordsky basert på dine mest frekvente sagte ord fra de siste 1000 meldingene dine'
+        name='siste',
+        description='Generer en ordsky basert på dine mest frekvente sagte ord fra de siste meldingene dine'
     )
-    async def generate_last_1000(self, interaction: discord.Interaction):
+    async def generate_last(self, interaction: discord.Interaction, antall: app_commands.Range[int, 100, 2000] = 1000):
         """
-        Generer en ordsky basert på dine mest frekvente sagte ord fra de siste 1000 meldingene dine
+        Generer en ordsky basert på dine mest frekvente sagte ord fra de siste meldingene dine
 
         Parameters
         ----------
@@ -420,7 +420,7 @@ class WordCloud(commands.Cog):
                 continue
 
             try:
-                async for message in channel.history(limit=200):
+                async for message in channel.history(limit=int(antall/2)):  # Limit search in each channel to half of requested
                     if message.author != interaction.user:
                         continue
 
@@ -456,8 +456,8 @@ class WordCloud(commands.Cog):
 
         word_cloud_file = discord.File(word_cloud, filename=f'wordcloud_{interaction.user.id}.png')
         embed = discord.Embed(title='☁️ Her er ordskyen din! ☁️')
-        embed.description = 'Basert på de 1000 siste meldingene i alle kanaler og ' + \
-                            'topp 1000 mest frekvente ord i dine meldinger'
+        embed.description = f'Basert på de {int(antall/2)} siste meldingene i alle kanaler og ' + \
+                            f'topp {antall} mest frekvente ord i dine meldinger'
         embed.set_image(url=f'attachment://wordcloud_{interaction.user.id}.png')
         await interaction.followup.send(embed=embed, file=word_cloud_file)
 
