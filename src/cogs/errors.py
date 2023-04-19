@@ -138,26 +138,29 @@ class Errors(commands.Cog):
         error (app_commands.AppCommandError): Eror context object
         """
 
+        # TODO: add support for defered interactions
+
         # Log command usage, just in case
         await self.on_app_command_completion(interaction, interaction.command)
 
-        if isinstance(error, commands.BotMissingPermissions):
+        if isinstance(error, app_commands.BotMissingPermissions):
             permissions = ', '.join(error.missing_perms)
             embed = embed_templates.error_warning(interaction, text='Jeg mangler følgende tillatelser:\n\n' +
                                                                     f'```\n{permissions}\n```')
             return await interaction.response.send_message(embed=embed)
 
-        elif isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, app_commands.MissingPermissions):
             permissions = ', '.join(error.missing_perms)
             embed = embed_templates.error_warning(interaction, text='Du mangler følgende tillatelser\n\n' +
                                                                     f'```\n{permissions}\n```')
             return await interaction.response.send_message(embed=embed)
 
-        elif isinstance(error, commands.NotOwner):
-            embed = embed_templates.error_fatal(interaction, text='Bare boteieren kan gjøre dette')
-            return await interaction.response.send_message(embed=embed)
+        # TODO: figure this shit out. app_commands does not support this check
+        # elif isinstance(error, app_commands.NotOwner):
+        #     embed = embed_templates.error_fatal(interaction, text='Bare boteieren kan gjøre dette')
+        #     return await interaction.response.send_message(embed=embed)
 
-        elif isinstance(error, commands.CommandOnCooldown):
+        elif isinstance(error, app_commands.CommandOnCooldown):
             embed = embed_templates.error_warning(interaction, text='Kommandoen har nettopp blitt brukt' +
                                                                     f'Prøv igjen om `{error.retry_after:.1f}` sekunder.')
             return await interaction.response.send_message(embed=embed)
