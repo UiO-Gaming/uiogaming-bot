@@ -105,7 +105,7 @@ class Errors(commands.Cog):
             return await ctx.reply(text)
 
         elif isinstance(error, commands.CommandOnCooldown):
-            text = 'Kommandoen har nettopp blitt brukt' + \
+            text = 'Kommandoen har nettopp blitt brukt\n' + \
                    f'Prøv igjen om `{error.retry_after:.1f}` sekunder.'
             return await ctx.reply(text)
 
@@ -161,7 +161,7 @@ class Errors(commands.Cog):
         #     return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.CommandOnCooldown):
-            embed = embed_templates.error_warning(interaction, text='Kommandoen har nettopp blitt brukt' +
+            embed = embed_templates.error_warning(interaction, text='Kommandoen har nettopp blitt brukt\n' +
                                                                     f'Prøv igjen om `{error.retry_after:.1f}` sekunder.')
             return await interaction.response.send_message(embed=embed)
 
