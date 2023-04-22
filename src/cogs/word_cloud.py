@@ -11,7 +11,7 @@ import nltk
 from nltk.corpus import stopwords
 import numpy as np
 from PIL import Image
-from psycopg2.extras import execute_values
+from psycopg2.extras import execute_batch
 import re
 from wordcloud import WordCloud as WCloud  # Avoid naming conflicts with cog class name
 # from wordcloud import ImageColorGenerator
@@ -41,6 +41,8 @@ class WordCloud(commands.Cog):
         self.populate_consenting_users()
 
         nltk.download('stopwords')
+
+        self.batch_update_word_freqs_loop.start()
 
     def init_db(self):
         """
@@ -98,7 +100,7 @@ class WordCloud(commands.Cog):
 
         # Insert cache into database
         try:
-            execute_values(
+            execute_batch(
                 self.cursor,
                 """
                 INSERT INTO wordcloud_words (discord_user_id, word, frequency)
