@@ -371,9 +371,14 @@ class WordCloud(commands.Cog):
             """, (interaction.user.id,)
         )
         origin_msg_channel_id, origin_msg_id = self.cursor.fetchone()
-        origin_msg_channel = self.bot.get_channel(origin_msg_channel_id)
-        origin_msg = await origin_msg_channel.fetch_message(origin_msg_id)
-        origin_msg_timestamp = discord.utils.format_dt(origin_msg.created_at, style='f')
+        try:
+            origin_msg_channel = self.bot.get_channel(origin_msg_channel_id)
+            origin_msg = await origin_msg_channel.fetch_message(origin_msg_id)
+            origin_msg_timestamp = discord.utils.format_dt(origin_msg.created_at, style='f')
+        except discord.errors.NotFound:
+            origin_found = False
+        else:
+            origin_found = True
 
         # Converts the raw SQL results tuple to a string where
         # each word occurs the x number of frequency that is provided
@@ -386,8 +391,11 @@ class WordCloud(commands.Cog):
 
         word_cloud_file = discord.File(word_cloud, filename=f'wordcloud_{interaction.user.id}.png')
         embed = discord.Embed(title='☁️ Her er ordskyen din! ☁️')
-        embed.description = f'Basert på de 4000 mest frekvente ordene dine siden {origin_msg_timestamp}\n' + \
-                            f'[Se melding]({origin_msg.jump_url})'
+        if origin_found:
+            embed.description = f'Basert på de 4000 mest frekvente ordene dine siden {origin_msg_timestamp}\n' + \
+                                f'[Se melding]({origin_msg.jump_url})'
+        else:
+            embed.description = 'Basert på de 4000 mest frekvente ordene dine siden `ukjent dato`'
         embed.set_image(url=f'attachment://wordcloud_{interaction.user.id}.png')
         await interaction.followup.send(embed=embed, file=word_cloud_file)
 
