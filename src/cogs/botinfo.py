@@ -1,5 +1,6 @@
-from os import environ, getpid
 import platform
+from os import environ
+from os import getpid
 from time import time
 
 import discord
@@ -24,7 +25,7 @@ class BotInfo(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command(name='botinfo', description='Se informajson om botten')
+    @app_commands.command(name="botinfo", description="Se informajson om botten")
     async def botinfo(self, interaction: discord.Interaction):
         """
         View information about the bot
@@ -58,42 +59,46 @@ class BotInfo(commands.Cog):
         for guild in self.bot.guilds:
             for member in guild.members:
                 total_members.add(member.id)
-                if str(member.status) == 'online':
+                if str(member.status) == "online":
                     online_members.add(member.id)
-                elif str(member.status) == 'idle':
+                elif str(member.status) == "idle":
                     idle_members.add(member.id)
-                elif str(member.status) == 'dnd':
+                elif str(member.status) == "dnd":
                     dnd_members.add(member.id)
-                elif str(member.status) == 'offline':
+                elif str(member.status) == "offline":
                     offline_members.add(member.id)
 
         # Build embed
-        embed = discord.Embed(color=interaction.client.user.color, url=self.bot.misc['website'])
+        embed = discord.Embed(color=interaction.client.user.color, url=self.bot.misc["website"])
         embed.set_author(name=dev.name, icon_url=dev.display_avatar)
         embed.set_thumbnail(url=self.bot.user.display_avatar)
-        embed.add_field(name='Dev', value=f'{dev.mention}\n{dev.name}#{dev.discriminator}')
-        embed.add_field(name='Oppetid', value=self.__get_uptime())
-        embed.add_field(name='Ping', value=f'Websocket ping: {self.__get_ping()} ms')
-        embed.add_field(name='Servere', value=len(self.bot.guilds))
-        embed.add_field(name='Discord.py', value=discord.__version__)
-        embed.add_field(name='Python', value=platform.python_version())
-        embed.add_field(name='Ressursbruk', value=f'RAM: {memory_usage} MB')
-        embed.add_field(name='Kernel', value=f'{platform.system()} {platform.release()}')
-        if 'docker' in environ:
-            embed.add_field(name='Docker', value='U+FE0F')
-        embed.add_field(name=f'Brukere ({len(total_members)})',
-                        value=f'{self.bot.emoji["online"]}{len(online_members)} ' +
-                              f'{self.bot.emoji["idle"]}{len(idle_members)} ' +
-                              f'{self.bot.emoji["dnd"]}{len(dnd_members)} ' +
-                              f'{self.bot.emoji["offline"]}{len(offline_members)}')
-        embed.add_field(name='Lenker', value=f'[Nettside]({self.bot.misc["website"]}) | ' +
-                                             f'[Kildekode]({self.bot.misc["source_code"]})')
+        embed.add_field(name="Dev", value=f"{dev.mention}\n{dev.name}#{dev.discriminator}")
+        embed.add_field(name="Oppetid", value=self.__get_uptime())
+        embed.add_field(name="Ping", value=f"Websocket ping: {self.__get_ping()} ms")
+        embed.add_field(name="Servere", value=len(self.bot.guilds))
+        embed.add_field(name="Discord.py", value=discord.__version__)
+        embed.add_field(name="Python", value=platform.python_version())
+        embed.add_field(name="Ressursbruk", value=f"RAM: {memory_usage} MB")
+        embed.add_field(name="Kernel", value=f"{platform.system()} {platform.release()}")
+        if "docker" in environ:
+            embed.add_field(name="Docker", value="U+FE0F")
+        embed.add_field(
+            name=f"Brukere ({len(total_members)})",
+            value=f'{self.bot.emoji["online"]}{len(online_members)} '
+            + f'{self.bot.emoji["idle"]}{len(idle_members)} '
+            + f'{self.bot.emoji["dnd"]}{len(dnd_members)} '
+            + f'{self.bot.emoji["offline"]}{len(offline_members)}',
+        )
+        embed.add_field(
+            name="Lenker",
+            value=f'[Nettside]({self.bot.misc["website"]}) | ' + f'[Kildekode]({self.bot.misc["source_code"]})',
+        )
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command(name='oppetid', description='Se hvor lenge botten har kjørt')
+    @app_commands.command(name="oppetid", description="Se hvor lenge botten har kjørt")
     async def uptime(self, interaction: discord.Interaction):
         """
         View the bot's uptime
@@ -104,13 +109,13 @@ class BotInfo(commands.Cog):
         """
 
         embed = discord.Embed(color=interaction.client.user.color)
-        embed.add_field(name='🔌 Oppetid', value=self.__get_uptime())
+        embed.add_field(name="🔌 Oppetid", value=self.__get_uptime())
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
-    @app_commands.command(name='ping', description='Se botten sin nåværende ping')
+    @app_commands.command(name="ping", description="Se botten sin nåværende ping")
     async def ping(self, interaction: discord.Interaction):
         """
         View the bot's ping
@@ -121,10 +126,7 @@ class BotInfo(commands.Cog):
         """
 
         embed = discord.Embed(color=interaction.client.user.color)
-        embed.add_field(
-            name='📶 Ping',
-            value=f'**Websocket ping:** {self.__get_ping()} ms'
-        )
+        embed.add_field(name="📶 Ping", value=f"**Websocket ping:** {self.__get_ping()} ms")
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed, content=None)
 
@@ -154,7 +156,7 @@ class BotInfo(commands.Cog):
         hours, remainder = divmod(remainder, 60 * 60)
         minutes, seconds = divmod(remainder, 60)
 
-        return f'{days}d, {hours}t, {minutes}m, {seconds}s'
+        return f"{days}d, {hours}t, {minutes}m, {seconds}s"
 
 
 async def setup(bot: commands.Bot):

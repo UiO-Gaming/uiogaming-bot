@@ -1,22 +1,25 @@
-import discord
-from discord import app_commands
-from discord.ext import commands, tasks
-
-from collections import defaultdict
 import functools
 import itertools
-from io import BytesIO, StringIO
 import json
+import re
+from collections import defaultdict
+from io import BytesIO
+from io import StringIO
+
+import discord
 import nltk
-from nltk.corpus import stopwords
 import numpy as np
+from discord import app_commands
+from discord.ext import commands
+from discord.ext import tasks
+from nltk.corpus import stopwords
 from PIL import Image
 from psycopg2.extras import execute_batch
-import re
 from wordcloud import WordCloud as WCloud  # Avoid naming conflicts with cog class name
-# from wordcloud import ImageColorGenerator
 
 from cogs.utils import embed_templates
+
+# from wordcloud import ImageColorGenerator
 
 
 class WordCloud(commands.Cog):
@@ -40,7 +43,7 @@ class WordCloud(commands.Cog):
         self.consenting_users = []
         self.populate_consenting_users()
 
-        nltk.download('stopwords')
+        nltk.download("stopwords")
 
         self.batch_update_word_freqs_loop.start()
 
@@ -93,10 +96,12 @@ class WordCloud(commands.Cog):
 
         # Flatten the defaultdict into a list of tuples
         # This is a bit of a hack but it works
-        word_freqs = list(itertools.chain.from_iterable(
-            [(user_id, word, freq) for word, freq in user_word_freqs.items()]
-            for user_id, user_word_freqs in self.word_freq_cache.items()
-        ))
+        word_freqs = list(
+            itertools.chain.from_iterable(
+                [(user_id, word, freq) for word, freq in user_word_freqs.items()]
+                for user_id, user_word_freqs in self.word_freq_cache.items()
+            )
+        )
 
         # Insert cache into database
         try:
@@ -107,7 +112,8 @@ class WordCloud(commands.Cog):
                 VALUES (%s, %s, %s)
                 ON CONFLICT (discord_user_id, word)
                 DO UPDATE SET frequency = wordcloud_words.frequency + EXCLUDED.frequency
-                """, word_freqs
+                """,
+                word_freqs,
             )
         except:
             self.bot.db_connection.rollback()
@@ -148,7 +154,7 @@ class WordCloud(commands.Cog):
         for word in words:
             # Filter urls
             # do I really need to comment on this being naive again?
-            if re.match(r'https?://', word):
+            if re.match(r"https?://", word):
                 continue
 
             # Remove punctuation
@@ -156,16 +162,12 @@ class WordCloud(commands.Cog):
             if not word:
                 continue
 
-        # Enter into cache
-        # This may take a performance hit but who tf cares. We're using python anyway
-            self.word_freq_cache[message.author.id][word] += 1         
+            # Enter into cache
+            # This may take a performance hit but who tf cares. We're using python anyway
+            self.word_freq_cache[message.author.id][word] += 1
 
     @staticmethod
-    def generate_wordcloud(
-        text: str,
-        max_words: int = 4000,
-        allow_bigrams: bool = False
-    ) -> BytesIO:
+    def generate_wordcloud(text: str, max_words: int = 4000, allow_bigrams: bool = False) -> BytesIO:
         """
         Generates a wordcloud
 
@@ -180,8 +182,8 @@ class WordCloud(commands.Cog):
         BytesIO: BytesIO object containing the wordcloud image
         """
 
-        filter_words = set(stopwords.words('norwegian') + stopwords.words('english'))
-        mask = np.array(Image.open('./src/assets/word_cloud/mask.png'))
+        filter_words = set(stopwords.words("norwegian") + stopwords.words("english"))
+        mask = np.array(Image.open("./src/assets/word_cloud/mask.png"))
 
         wc = WCloud(
             max_words=max_words,
@@ -189,7 +191,7 @@ class WordCloud(commands.Cog):
             repeat=False,
             stopwords=filter_words,
             min_word_length=3,
-            collocations=allow_bigrams
+            collocations=allow_bigrams,
         )
         wc.process_text(text)
         wc.generate(text)
@@ -199,22 +201,19 @@ class WordCloud(commands.Cog):
 
         img = wc.to_image()
         b = BytesIO()
-        img.save(b, 'png')
+        img.save(b, "png")
         b.seek(0)
         return b
 
     wordcloud_group = app_commands.Group(
-        name='ordsky',
-        description='Generer en ordsky basert på dine mest frekvente sagte ord'
+        name="ordsky", description="Generer en ordsky basert på dine mest frekvente sagte ord"
     )
     wordcloud_generate_group = app_commands.Group(
-        parent=wordcloud_group,
-        name='generer',
-        description='Generer en ordsky basert på dine mest frekvente sagte ord'
+        parent=wordcloud_group, name="generer", description="Generer en ordsky basert på dine mest frekvente sagte ord"
     )
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
-    @wordcloud_group.command(name='samtykke', description='Gi samtykke til å samle meldingsdataen din for ordskyer')
+    @wordcloud_group.command(name="samtykke", description="Gi samtykke til å samle meldingsdataen din for ordskyer")
     async def consent(self, interaction: discord.Interaction):
         """
         Gi samtykke til å samle meldingsdataen din
@@ -226,8 +225,7 @@ class WordCloud(commands.Cog):
 
         if interaction.user.id in self.consenting_users:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text='Du har allerede samtykket'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Du har allerede samtykket"), ephemeral=False
             )
 
         try:
@@ -235,23 +233,24 @@ class WordCloud(commands.Cog):
                 """
                 INSERT INTO wordcloud_metadata (discord_user_id, tracked_since_message_channel_id, tracked_since_message_id)
                 VALUES (%s, %s, %s)
-                """, (interaction.user.id, interaction.channel_id, interaction.id)
+                """,
+                (interaction.user.id, interaction.channel_id, interaction.id),
             )
         except:
             self.bot.db_connection.rollback()
             self.bot.logger.exception("Failed to insert wordcloud metadata into database")
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text='Klarte ikke å skrive til database'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Klarte ikke å skrive til database"),
+                ephemeral=False,
             )
 
         self.consenting_users.append(interaction.user.id)
 
-        embed = embed_templates.success(interaction, 'Samtykke registrert!')
+        embed = embed_templates.success(interaction, "Samtykke registrert!")
         await interaction.response.send_message(embed=embed, ephemeral=False)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
-    @wordcloud_group.command(name='slett', description='Fjern samtykke og slett alle dine ordskydata')
+    @wordcloud_group.command(name="slett", description="Fjern samtykke og slett alle dine ordskydata")
     async def consent_remove(self, interaction: discord.Interaction):
         """
         Fjern samtykke og slett meldingsdata
@@ -265,33 +264,33 @@ class WordCloud(commands.Cog):
             self.consenting_users.remove(interaction.user.id)
         except ValueError:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text='Fant ingen data om deg'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
             )
 
-        self.word_freq_cache.pop(f'{interaction.user.id}', None)
+        self.word_freq_cache.pop(f"{interaction.user.id}", None)
 
         try:
             self.cursor.execute(
                 """
                 DELETE FROM wordcloud_metadata WHERE discord_user_id = %s;
                 DELETE FROM wordcloud_words WHERE discord_user_id = %s;
-                """, (interaction.user.id, interaction.user.id)
+                """,
+                (interaction.user.id, interaction.user.id),
             )
         except:
             self.bot.db_connection.rollback()
             self.bot.logger.exception("Failed to delete wordcloud metadata from database")
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text='Klarte ikke å slette fra database'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Klarte ikke å slette fra database"),
+                ephemeral=False,
             )
 
-        embed = embed_templates.success(interaction, 'Meldingsdata er slettet!')
+        embed = embed_templates.success(interaction, "Meldingsdata er slettet!")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 10)
-    @wordcloud_group.command(name='data', description='Få tilsendt dine ordskydata i JSON-format')
+    @wordcloud_group.command(name="data", description="Få tilsendt dine ordskydata i JSON-format")
     async def data(self, interaction: discord.Interaction):
         """
         Få tilsendt dine data
@@ -307,30 +306,29 @@ class WordCloud(commands.Cog):
             FROM wordcloud_words
             WHERE discord_user_id = %s
             ORDER BY frequency DESC
-            """, (interaction.user.id,)
+            """,
+            (interaction.user.id,),
         )
         result = self.cursor.fetchall()
 
         if not result:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text='Fant ingen data om deg'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
             )
 
-        freq_list = {f'{word}': freq for word, freq in result}
+        freq_list = {f"{word}": freq for word, freq in result}
 
-        embed = discord.Embed(description='Her er dataen jeg har lagret om deg')
+        embed = discord.Embed(description="Her er dataen jeg har lagret om deg")
         buffer = StringIO()
         buffer.write(json.dumps(freq_list, indent=4))
         buffer.seek(0)
-        file = discord.File(buffer, filename=f'uiog_word_freqs_{interaction.user.id}.json')
+        file = discord.File(buffer, filename=f"uiog_word_freqs_{interaction.user.id}.json")
         await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 10)
     @wordcloud_generate_group.command(
-        name='alle',
-        description='Generer en ordsky basert på dine mest frekvente sagte ord siden du ga samtykke'
+        name="alle", description="Generer en ordsky basert på dine mest frekvente sagte ord siden du ga samtykke"
     )
     async def generate_db(self, interaction: discord.Interaction):
         """
@@ -352,14 +350,14 @@ class WordCloud(commands.Cog):
             SELECT word, frequency
             FROM wordcloud_words
             WHERE discord_user_id = %s
-            """, (interaction.user.id,)
+            """,
+            (interaction.user.id,),
         )
         results = self.cursor.fetchall()
 
         if not results:
             return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, text='Fant ingen data om deg'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
             )
 
         # Fetch tracking start time metadata
@@ -368,13 +366,14 @@ class WordCloud(commands.Cog):
             SELECT tracked_since_message_channel_id, tracked_since_message_id
             FROM wordcloud_metadata
             WHERE discord_user_id = %s
-            """, (interaction.user.id,)
+            """,
+            (interaction.user.id,),
         )
         origin_msg_channel_id, origin_msg_id = self.cursor.fetchone()
         try:
             origin_msg_channel = self.bot.get_channel(origin_msg_channel_id)
             origin_msg = await origin_msg_channel.fetch_message(origin_msg_id)
-            origin_msg_timestamp = discord.utils.format_dt(origin_msg.created_at, style='f')
+            origin_msg_timestamp = discord.utils.format_dt(origin_msg.created_at, style="f")
         except discord.errors.NotFound:
             origin_found = False
         else:
@@ -389,21 +388,23 @@ class WordCloud(commands.Cog):
         generation_task = functools.partial(WordCloud.generate_wordcloud, text)
         word_cloud = await self.bot.loop.run_in_executor(None, generation_task)
 
-        word_cloud_file = discord.File(word_cloud, filename=f'wordcloud_{interaction.user.id}.png')
-        embed = discord.Embed(title='☁️ Her er ordskyen din! ☁️')
+        word_cloud_file = discord.File(word_cloud, filename=f"wordcloud_{interaction.user.id}.png")
+        embed = discord.Embed(title="☁️ Her er ordskyen din! ☁️")
         if origin_found:
-            embed.description = f'Basert på de 4000 mest frekvente ordene dine siden {origin_msg_timestamp}\n' + \
-                                f'[Se melding]({origin_msg.jump_url})'
+            embed.description = (
+                f"Basert på de 4000 mest frekvente ordene dine siden {origin_msg_timestamp}\n"
+                + f"[Se melding]({origin_msg.jump_url})"
+            )
         else:
-            embed.description = 'Basert på de 4000 mest frekvente ordene dine siden `ukjent dato`'
-        embed.set_image(url=f'attachment://wordcloud_{interaction.user.id}.png')
+            embed.description = "Basert på de 4000 mest frekvente ordene dine siden `ukjent dato`"
+        embed.set_image(url=f"attachment://wordcloud_{interaction.user.id}.png")
         await interaction.followup.send(embed=embed, file=word_cloud_file)
 
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 30)
     @wordcloud_generate_group.command(
-        name='siste',
-        description='Generer en ordsky basert på dine mest frekvente sagte ord fra de siste meldingene dine'
+        name="siste",
+        description="Generer en ordsky basert på dine mest frekvente sagte ord fra de siste meldingene dine",
     )
     async def generate_last(self, interaction: discord.Interaction, antall: app_commands.Range[int, 100, 2000] = 1000):
         """
@@ -420,17 +421,22 @@ class WordCloud(commands.Cog):
         member_role = interaction.guild.get_role(779849617651138601)
 
         # Fetch last 1000 messages
-        all_messages = ''
+        all_messages = ""
         for channel in interaction.guild.text_channels:
             if not channel.permissions_for(interaction.user).send_messages:
                 continue
 
             # Avoid reading secret board member chats
-            if not channel.permissions_for(member_role).send_messages and not channel.permissions_for(interaction.guild.default_role).send_messages:
+            if (
+                not channel.permissions_for(member_role).send_messages
+                and not channel.permissions_for(interaction.guild.default_role).send_messages
+            ):
                 continue
 
             try:
-                async for message in channel.history(limit=int(antall/2)):  # Limit search in each channel to half of requested
+                async for message in channel.history(
+                    limit=int(antall / 2)
+                ):  # Limit search in each channel to half of requested
                     if message.author != interaction.user:
                         continue
 
@@ -440,35 +446,33 @@ class WordCloud(commands.Cog):
 
                     # Filter URLs
                     filtered_msg = re.sub(
-                        r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)',  # noqa: E501
-                        '',
-                        message.clean_content
+                        r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)",  # noqa: E501
+                        "",
+                        message.clean_content,
                     )
 
-                    all_messages += f'{filtered_msg} '
+                    all_messages += f"{filtered_msg} "
             except discord.errors.Forbidden:
                 continue
 
         if not all_messages:
             return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, text='Fant ingen data om deg'),
-                ephemeral=False
+                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
             )
 
         # Generate word cloud
         generation_task = functools.partial(
-            WordCloud.generate_wordcloud,
-            all_messages,
-            max_words=1000,
-            allow_bigrams=True
+            WordCloud.generate_wordcloud, all_messages, max_words=1000, allow_bigrams=True
         )
         word_cloud = await self.bot.loop.run_in_executor(None, generation_task)
 
-        word_cloud_file = discord.File(word_cloud, filename=f'wordcloud_{interaction.user.id}.png')
-        embed = discord.Embed(title='☁️ Her er ordskyen din! ☁️')
-        embed.description = f'Basert på de {int(antall/2)} siste meldingene i alle kanaler og ' + \
-                            f'topp {antall} mest frekvente ord i dine meldinger'
-        embed.set_image(url=f'attachment://wordcloud_{interaction.user.id}.png')
+        word_cloud_file = discord.File(word_cloud, filename=f"wordcloud_{interaction.user.id}.png")
+        embed = discord.Embed(title="☁️ Her er ordskyen din! ☁️")
+        embed.description = (
+            f"Basert på de {int(antall/2)} siste meldingene i alle kanaler og "
+            + f"topp {antall} mest frekvente ord i dine meldinger"
+        )
+        embed.set_image(url=f"attachment://wordcloud_{interaction.user.id}.png")
         await interaction.followup.send(embed=embed, file=word_cloud_file)
 
 
@@ -481,5 +485,5 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(WordCloud(bot).word_freq_listener, 'on_message')
+    bot.add_listener(WordCloud(bot).word_freq_listener, "on_message")
     await bot.add_cog(WordCloud(bot))

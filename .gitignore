@@ -1,4 +1,3 @@
-*.yaml
 *.pyc
 *.log
 __pycache__/

@@ -16,7 +16,7 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
     (discord.Color): The user's displayed color
     """
 
-    if hasattr(discord_object, 'color') and str(discord_object.color) != '#000000':
+    if hasattr(discord_object, "color") and str(discord_object.color) != "#000000":
         return discord_object.color
 
     return discord.Colour(0x99AAB5)
@@ -25,7 +25,14 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
 class ScrollerButton(discord.ui.Button):
     """Button that scrolls through pages in a scroller view"""
 
-    def __init__(self, paginator: Paginator, button_action: callable, content_constructor: callable, label: str, disabled: bool = False):
+    def __init__(
+        self,
+        paginator: Paginator,
+        button_action: callable,
+        content_constructor: callable,
+        label: str,
+        disabled: bool = False,
+    ):
         """
         Parameters
         -----------
@@ -67,7 +74,39 @@ class Scroller(discord.ui.View):
         super().__init__()
         self.paginator = paginatior
 
-        self.add_item(ScrollerButton(self.paginator, self.paginator.first_page, content_constructor, label='<<', disabled=self.paginator.current_page == 1))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.previous_page, content_constructor, label='<', disabled=self.paginator.current_page == 1))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.next_page, content_constructor, label='>', disabled=self.paginator.current_page == self.paginator.total_page_count))
-        self.add_item(ScrollerButton(self.paginator, self.paginator.last_page, content_constructor, label='>>', disabled=self.paginator.current_page == self.paginator.total_page_count))
+        self.add_item(
+            ScrollerButton(
+                self.paginator,
+                self.paginator.first_page,
+                content_constructor,
+                label="<<",
+                disabled=self.paginator.current_page == 1,
+            )
+        )
+        self.add_item(
+            ScrollerButton(
+                self.paginator,
+                self.paginator.previous_page,
+                content_constructor,
+                label="<",
+                disabled=self.paginator.current_page == 1,
+            )
+        )
+        self.add_item(
+            ScrollerButton(
+                self.paginator,
+                self.paginator.next_page,
+                content_constructor,
+                label=">",
+                disabled=self.paginator.current_page == self.paginator.total_page_count,
+            )
+        )
+        self.add_item(
+            ScrollerButton(
+                self.paginator,
+                self.paginator.last_page,
+                content_constructor,
+                label=">>",
+                disabled=self.paginator.current_page == self.paginator.total_page_count,
+            )
+        )

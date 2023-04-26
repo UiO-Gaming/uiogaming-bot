@@ -2,7 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from cogs.utils import discord_utils, embed_templates
+from cogs.utils import discord_utils
+from cogs.utils import embed_templates
 
 
 class Gullkorn(commands.Cog):
@@ -61,10 +62,10 @@ class Gullkorn(commands.Cog):
         str: The input data formatted into a prettified string
         """
 
-        formatted_string = ''
+        formatted_string = ""
         for i, row in enumerate(data):
             user = self.bot.get_user(row[0])
-            formatted_string += f'**#{i+1}** {user.name}#{user.discriminator} - *{row[1]}*\n'
+            formatted_string += f"**#{i+1}** {user.name}#{user.discriminator} - *{row[1]}*\n"
 
         return formatted_string
 
@@ -87,7 +88,8 @@ class Gullkorn(commands.Cog):
                 VALUES (%s, 1, 0)
                 ON CONFLICT (discord_id)
                 DO UPDATE SET times_cited = gullkorn.times_cited + 1;
-                """, (user.id,)
+                """,
+                (user.id,),
             )
 
         self.cursor.execute(
@@ -96,14 +98,17 @@ class Gullkorn(commands.Cog):
             VALUES (%s, 0, 1)
             ON CONFLICT (discord_id)
             DO UPDATE SET citations_posted = gullkorn.citations_posted + 1;
-            """, (message.author.id,)
+            """,
+            (message.author.id,),
         )
 
-    gullkorn_group = app_commands.Group(name='gullkorn', description='Se statistikk for gullkorn')
+    gullkorn_group = app_commands.Group(name="gullkorn", description="Se statistikk for gullkorn")
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @gullkorn_group.command(name='statistikk', description='Se informasjon om gullkorn for en bruker eller hele serveren')
+    @gullkorn_group.command(
+        name="statistikk", description="Se informasjon om gullkorn for en bruker eller hele serveren"
+    )
     async def gullkorn_stats(self, interaction: discord.Interaction, bruker: discord.Member | None = None):
         """
         Fetches gullkorn stats for a user or the whole server
@@ -118,26 +123,27 @@ class Gullkorn(commands.Cog):
             result = self.cursor.execute(
                 """
                 SELECT *
-                FROM gullkorn 
+                FROM gullkorn
                 WHERE discord_id = %s;
-                """, (bruker.id,)        
+                """,
+                (bruker.id,),
             )
 
             result = self.cursor.fetchone()
 
             if not result:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_fatal(interaction, text='Ingen data om denne brukeren funnet'),
-                    ephemeral=False
+                    embed=embed_templates.error_fatal(interaction, text="Ingen data om denne brukeren funnet"),
+                    ephemeral=False,
                 )
 
             embed = discord.Embed(
-                title=f'Gullkornstatistikk for {bruker.name}#{bruker.discriminator}',
-                color=discord_utils.get_color(bruker)
+                title=f"Gullkornstatistikk for {bruker.name}#{bruker.discriminator}",
+                color=discord_utils.get_color(bruker),
             )
             embed.set_thumbnail(url=bruker.avatar)
-            embed.add_field(name='Antall gullkorn', value=result[1])
-            embed.add_field(name='Antall gullkorn postet', value=result[2])
+            embed.add_field(name="Antall gullkorn", value=result[1])
+            embed.add_field(name="Antall gullkorn postet", value=result[2])
             return await interaction.response.send_message(embed=embed, ephemeral=False)
 
         summary = self.cursor.execute(
@@ -168,12 +174,12 @@ class Gullkorn(commands.Cog):
 
         most_cited_string = self.__construct_data_string(most_cited)
         citations_posted_string = self.__construct_data_string(citations_posted)
-        
-        embed = discord.Embed(title='Gullkornstatistikk for serveren')
-        embed.description = f'Antall gullkorn siden [denne meldingen](https://canary.discord.com/channels/747542543750660178/865970753748074576/1034587913285025912): *{summary[0]}*'
-        embed.add_field(name='Mest sitert', value=most_cited_string, inline=False)
-        embed.add_field(name='Postet mest', value=citations_posted_string, inline=False)
-        await interaction.response.send_message(embed=embed, ephemeral=False)     
+
+        embed = discord.Embed(title="Gullkornstatistikk for serveren")
+        embed.description = f"Antall gullkorn siden [denne meldingen](https://canary.discord.com/channels/747542543750660178/865970753748074576/1034587913285025912): *{summary[0]}*"
+        embed.add_field(name="Mest sitert", value=most_cited_string, inline=False)
+        embed.add_field(name="Postet mest", value=citations_posted_string, inline=False)
+        await interaction.response.send_message(embed=embed, ephemeral=False)
 
 
 async def setup(bot: commands.Bot):
@@ -185,5 +191,5 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(Gullkorn(bot).gullkorn_listener, 'on_message')
+    bot.add_listener(Gullkorn(bot).gullkorn_listener, "on_message")
     await bot.add_cog(Gullkorn(bot))

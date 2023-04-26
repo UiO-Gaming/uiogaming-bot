@@ -16,8 +16,7 @@ def default_footer(interaction: discord.Interaction, embed: discord.Embed) -> di
     """
 
     return embed.set_footer(
-        icon_url=interaction.user.avatar,
-        text=f'{interaction.user.name}#{interaction.user.discriminator}'
+        icon_url=interaction.user.avatar, text=f"{interaction.user.name}#{interaction.user.discriminator}"
     )
 
 
@@ -35,7 +34,7 @@ def error_warning(interaction: discord.Interaction, text: str) -> discord.Embed:
     (discord.Embed): An embed object based on the template with the specified text
     """
 
-    embed = discord.Embed(color=discord.Color.gold(), description=f'⚠️ {text}')
+    embed = discord.Embed(color=discord.Color.gold(), description=f"⚠️ {text}")
     default_footer(interaction, embed)
 
     return embed
@@ -55,7 +54,7 @@ def error_fatal(interaction: discord.Interaction, text: str) -> discord.Embed:
     (discord.Embed): An embed object based on the template with the specified text
     """
 
-    embed = discord.Embed(color=discord.Color.red(), description=f'❌ {text}')
+    embed = discord.Embed(color=discord.Color.red(), description=f"❌ {text}")
     default_footer(interaction, embed)
 
     return embed
@@ -75,7 +74,7 @@ def success(interaction: discord.Interaction, text: str) -> discord.Embed:
     discord.Embed: An embed object based on the template with the specified text
     """
 
-    embed = discord.Embed(color=discord.Color.green(), description=f'✅ {text}')
+    embed = discord.Embed(color=discord.Color.green(), description=f"✅ {text}")
     default_footer(interaction, embed)
 
     return embed

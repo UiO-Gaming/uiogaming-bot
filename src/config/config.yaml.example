@@ -2,9 +2,9 @@ config_mode: dev
 
 # Bot settings
 bot:
-  token: 
+  token:
   prefix: 'u!'
-  presence: 
+  presence:
     message: Diskusjoner om borgerlønn
     activity: listening
     type: dnd
@@ -22,7 +22,7 @@ minecraft:
 
 # Api keys
 api:
-  clarifai: 
+  clarifai:
 
 # Emoji
 emoji:
