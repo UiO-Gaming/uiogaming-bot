@@ -74,12 +74,14 @@ class The(commands.Cog):
         (discord.File): an image 
         """
 
+        await interaction.response.defer()
+
         try:
             image_data = await self.fetch_image(image_url)
             bg_data = await self.fetch_image(self.background_url)
 
             if not image_data or not bg_data:
-                await interaction.response.send_message("Invalid image URLs provided.")
+                await interaction.followup.send("Invalid image URLs provided.")
                 return
 
             image = Image.open(image_data)
@@ -111,11 +113,11 @@ class The(commands.Cog):
             with io.BytesIO() as output:
                 background.save(output, format="PNG")
                 output.seek(0)
-                await interaction.response.send_message(file=discord.File(output, "result.png"))
+                await interaction.followup.send(file=discord.File(output, "result.png"))
 
         except Exception as e:
             print(e)
-            await interaction.response.send_message("An error occurred while processing the images.")
+            await interaction.followup.send("An error occurred while processing the images.")
 
 
 async def setup(bot):
