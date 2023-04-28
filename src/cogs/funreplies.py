@@ -27,7 +27,6 @@ class FunReplies(commands.Cog):
             'borgerlønn': initial_datetime,
             'olof palme': initial_datetime,
             'lesgo': initial_datetime,
-            'neuf': initial_datetime,
             'yeet': initial_datetime
         }
 
@@ -60,15 +59,6 @@ class FunReplies(commands.Cog):
                 await message.reply('https://cdn.discordapp.com/attachments/750052141346979850/' +
                                            '824764933513281596/3xhpwbakz2361.png')
                 self.previous_invokations['lesgo'] = datetime.now()
-
-        elif re.search(r'^((er det|hvor)\s+)*(noen|folk|mange)\s+på\s+(rommet|neuf|kontoret)\?*$', message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations['neuf']).seconds > self.cooldown_seconds:
-                # Choose a random user to ping
-                pingable = ["<@554977854971183125>", "<@276061121776058370>"]
-                to_be_pinged = random.choice(pingable)
-                await message.reply(f'Ja, {to_be_pinged} bor der')
-
-                self.previous_invokations['neuf'] = datetime.now()
 
         elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations['yeet']).seconds > self.cooldown_seconds:
