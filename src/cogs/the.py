@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -10,13 +11,24 @@ class The(commands.Cog):
     This cog lets you make a "the" barnacle boy laser eyes meme 
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.background_url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png'  # Set your background image URL here
         self.x = 30  # Set your desired X coordinate
         self.y = 340  # Set your desired Y coordinate
 
-    async def fetch_image(self, url):
+    async def fetch_image(self, url: str) -> io.BytesIO:
+        """
+        Add the cog to the bot on extension load
+
+        Parameters
+        ----------
+        url (str): url
+
+        Returns
+        ----------
+        (io.BytesIO): data buffer
+        """
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
@@ -24,7 +36,20 @@ class The(commands.Cog):
                 data = io.BytesIO(await resp.read())
                 return data
 
-    def outline_text(self, draw, text, font, x, y, thickness):
+    def outline_text(
+        self,
+        draw: ImageDraw,
+        text: str,
+        font: ImageFont.FreeTypeFont,
+        x: int,
+        y: int,
+        thickness: int,
+    ) -> None:
+        """
+        Outlines given text
+
+
+        """
         for dx in range(-thickness, thickness + 1):
             for dy in range(-thickness, thickness + 1):
                 if dx != 0 or dy != 0:
@@ -68,9 +93,8 @@ class The(commands.Cog):
                 draw = ImageDraw.Draw(background)
                 font = ImageFont.truetype("./src/assets/fonts/impact.ttf", 120)
                 text = caption.upper()
-                text_width, text_height = draw.textsize(text, font=font)
+                draw.textsize(text, font=font)
                 text_x, text_y = (210, -10)
-                # text_x, text_y = self.x + (image.width - text_width) // 2, self.y + image.height
                 self.outline_text(draw, text, font, text_x, text_y, thickness=5)
                 draw.text((text_x, text_y), text, font=font, fill="white")
 
@@ -78,9 +102,8 @@ class The(commands.Cog):
                 draw = ImageDraw.Draw(background)
                 font = ImageFont.truetype("./src/assets/fonts/impact.ttf", 120)
                 text = bottom_text.upper()
-                text_width, text_height = draw.textsize(text, font=font)
+                draw.textsize(text, font=font)
                 text_x, text_y = (150, 550)
-                # text_x, text_y = self.x + (image.width - text_width) // 2, self.y + image.height
                 self.outline_text(draw, text, font, text_x, text_y, thickness=5)
                 draw.text((text_x, text_y), text, font=font, fill="white")
 
@@ -93,5 +116,14 @@ class The(commands.Cog):
             print(e)
             await interaction.response.send_message("An error occurred while processing the images.")
 
+
 async def setup(bot):
+    """
+    Add the cog to the bot on extension load
+
+    Parameters
+    ----------
+    bot (commands.Bot): Bot instance
+    """
+    
     await bot.add_cog(The(bot))
