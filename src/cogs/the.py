@@ -6,6 +6,10 @@ import aiohttp
 import io
 
 class The(commands.Cog):
+    """
+    This cog lets you make a "the" barnacle boy laser eyes meme 
+    """
+
     def __init__(self, bot):
         self.bot = bot
         self.background_url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png'  # Set your background image URL here
@@ -28,8 +32,22 @@ class The(commands.Cog):
         draw.text((x, y), text, font=font, fill="white")
 
 
-    @app_commands.command(name="the", )
-    async def add_image(self, interaction: discord.Interaction, caption: str, image_url: str, bottom_text: str = ""):
+    @app_commands.command()
+    async def the(self, interaction: discord.Interaction, caption: str, image_url: str, bottom_text: str = ""):
+        """
+        Responds with a barnacle boy laser eyes THE meme with the given captions
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        caption (str): top text
+        image_url (str): image url
+        bottom_text (str): bottom text
+        
+        Returns
+        ----------
+        (discord.File): an image 
+        """
         try:
             image_data = await self.fetch_image(image_url)
             bg_data = await self.fetch_image(self.background_url)
