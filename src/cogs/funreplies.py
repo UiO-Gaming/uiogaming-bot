@@ -65,9 +65,6 @@ class FunReplies(commands.Cog):
                 await message.reply('<:Nei:826593267642662912>')
                 self.previous_invokations['yeet'] = datetime.now()
 
-        elif re.search(r'https?://(www\.)?instagram\.com/reel/.*', message_content, flags=re.IGNORECASE) and message.author.id == 205741213050077185:
-            await message.reply('||Bruk yt-dlp REEEE||\nhttps://media.tenor.com/Fm0bJgHucO8AAAAd/epic-embed-fail.gif')
-
 
 async def setup(bot: commands.Bot):
     """
