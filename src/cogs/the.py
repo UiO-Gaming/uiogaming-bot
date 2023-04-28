@@ -29,6 +29,7 @@ class The(commands.Cog):
         ----------
         (io.BytesIO): data buffer
         """
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
@@ -47,9 +48,8 @@ class The(commands.Cog):
     ) -> None:
         """
         Outlines given text
-
-
         """
+
         for dx in range(-thickness, thickness + 1):
             for dy in range(-thickness, thickness + 1):
                 if dx != 0 or dy != 0:
@@ -73,6 +73,7 @@ class The(commands.Cog):
         ----------
         (discord.File): an image 
         """
+
         try:
             image_data = await self.fetch_image(image_url)
             bg_data = await self.fetch_image(self.background_url)
