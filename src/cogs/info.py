@@ -66,7 +66,7 @@ class Info(commands.Cog):
         # Use map instead of list comprehension because I can divide the code into 2 lines
         boosters = list(
             map(
-                lambda booster: f"{booster.name}#{booster.discriminator} - {discord.utils.format_dt(booster.premium_since)}",
+                lambda b: f"{b.name}#{b.discriminator} - {discord.utils.format_dt(b.premium_since)}",
                 sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since),
             )
         )
@@ -158,7 +158,7 @@ class Info(commands.Cog):
         roles = (
             roles
             if len(roles) < 1024
-            else f'Bruk `/{self.bot.tree.get_command("guild").get_command("roller").qualified_name}` for å se rollene'
+            else f"Bruk `/{self.bot.tree.get_command('guild').get_command('roller').qualified_name}` for å se rollene"
         )
 
         # Boosts
@@ -166,7 +166,7 @@ class Info(commands.Cog):
         boosters = (
             boosters
             if len(boosters) < 1024
-            else f'Bruk `/{self.bot.tree.get_command("guild").get_command("boosters").qualified_name}` for å se boostere'
+            else f"Bruk `/{self.bot.tree.get_command('guild').get_command('boosters').qualified_name}` for å se boostere"  # noqa: E501
         )
 
         # Channels counts
@@ -564,7 +564,7 @@ class Info(commands.Cog):
         # Create list of members with index, name#discriminator and creation date
         members_formatted = list(
             map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].created_at, style="F")}',
+                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].created_at, style="F")}',  # noqa: E501
                 enumerate(members),
             )
         )
@@ -600,7 +600,7 @@ class Info(commands.Cog):
         # Create list of members with index, name#discriminator and creation date
         members_formatted = list(
             map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].joined_at, style="F")}',
+                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].joined_at, style="F")}',  # noqa: E501
                 enumerate(members),
             )
         )

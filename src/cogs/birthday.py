@@ -115,7 +115,7 @@ class Birthday(commands.Cog):
 
         self.cursor.execute(
             """
-            SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_fbirthday
+            SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_bday
             FROM birthdays
             WHERE discord_id = %s
             """,
@@ -135,15 +135,15 @@ class Birthday(commands.Cog):
 
         Returns
         ----------
-        (list[tuple[int, datetime, datetime]]): A list of tuples containing the user ID, the date of birth and the next birthday
+        (list[tuple[int, datetime, datetime]]): List of tuples containing the user ID, date of birth and next birthday
         """
 
         self.cursor.execute(
             """
-                SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_birthday
-                FROM birthdays
-                ORDER BY next_birthday ASC
-                LIMIT 5
+            SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_bday
+            FROM birthdays
+            ORDER BY next_birthday ASC
+            LIMIT 5
             """
         )
         results = self.cursor.fetchall()

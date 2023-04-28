@@ -9,6 +9,7 @@ from io import StringIO
 import discord
 import nltk
 import numpy as np
+import psycopg2
 from discord import app_commands
 from discord.ext import commands
 from discord.ext import tasks
@@ -115,9 +116,9 @@ class WordCloud(commands.Cog):
                 """,
                 word_freqs,
             )
-        except:
+        except psycopg2.Error as err:
             self.bot.db_connection.rollback()
-            self.bot.logger.exception("Failed to insert wordcloud cache into database")
+            self.bot.logger.error(f"Failed to insert wordcloud cache into database - {err}")
 
         self.word_freq_cache.clear()
 
@@ -231,14 +232,14 @@ class WordCloud(commands.Cog):
         try:
             self.cursor.execute(
                 """
-                INSERT INTO wordcloud_metadata (discord_user_id, tracked_since_message_channel_id, tracked_since_message_id)
+                INSERT INTO wordcloud_metadata
                 VALUES (%s, %s, %s)
                 """,
                 (interaction.user.id, interaction.channel_id, interaction.id),
             )
-        except:
+        except psycopg2.Error as err:
             self.bot.db_connection.rollback()
-            self.bot.logger.exception("Failed to insert wordcloud metadata into database")
+            self.bot.logger.error(f"Failed to insert wordcloud metadata into database - {err}")
             return await interaction.response.send_message(
                 embed=embed_templates.error_warning(interaction, text="Klarte ikke å skrive til database"),
                 ephemeral=False,
@@ -277,9 +278,9 @@ class WordCloud(commands.Cog):
                 """,
                 (interaction.user.id, interaction.user.id),
             )
-        except:
+        except psycopg2.Error as err:
             self.bot.db_connection.rollback()
-            self.bot.logger.exception("Failed to delete wordcloud metadata from database")
+            self.bot.logger.error(f"Failed to delete wordcloud metadata from database - {err}")
             return await interaction.response.send_message(
                 embed=embed_templates.error_warning(interaction, text="Klarte ikke å slette fra database"),
                 ephemeral=False,
