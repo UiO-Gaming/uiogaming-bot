@@ -1,25 +1,27 @@
+import traceback
 from typing import Any
 import discord
 from discord import app_commands
 from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageSequence
 import aiohttp
 import io
 
+
 class The(commands.Cog):
     """
-    This cog lets you make a "the" barnacle boy laser eyes meme 
+    This cog lets you make a "the" barnacle boy laser eyes meme
     """
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.background_url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png'  # Set your background image URL here
-        self.x = 30  # Set your desired X coordinate
-        self.y = 340  # Set your desired Y coordinate
+        self.background_url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png'
+        self.x = 30
+        self.y = 340
 
     async def fetch_image(self, url: str) -> io.BytesIO:
         """
-        Add the cog to the bot on extension load
+        Fetch the image from the URL
 
         Parameters
         ----------
@@ -29,6 +31,8 @@ class The(commands.Cog):
         ----------
         (io.BytesIO): data buffer
         """
+        if not url:
+            return None
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
@@ -56,9 +60,8 @@ class The(commands.Cog):
                     draw.text((x + dx, y + dy), text, font=font, fill="black")
         draw.text((x, y), text, font=font, fill="white")
 
-
     @app_commands.command()
-    async def the(self, interaction: discord.Interaction, caption: str, image_url: str, bottom_text: str = ""):
+    async def the(self, interaction: discord.Interaction, top_text: str = "", image_url: str = "", bottom_text: str = ""):
         """
         Responds with a barnacle boy laser eyes THE meme with the given captions
 
@@ -68,55 +71,71 @@ class The(commands.Cog):
         caption (str): top text
         image_url (str): image url
         bottom_text (str): bottom text
-        
+
         Returns
         ----------
-        (discord.File): an image 
+        (discord.File): an image
         """
-
         await interaction.response.defer()
-
+        gif = False
         try:
-            image_data = await self.fetch_image(image_url)
             bg_data = await self.fetch_image(self.background_url)
-
-            if not image_data or not bg_data:
-                await interaction.followup.send("Invalid image URLs provided.")
-                return
-
-            image = Image.open(image_data)
             background = Image.open(bg_data)
 
-            fixed_size = (200, 200)  # Set your desired maximum width and height
-            image.thumbnail(fixed_size, Image.ANTIALIAS)
+            image_data = await self.fetch_image(image_url)
 
-            background.paste(image, (self.x, self.y))
+            if image_data:
+                image = Image.open(image_data)
 
-            if caption:
-                draw = ImageDraw.Draw(background)
-                font = ImageFont.truetype("./src/assets/fonts/impact.ttf", 120)
-                text = caption.upper()
-                draw.textsize(text, font=font)
+                if image.format.lower() == "gif":
+                    gif = True
+                    frames = []
+                    for frame in ImageSequence.Iterator(image):
+                        frame = frame.convert("RGBA").resize((200, 200), Image.ANTIALIAS)
+                        new_frame = background.copy().convert("RGBA")
+                        new_frame.alpha_composite(frame, (self.x, self.y))
+                        frames.append(new_frame)
+
+                    draw = ImageDraw.Draw(frames[0], "RGBA")
+                else:
+                    image = image.convert("RGBA").resize((200, 200), Image.ANTIALIAS)
+                    background = background.convert("RGBA")
+                    background.alpha_composite(image, (self.x, self.y))
+
+                    draw = ImageDraw.Draw(background, "RGBA")
+
+            font = ImageFont.truetype("./src/assets/fonts/impact.ttf", 120)
+
+            if top_text:
                 text_x, text_y = (210, -10)
-                self.outline_text(draw, text, font, text_x, text_y, thickness=5)
-                draw.text((text_x, text_y), text, font=font, fill="white")
+                self.outline_text(draw, top_text.upper(), font, text_x, text_y, thickness=5)
 
             if bottom_text:
-                draw = ImageDraw.Draw(background)
-                font = ImageFont.truetype("./src/assets/fonts/impact.ttf", 120)
-                text = bottom_text.upper()
-                draw.textsize(text, font=font)
                 text_x, text_y = (150, 550)
-                self.outline_text(draw, text, font, text_x, text_y, thickness=5)
-                draw.text((text_x, text_y), text, font=font, fill="white")
+                self.outline_text(draw, bottom_text.upper(), font, text_x, text_y, thickness=5)
 
-            with io.BytesIO() as output:
-                background.save(output, format="PNG")
-                output.seek(0)
-                await interaction.followup.send(file=discord.File(output, "result.png"))
+            if gif:
+                with io.BytesIO() as output:
+                    frames[0].save(
+                        output,
+                        format="GIF",
+                        save_all=True,
+                        append_images=frames[1:],
+                        duration=image.info["duration"],
+                        loop=0,
+                        transparency=image.info.get("transparency", 0),
+                        disposal=2,  # Use 'restore to background color' disposal method
+                    )
+                    output.seek(0)
+                    await interaction.followup.send(file=discord.File(output, "result.gif"))
+            else:
+                with io.BytesIO() as output:
+                    background.save(output, format="PNG")
+                    output.seek(0)
+                    await interaction.followup.send(file=discord.File(output, "result.png"))
 
         except Exception as e:
-            print(e)
+            traceback.print_exc()
             await interaction.followup.send("An error occurred while processing the images.")
 
 
@@ -128,5 +147,6 @@ async def setup(bot):
     ----------
     bot (commands.Bot): Bot instance
     """
-    
+
     await bot.add_cog(The(bot))
+
