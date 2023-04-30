@@ -1,5 +1,5 @@
 [tool.black]
-line-length = 180  # avoid fucking up the code  
+line-length = 120
 
 [tool.isort]
 atomic = true
