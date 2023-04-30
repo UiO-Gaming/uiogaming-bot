@@ -40,8 +40,7 @@ class Birthday(commands.Cog):
         )
 
     birthday_group = app_commands.Group(
-        name="bursdag",
-        description="Se, endre eller fjern bursdager for brukere på serveren"
+        name="bursdag", description="Se, endre eller fjern bursdager for brukere på serveren"
     )
 
     @tasks.loop(hours=24)
