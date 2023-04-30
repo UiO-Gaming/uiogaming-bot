@@ -9,7 +9,6 @@ from discord.ext import commands
 
 from logger import BotLogger
 
-
 UIO_GAMING_GUILD_ID = 747542543750660178
 DATABASE_RELIANT_COGS = {
     "birthday.py",
@@ -39,23 +38,21 @@ class Bot(commands.Bot):
         self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
 
         # Connect to database
-        db = config.get('database')
+        db = config.get("database")
 
         if db is not None:
             self.db_connection = psycopg2.connect(
-                host=db['host'],
-                dbname=db['dbname'],
-                user=db['username'],
-                password=db['password'],
+                host=db["host"],
+                dbname=db["dbname"],
+                user=db["username"],
+                password=db["password"],
             )
             self.db_connection.autocommit = True
         else:
             self.db_connection = None
             self.logger.warning(
-                "No database credentials specified. "
-                "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
+                "No database credentials specified. " "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
             )
-        
 
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
@@ -66,14 +63,14 @@ class Bot(commands.Bot):
         self.config_mode = config.get("config_mode")
 
     async def setup_hook(self):
-        cog_files = listdir('./src/cogs')
+        cog_files = listdir("./src/cogs")
 
         if self.db_connection is None:
             cog_files = set(cog_files) - DATABASE_RELIANT_COGS
-        
+
         # Load cogs
         for file in cog_files:
-            if file.endswith('.py'):
+            if file.endswith(".py"):
                 name = file[:-3]
                 await bot.load_extension(f"cogs.{name}")
 

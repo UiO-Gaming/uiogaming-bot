@@ -1,4 +1,3 @@
-import random
 import re
 from datetime import datetime
 
@@ -26,10 +25,10 @@ class FunReplies(commands.Cog):
             2000, 9, 11
         )  # Set initial datetime far in the past to allow triggering right after boot
         self.previous_invokations = {
-            'borgerlønn': initial_datetime,
-            'olof palme': initial_datetime,
-            'lesgo': initial_datetime,
-            'yeet': initial_datetime
+            "borgerlønn": initial_datetime,
+            "olof palme": initial_datetime,
+            "lesgo": initial_datetime,
+            "yeet": initial_datetime,
         }
 
     async def reply_to_triggers(self, message: discord.Message):
@@ -46,26 +45,28 @@ class FunReplies(commands.Cog):
 
         message_content = message.content.lower()
 
-        if re.search(r'(^|\W)borgerlønn(\W|$)', message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations['borgerlønn']).seconds > self.cooldown_seconds:
-                await message.reply('<@267415183931080715> DE SNAKKER OM BORGERLØNN')
-                self.previous_invokations['borgerlønn'] = datetime.now()
+        if re.search(r"(^|\W)borgerlønn(\W|$)", message_content, flags=re.IGNORECASE):
+            if (datetime.now() - self.previous_invokations["borgerlønn"]).seconds > self.cooldown_seconds:
+                await message.reply("<@267415183931080715> DE SNAKKER OM BORGERLØNN")
+                self.previous_invokations["borgerlønn"] = datetime.now()
 
-        elif re.search(r'(^|\W)olof palme(\W|$)', message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations['olof palme']).seconds > self.cooldown_seconds:
-                await message.reply('Jeg vet hvem som drepte Olof Palme 👀')
-                self.previous_invokations['olof palme'] = datetime.now()
+        elif re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
+            if (datetime.now() - self.previous_invokations["olof palme"]).seconds > self.cooldown_seconds:
+                await message.reply("Jeg vet hvem som drepte Olof Palme 👀")
+                self.previous_invokations["olof palme"] = datetime.now()
 
-        elif re.search(r'(\W|\s)*le+s+go+(\s|\W)*', message_content):
-            if (datetime.now() - self.previous_invokations['lesgo']).seconds > self.cooldown_seconds:
-                await message.reply('https://cdn.discordapp.com/attachments/750052141346979850/' +
-                                           '824764933513281596/3xhpwbakz2361.png')
-                self.previous_invokations['lesgo'] = datetime.now()
+        elif re.search(r"(\W|\s)*le+s+go+(\s|\W)*", message_content):
+            if (datetime.now() - self.previous_invokations["lesgo"]).seconds > self.cooldown_seconds:
+                await message.reply(
+                    "https://cdn.discordapp.com/attachments/750052141346979850/"
+                    + "824764933513281596/3xhpwbakz2361.png"
+                )
+                self.previous_invokations["lesgo"] = datetime.now()
 
-        elif re.search(r'(^|\W)+ye+et($|\W)+', message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations['yeet']).seconds > self.cooldown_seconds:
-                await message.reply('<:Nei:826593267642662912>')
-                self.previous_invokations['yeet'] = datetime.now()
+        elif re.search(r"(^|\W)+ye+et($|\W)+", message_content, flags=re.IGNORECASE):
+            if (datetime.now() - self.previous_invokations["yeet"]).seconds > self.cooldown_seconds:
+                await message.reply("<:Nei:826593267642662912>")
+                self.previous_invokations["yeet"] = datetime.now()
 
 
 async def setup(bot: commands.Bot):

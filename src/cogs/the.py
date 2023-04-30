@@ -1,11 +1,14 @@
+import io
 import traceback
-from typing import Any
+
+import aiohttp
 import discord
 from discord import app_commands
 from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont, ImageSequence
-import aiohttp
-import io
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import ImageSequence
 
 
 class The(commands.Cog):
@@ -15,7 +18,7 @@ class The(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.background_url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png'
+        self.background_url = "https://i.kym-cdn.com/photos/images/newsfeed/001/777/063/d42.png"
         self.x = 30
         self.y = 340
 
@@ -61,7 +64,9 @@ class The(commands.Cog):
         draw.text((x, y), text, font=font, fill="white")
 
     @app_commands.command()
-    async def the(self, interaction: discord.Interaction, top_text: str = "", image_url: str = "", bottom_text: str = ""):
+    async def the(
+        self, interaction: discord.Interaction, top_text: str = "", image_url: str = "", bottom_text: str = ""
+    ):
         """
         Responds with a barnacle boy laser eyes THE meme with the given captions
 
@@ -135,6 +140,7 @@ class The(commands.Cog):
                     await interaction.followup.send(file=discord.File(output, "result.png"))
 
         except Exception as e:
+            self.bot.logger.warning(f"An error occurred while processing the images: {e}")
             traceback.print_exc()
             await interaction.followup.send("An error occurred while processing the images.")
 
@@ -149,4 +155,3 @@ async def setup(bot):
     """
 
     await bot.add_cog(The(bot))
-
