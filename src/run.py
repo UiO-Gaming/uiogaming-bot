@@ -9,6 +9,16 @@ from discord.ext import commands
 
 from logger import BotLogger
 
+
+UIO_GAMING_GUILD_ID = 747542543750660178
+DATABASE_RELIANT_COGS = {
+    "birthday.py",
+    "gullkorn.py",
+    "mc_whitelist.py",
+    "word_cloud.py",
+}
+
+
 # Load config file
 with codecs.open("./src/config/config.yaml", "r", encoding="utf8") as f:
     config = yaml.load(f, Loader=yaml.SafeLoader)
@@ -26,15 +36,26 @@ class Bot(commands.Bot):
 
         self.logger = BotLogger().logger  # Initialize logger
 
+        self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
+
         # Connect to database
-        db = config.get("database", {})
-        self.db_connection = psycopg2.connect(
-            host=db["host"],
-            dbname=db["dbname"],
-            user=db["username"],
-            password=db["password"],
-        )
-        self.db_connection.autocommit = True
+        db = config.get('database')
+
+        if db is not None:
+            self.db_connection = psycopg2.connect(
+                host=db['host'],
+                dbname=db['dbname'],
+                user=db['username'],
+                password=db['password'],
+            )
+            self.db_connection.autocommit = True
+        else:
+            self.db_connection = None
+            self.logger.warning(
+                "No database credentials specified. "
+                "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
+            )
+        
 
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
@@ -45,9 +66,14 @@ class Bot(commands.Bot):
         self.config_mode = config.get("config_mode")
 
     async def setup_hook(self):
+        cog_files = listdir('./src/cogs')
+
+        if self.db_connection is None:
+            cog_files = set(cog_files) - DATABASE_RELIANT_COGS
+        
         # Load cogs
-        for file in listdir("./src/cogs"):
-            if file.endswith(".py"):
+        for file in cog_files:
+            if file.endswith('.py'):
                 name = file[:-3]
                 await bot.load_extension(f"cogs.{name}")
 
@@ -55,8 +81,8 @@ class Bot(commands.Bot):
         if self.config_mode == "prod":
             await self.tree.sync()
         else:
-            self.tree.copy_global_to(guild=discord.Object(id=412646636771344395))
-            await self.tree.sync(guild=discord.Object(id=412646636771344395))
+            self.tree.copy_global_to(guild=discord.Object(id=self.guild_id))
+            await self.tree.sync(guild=discord.Object(id=self.guild_id))
 
 
 # Create bot instance
