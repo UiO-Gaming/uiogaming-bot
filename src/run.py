@@ -36,7 +36,7 @@ class Bot(commands.Bot):
 
         self.logger = BotLogger().logger  # Initialize logger
 
-        self.guild_id = config.get("guild", UIO_GAMING_GUILD_ID)
+        self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
 
         # Connect to database
         db = config.get('database')
