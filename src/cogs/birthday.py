@@ -39,6 +39,11 @@ class Birthday(commands.Cog):
             """
         )
 
+    birthday_group = app_commands.Group(
+        name="bursdag",
+        description="Se, endre eller fjern bursdager for brukere på serveren"
+    )
+
     @tasks.loop(hours=24)
     async def birthday_check(self):
         """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
@@ -182,7 +187,7 @@ class Birthday(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @app_commands.command(name="settbursdag", description="Lagrer din bursdag i databasen")
+    @birthday_group.command(name="sett", description="Lagrer din bursdag i databasen")
     async def birthday_set(self, interaction: discord.Interaction, dag: int, måned: int, år: int):
         """
         Allows the user to set their birthday in the database.
@@ -225,7 +230,7 @@ class Birthday(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @app_commands.command(name="fjernbursdag", description="Fjerner bursdagen din fra databasen")
+    @birthday_group.command(name="fjern", description="Fjerner bursdagen din fra databasen")
     async def birthday_remove(self, interaction: discord.Interaction):
         """
         Removes the invoking user's birthday from the database
@@ -242,7 +247,7 @@ class Birthday(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @app_commands.command(name="bursdag", description="Viser bursdagen til en bruker. Om ingen er gitt, vises din egen")
+    @birthday_group.command(name="se", description="Viser bursdagen til en bruker. Om ingen er gitt, vises din egen")
     async def birthday_show(
         self, interaction: discord.Interaction, bruker: discord.Member | discord.User | None = None
     ):
@@ -290,8 +295,8 @@ class Birthday(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @app_commands.command(
-        name="kommendebursdager", description="Viser en liste over de opptil 5 kommende bursdager i serveren"
+    @birthday_group.command(
+        name="kommende", description="Viser en liste over de opptil 5 kommende bursdager i serveren"
     )
     async def birthdays_upcoming(self, interaction: discord.Interaction):
         """
