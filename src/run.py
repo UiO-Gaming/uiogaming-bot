@@ -9,7 +9,8 @@ import yaml
 
 from logger import BotLogger
 
-UIO_GAMING_GUILD_ID = 412646636771344395
+
+UIO_GAMING_GUILD_ID = 747542543750660178
 DATABASE_RELIANT_COGS = {
     "birthday.py",
     "gullkorn.py",
