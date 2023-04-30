@@ -10,6 +10,8 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageSequence
 
+from cogs.utils import embed_templates
+
 
 class The(commands.Cog):
     """
@@ -68,7 +70,7 @@ class The(commands.Cog):
         self, interaction: discord.Interaction, top_text: str = "", image_url: str = "", bottom_text: str = ""
     ):
         """
-        Responds with a barnacle boy laser eyes THE meme with the given captions
+        Generer en barnacle boy laser eyes THE mem basert på gitt bilde/tekst
 
         Parameters
         ----------
@@ -142,7 +144,11 @@ class The(commands.Cog):
         except Exception as e:
             self.bot.logger.warning(f"An error occurred while processing the images: {e}")
             traceback.print_exc()
-            await interaction.followup.send("An error occurred while processing the images.")
+            await interaction.followup.send(
+                embed=embed_templates.error_fatal(
+                    interaction, "Klarte ikke å generere mem! Har du gitt en ordentlig bildelenke?"
+                )
+            )
 
 
 async def setup(bot):
