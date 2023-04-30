@@ -32,13 +32,15 @@ class Errors(commands.Cog):
         """
 
         self.bot.logger.info(
-            f'{"❌ " if ctx.command_failed else "✔ "} {ctx.command} | ' +
-            f'{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) | ' +
-            f'{ctx.guild.id}-{ctx.channel.id}-{ctx.message.id}'
+            f'{"❌ " if ctx.command_failed else "✔ "} {ctx.command} | '
+            + f"{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}) | "
+            + f"{ctx.guild.id}-{ctx.channel.id}-{ctx.message.id}"
         )
 
     @commands.Cog.listener()
-    async def on_app_command_completion(self, interaction: discord.Interaction, command: app_commands.Command | app_commands.ContextMenu):
+    async def on_app_command_completion(
+        self, interaction: discord.Interaction, command: app_commands.Command | app_commands.ContextMenu
+    ):
         """
         Logs slash command execution metadata
 
@@ -49,9 +51,9 @@ class Errors(commands.Cog):
         """
 
         self.bot.logger.info(
-            f'{"❌ " if interaction.command_failed else "✔ "} {command.name} | ' +
-            f'{interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}) | ' +
-            f'{interaction.guild_id}-{interaction.channel_id}-{interaction.id}'
+            f'{"❌ " if interaction.command_failed else "✔ "} {command.name} | '
+            + f"{interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}) | "
+            + f"{interaction.guild_id}-{interaction.channel_id}-{interaction.id}"
         )
 
     @commands.Cog.listener()
@@ -67,54 +69,47 @@ class Errors(commands.Cog):
 
         # Reset cooldown if command throws AttributeError
         with ignore_exception(AttributeError):
-            self.bot.get_command(f'{ctx.command}').reset_cooldown(ctx)
+            self.bot.get_command(f"{ctx.command}").reset_cooldown(ctx)
 
         # Ignore command's own error handling
-        if hasattr(ctx.command, 'on_error'):
+        if hasattr(ctx.command, "on_error"):
             return
 
         # Ignored errors
         ignored = commands.CommandNotFound
-        error = getattr(error, 'original', error)
+        error = getattr(error, "original", error)
         if isinstance(error, ignored):
             return
 
-        send_help = (
-            commands.MissingRequiredArgument,
-            commands.TooManyArguments,
-            commands.BadArgument
-        )
+        send_help = (commands.MissingRequiredArgument, commands.TooManyArguments, commands.BadArgument)
         if isinstance(error, send_help):
-            self.bot.get_command(f'{ctx.command}').reset_cooldown(ctx)
+            self.bot.get_command(f"{ctx.command}").reset_cooldown(ctx)
             return await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            permissions = ', '.join(error.missing_perms)
-            text = 'Jeg mangler følgende tillatelser:\n\n' + \
-                   f'```\n{permissions}\n```'
+            permissions = ", ".join(error.missing_perms)
+            text = "Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
             return await ctx.reply(text)
 
         elif isinstance(error, commands.MissingPermissions):
-            permissions = ', '.join(error.missing_perms)
-            text = 'Du mangler følgende tillatelser\n\n' + \
-                   f'```\n{permissions}\n```'
+            permissions = ", ".join(error.missing_perms)
+            text = "Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
             return await ctx.reply(text)
 
         elif isinstance(error, commands.NotOwner):
-            text = 'Bare boteieren kan gjøre dette'
+            text = "Bare boteieren kan gjøre dette"
             return await ctx.reply(text)
 
         elif isinstance(error, commands.CommandOnCooldown):
-            text = 'Kommandoen har nettopp blitt brukt\n' + \
-                   f'Prøv igjen om `{error.retry_after:.1f}` sekunder.'
+            text = "Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder."
             return await ctx.reply(text)
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                text = 'Denne kommandoen kan bare utføres i servere'
+                text = "Denne kommandoen kan bare utføres i servere"
                 return await ctx.reply(text)
             except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
-                print('DM Blocked!')
+                print("DM Blocked!")
 
         elif isinstance(error, commands.DisabledCommand):
             pass
@@ -122,11 +117,11 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.CheckFailure):
             return
 
-        embed = embed_templates.error_fatal(ctx, text='En ukjent feil oppstod!')
+        embed = embed_templates.error_fatal(ctx, text="En ukjent feil oppstod!")
         await ctx.reply(embed=embed)
 
         # Log full exception to file
-        self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
+        self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
 
     async def on_app_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         """
@@ -144,15 +139,17 @@ class Errors(commands.Cog):
         await self.on_app_command_completion(interaction, interaction.command)
 
         if isinstance(error, app_commands.BotMissingPermissions):
-            permissions = ', '.join(error.missing_perms)
-            embed = embed_templates.error_warning(interaction, text='Jeg mangler følgende tillatelser:\n\n' +
-                                                                    f'```\n{permissions}\n```')
+            permissions = ", ".join(error.missing_perms)
+            embed = embed_templates.error_warning(
+                interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
+            )
             return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.MissingPermissions):
-            permissions = ', '.join(error.missing_perms)
-            embed = embed_templates.error_warning(interaction, text='Du mangler følgende tillatelser\n\n' +
-                                                                    f'```\n{permissions}\n```')
+            permissions = ", ".join(error.missing_perms)
+            embed = embed_templates.error_warning(
+                interaction, text="Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
+            )
             return await interaction.response.send_message(embed=embed)
 
         # TODO: figure this shit out. app_commands does not support this check
@@ -161,15 +158,17 @@ class Errors(commands.Cog):
         #     return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.CommandOnCooldown):
-            embed = embed_templates.error_warning(interaction, text='Kommandoen har nettopp blitt brukt\n' +
-                                                                    f'Prøv igjen om `{error.retry_after:.1f}` sekunder.')
+            embed = embed_templates.error_warning(
+                interaction,
+                text="Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
+            )
             return await interaction.response.send_message(embed=embed)
 
-        embed = embed_templates.error_fatal(interaction, text='En ukjent feil oppstod!')
+        embed = embed_templates.error_fatal(interaction, text="En ukjent feil oppstod!")
         await interaction.response.send_message(embed=embed)
 
         # Log full exception to file
-        self.bot.logger.error(''.join(traceback.format_exception(type(error), error, error.__traceback__)))
+        self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
 
 
 async def setup(bot: commands.Bot):

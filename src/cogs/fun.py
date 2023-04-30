@@ -5,7 +5,7 @@ class Fun(commands.Cog):
     """Simple commands that return short strings for the memes"""
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command(name='norskeuniversiteter')
+    @commands.command(name="norskeuniversiteter")
     async def norskeuniversiteter(self, ctx: commands.Context):
         """
         Sends a link to university meme image album
@@ -15,10 +15,10 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('<https://imgur.com/a/uGopaSq>')
+        await ctx.reply("<https://imgur.com/a/uGopaSq>")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command(name='ifi')
+    @commands.command(name="ifi")
     async def ifi(self, ctx: commands.Context):
         """
         ifi meme 1
@@ -28,10 +28,10 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://i.imgur.com/ypyK1mi.jpg')
+        await ctx.reply("https://i.imgur.com/ypyK1mi.jpg")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
-    @commands.command(name='ifi2')
+    @commands.command(name="ifi2")
     async def ifi2(self, ctx: commands.Context):
         """
         ifi meme 2
@@ -41,7 +41,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://i.imgur.com/ZqgZEEA.jpg')
+        await ctx.reply("https://i.imgur.com/ZqgZEEA.jpg")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -54,7 +54,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://i.imgur.com/Gx9DQE5.jpg')
+        await ctx.reply("https://i.imgur.com/Gx9DQE5.jpg")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -67,7 +67,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://i.imgur.com/188MoIV.jpg')
+        await ctx.reply("https://i.imgur.com/188MoIV.jpg")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -80,7 +80,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://twitter.com/NTNU/status/970667413564993536')
+        await ctx.reply("https://twitter.com/NTNU/status/970667413564993536")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -93,7 +93,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://i.imgur.com/h84fknj.jpg')
+        await ctx.reply("https://i.imgur.com/h84fknj.jpg")
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
@@ -106,7 +106,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply('https://twitter.com/erna_solberg/status/1075333228779765760')
+        await ctx.reply("https://twitter.com/erna_solberg/status/1075333228779765760")
 
 
 async def setup(bot: commands.Bot):

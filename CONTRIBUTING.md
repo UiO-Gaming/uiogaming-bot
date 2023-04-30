@@ -4,20 +4,6 @@ Heisann sveisann! Er du interessert i å bidra? Kult!
 
 Det er derimot noen kodestilsregler jeg ønsker at skal følges. Dette dokumentet fungerer som en defacto regelbok for både meg og/eller andre.
 
-## Sjekk koden din
-
-Viktigst av alt er at koden din består flake8 sin PEP8-test. Dette kan du teste på egen maskin ved å installere flake8:
-
-```
-pip install flake8
-```
-
-for å så kjøre følgende kommando:
-
-```
-flake8 --max-line-length=120 --show-source
-```
-
 ## Regler
 
 ### Typing
@@ -42,20 +28,10 @@ def greet(self, navn: str) -> str:
     (str): A greeting
     """
 
-    return f'Hello, {name}'
+    return f"Hello, {name}"
 ```
 
 Sløyf alt som ikke brukes.
-
-### Sortering av imports
-
-Alle imports skal være gruppert på følgende måte:
-
-1. Standardbibliotek
-2. Tredjepartsbibliotek
-3. Lokal kode
-
-Innad i hver gruppe skal importeringer sortert alfabetisk med vekt på forelderpakken. Det vil si at hvis du importerer bare en del av en pakke skal den fortsatt være sortert i henhold til forelderpakkens navn.
 
 ### Rekkefølge på kommandosjekker (decorators)
 
@@ -71,10 +47,6 @@ Decorators skal sorteres som følgende:
 6. Kommando (denne må alltid være med)
 
 Merk deg at ikke alle disse trenger å være med, og ikke alle sjekker som finnes er nevnt her. Bruk hodet og tenk hva som er logisk for deg om du møter på en slik situasjon.
-
-### Quotation marks
-
-Ta i bruk enkle quotation marks `'` der det er mulig. Multiline comments skal skrives med dobble quotation marks `"`.
 
 ### Newline mellom docstring og kode samt mellom siste kodelinje returstatement
 
@@ -94,9 +66,8 @@ Et tips er å ha et engelsk funksjonsnavn, men spesifisere i decoratoren over me
 
 Hvis en ny avhengighet trengs, sørg for å spesifisere major og minor versjon i requirementsfila.
 
-
 ## Ønsket utforming av ny funksjonalitet
 
 - Bruk embeds til feilmeldinger og som respons om mulig.
 - Sett cooldown til 5 sekunder for kommandoer som krever eksterne API kall eller særlig mye prosessering.
-    - Ellers, settes denne til 2 sekunder.
+  - Ellers, settes denne til 2 sekunder.

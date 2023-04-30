@@ -29,6 +29,7 @@ class ThousanthMember(commands.Cog):
             channel = member.guild.get_channel(747542544291987597)
             await channel.send("Vi er nå 1000 brukere på serveren! <:LETSFUCKINGGOOOOOO:814477215868649492>")
 
+
 async def setup(bot: commands.Bot):
     """
     Add the cog to the bot on extension load
@@ -38,6 +39,5 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(ThousanthMember(bot).on_member_join, 'on_member_join')
+    bot.add_listener(ThousanthMember(bot).on_member_join, "on_member_join")
     await bot.add_cog(ThousanthMember(bot))
-

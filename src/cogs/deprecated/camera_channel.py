@@ -1,6 +1,6 @@
-from discord.ext import commands
-
 import asyncio
+
+from discord.ext import commands
 
 
 class CameraChannel(commands.Cog):
@@ -21,6 +21,6 @@ class CameraChannel(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    #bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
-    #await bot.add_cog(CameraChannel(bot))
+    # bot.add_listener(CameraChannel(bot).on_voice_state_update, 'on_voice_state_update')
+    # await bot.add_cog(CameraChannel(bot))
     pass
