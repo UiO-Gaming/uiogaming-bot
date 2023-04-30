@@ -65,7 +65,10 @@ class Gullkorn(commands.Cog):
         formatted_string = ""
         for i, row in enumerate(data):
             user = self.bot.get_user(row[0])
-            formatted_string += f"**#{i+1}** {user.name}#{user.discriminator} - *{row[1]}*\n"
+            if user:
+                formatted_string += f"**#{i+1}** {user.name}#{user.discriminator} - *{row[1]}*\n"
+            else:
+                formatted_string += f"**#{i+1}** `Ukjent bruker` - *{row[1]}*\n"
 
         return formatted_string
 
