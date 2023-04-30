@@ -9,7 +9,8 @@ import yaml
 
 from logger import BotLogger
 
-UIO_GAMING_GUILD_ID = 412646636771344395
+
+UIO_GAMING_GUILD_ID = 747542543750660178
 DATABASE_RELIANT_COGS = {
     "birthday.py",
     "gullkorn.py",
@@ -35,7 +36,7 @@ class Bot(commands.Bot):
 
         self.logger = BotLogger().logger  # Initialize logger
 
-        self.guild_id = config.get("guild", UIO_GAMING_GUILD_ID)
+        self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
 
         # Connect to database
         db = config.get('database')
