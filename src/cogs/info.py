@@ -505,9 +505,10 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        roles = sorted(interaction.guild.roles, key=lambda x: len(x.members), reverse=True)
+        roles = list(filter(lambda r: r.name != "@everyone", interaction.guild.roles))
+        roles = sorted(roles, key=lambda x: len(x.members), reverse=True)
         roles_formatted = list(
-            map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)} brukere", enumerate(roles))
+            map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles))
         )
 
         paginator = misc_utils.Paginator(roles_formatted)
