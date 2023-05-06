@@ -492,6 +492,29 @@ class Info(commands.Cog):
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.cooldown(1, 5)
+    @guild_group.command(name="topproller", description="Viser rollene med flest brukere i kronologisk rekkefølge")
+    async def guild_top_roles(self, interaction: discord.Interaction):
+        """
+        Show the roles with the most users in chronological order
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
+        roles = sorted(interaction.guild.roles, key=lambda x: len(x.members), reverse=True)
+        roles_formatted = list(map(lambda r: f"**#{m[0] + 1}** {r.mention} - {len(r.members)} brukere", roles))
+
+        paginator = misc_utils.Paginator(roles_formatted)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
+
+        embed = discord.Embed(color=interaction.guild.me.color, title="Rollene med flest brukere på serveren")
+        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
+        await interaction.response.send_message(embed=embed, view=view)
+
     # NOTE: This command is implemented using the old command framework
     # This is due to lack of emoji support in the new framework
     # TODO: take a look at this command when/if the new framework supports emojis
@@ -527,11 +550,11 @@ class Info(commands.Cog):
         name="eldst", description="Viser de eldste medlemmene på serveren", parent=guild_group
     )
 
-    def __construct_oldest_embed(
+    def __construct_ranking_embed(
         self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed
     ) -> discord.Embed:
         """
-        Constructs the embed for the oldest commands
+        Constructs the embed for commands that show a ranking
 
         Parameters
         ----------
@@ -570,13 +593,13 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_oldest_embed)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
 
         # Send first page
         embed = discord.Embed(
             color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"
         )
-        embed = self.__construct_oldest_embed(paginator, paginator.get_current_page(), embed)
+        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
     @commands.guild_only()
@@ -606,13 +629,13 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_oldest_embed)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
 
         # Send first page
         embed = discord.Embed(
             color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble med"
         )
-        embed = self.__construct_oldest_embed(paginator, paginator.get_current_page(), embed)
+        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.guild_only()
