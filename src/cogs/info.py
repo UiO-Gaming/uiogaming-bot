@@ -507,9 +507,7 @@ class Info(commands.Cog):
 
         roles = list(filter(lambda r: r.name != "@everyone", interaction.guild.roles))
         roles = sorted(roles, key=lambda x: len(x.members), reverse=True)
-        roles_formatted = list(
-            map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles))
-        )
+        roles_formatted = list(map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles)))
 
         paginator = misc_utils.Paginator(roles_formatted)
         view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
