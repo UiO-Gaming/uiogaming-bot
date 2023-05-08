@@ -70,7 +70,7 @@ class Meme(commands.Cog):
         await interaction.followup.send(file=discord.File(output, "deepfry.jpg"))
 
     @staticmethod
-    def __format_text(text: str, textbox_width: int):
+    def __format_text(text: str, textbox_width: int) -> tuple[str, ImageFont.FreeTypeFont]:
         """
         Formats text to fit in a textbox of a given width.
 
@@ -78,12 +78,25 @@ class Meme(commands.Cog):
         ----------
         text (str): Text to be formatted.
         textbox_width (int): Width of the textbox.
+
+        Returns
+        ----------
+        tuple[str, ImageFont.FreeTypeFont]: The formatted text and the font, with its size set, to be used.
         """
 
-        font_size = int(textbox_width / (3 * len(text) ** (1 / 2)))
+        if len(text) <= 1:
+            font_size = 150
+        else:
+            font_size = textbox_width // (len(text) // 6)
+
+        if font_size < 20:
+            font_size = 20
+        elif font_size > 150:
+            font_size = 150
+
         font = ImageFont.truetype("./src/assets/fonts/RobotoMono-Medium.ttf", font_size)
 
-        line_length = textbox_width // font_size
+        line_length = int(textbox_width // font_size * 1.5)
         text = textwrap.fill(text, width=line_length)
 
         return text, font
@@ -106,9 +119,11 @@ class Meme(commands.Cog):
         box = Image.new("RGB", box_size, (255, 255, 255))
         draw = ImageDraw.Draw(box)
 
-        text_box = draw.multiline_textbbox((box_size[0] // 2, box_size[1] // 2), text=text, font=font, align="center")
-        text_box = ((box.size[0] - text_box[0]) // 2, (box.size[1] - text_box[1]) // 2)
-        draw.multiline_text(text_box, text, font=font, fill=(0, 0, 0, 255), align="center")
+        text_box = draw.multiline_textbbox(
+            (box_size[0], box_size[1]), text=text, font=font, align="center", anchor="mm"
+        )
+        text_box = box.size[0] // 2, box.size[1] // 2
+        draw.multiline_text(text_box, text, font=font, fill=(0, 0, 0, 255), align="center", anchor="mm")
 
         image.paste(box, offset)
 
