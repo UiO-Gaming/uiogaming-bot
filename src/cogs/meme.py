@@ -79,6 +79,7 @@ class Meme(commands.Cog):
         text (str): Text to be formatted.
         textbox_width (int): Width of the textbox.
         """
+
         font_size = int(textbox_width / (3 * len(text) ** (1 / 2)))
         font = ImageFont.truetype("./src/assets/fonts/RobotoMono-Medium.ttf", font_size)
 
@@ -86,6 +87,30 @@ class Meme(commands.Cog):
         text = textwrap.fill(text, width=line_length)
 
         return text, font
+
+    @staticmethod
+    def __draw_text(image: Image.Image, text: str, font: ImageFont.FreeTypeFont, offset: tuple = (0, 0)):
+        """
+        Draws meme text on preferred meme template.
+
+        Parameters
+        ----------
+        image (Image.Image): The meme template.
+        text (str): The text to be drawn.
+        font (ImageFont.FreeTypeFont): The font, with its size set, to be used.
+        offset (tuple): The offset of the text from the top left corner of the image. Defaults to (0, 0).
+        """
+
+        box_size = (540, 540)
+
+        box = Image.new("RGB", box_size, (255, 255, 255))
+        draw = ImageDraw.Draw(box)
+
+        text_box = draw.multiline_textbbox((box_size[0] // 2, box_size[1] // 2), text=text, font=font, align="center")
+        text_box = ((box.size[0] - text_box[0]) // 2, (box.size[1] - text_box[1]) // 2)
+        draw.multiline_text(text_box, text, font=font, fill=(0, 0, 0, 255), align="center")
+
+        image.paste(box, offset)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
@@ -107,30 +132,12 @@ class Meme(commands.Cog):
         template = Image.open("./src/assets/misc/sivert_goodbad.jpg")
 
         # Calculate font sizes
-        top_text, top_font = Meme.__format_text(dårlig_tekst, 536)
-        bottom_text, bottom_font = Meme.__format_text(bra_tekst, 536)
+        top_text, top_font = Meme.__format_text(dårlig_tekst, 540)
+        bottom_text, bottom_font = Meme.__format_text(bra_tekst, 540)
 
-        # Draw top text
-        box_size = (536, 538)
-        box = Image.new("RGB", box_size, (255, 255, 255))
-        draw = ImageDraw.Draw(box)
-        text_box = draw.multiline_textbbox(
-            (box_size[0] // 2, box_size[1] // 2), text=top_text, font=top_font, align="center"
-        )
-        text_box = ((box.size[0] - text_box[0]) // 2, (box.size[1] - text_box[1]) // 2)
-        draw.multiline_text(text_box, top_text, font=top_font, fill=(0, 0, 0, 255), align="center")
-        template.paste(box, (536, 0))
-
-        # Draw bottom text
-        box_size = (536, 554)
-        box = Image.new("RGB", box_size, (255, 255, 255))
-        draw = ImageDraw.Draw(box)
-        text_box = draw.multiline_textbbox(
-            (box_size[0] // 2, box_size[1] // 2), text=bottom_text, font=bottom_font, align="center"
-        )
-        text_box = ((box.size[0] - text_box[0]) // 2, (box.size[1] - text_box[1]) // 2)
-        draw.multiline_text(text_box, bottom_text, font=bottom_font, fill=(0, 0, 0, 255), align="center")
-        template.paste(box, (536, 538))
+        # Draw text
+        Meme.__draw_text(template, top_text, top_font, offset=(540, 0))
+        Meme.__draw_text(template, bottom_text, bottom_font, offset=(540, 540))
 
         # Save image to buffer
         output = BytesIO()
