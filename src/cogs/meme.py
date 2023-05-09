@@ -10,6 +10,7 @@ from PIL import ImageEnhance
 from PIL import ImageFont
 from PIL import UnidentifiedImageError
 
+from cogs.utils import discord_utils
 from cogs.utils import embed_templates
 
 
@@ -41,9 +42,7 @@ class Meme(commands.Cog):
         await interaction.response.defer()
 
         # Fetch image
-        input = BytesIO()
-        input.write(await bilde.read())
-        input.seek(0)
+        input = await discord_utils.get_file_bytesio(bilde)
 
         # Open image
         # Check if image is valid

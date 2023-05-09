@@ -1,6 +1,7 @@
 import re
 import urllib
 from datetime import datetime
+from io import BytesIO
 from os import remove
 
 import discord
@@ -11,6 +12,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+from cogs.utils import discord_utils
 from cogs.utils import embed_templates
 from cogs.utils.misc_utils import ignore_exception
 
@@ -221,7 +223,7 @@ class Misc(commands.Cog):
 
         if bruker == interaction.user:
             embed = embed_templates.error_warning(
-                interaction, text="Jeg vet du er ensom, men du kan " "ikke matche med deg selv"
+                interaction, text="Jeg vet du er ensom, men du kan ikke matche med deg selv"
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -233,16 +235,21 @@ class Misc(commands.Cog):
         if bruker.id == self.bot.user.id:
             match_percent = 100
 
-        await interaction.user.display_avatar.save(fp=f"./src/assets/temp/{interaction.user.id}_raw.png")
-        await bruker.display_avatar.save(fp=f"./src/assets/temp/{bruker.id}_raw.png")
-
-        invoker = Image.open(f"./src/assets/temp/{interaction.user.id}_raw.png").convert("RGBA")
+        # Prepare invoker avatar
+        invoker_avatar = await discord_utils.get_file_bytesio(interaction.user.display_avatar)
+        invoker = Image.open(invoker_avatar).convert("RGBA")
         invoker = invoker.resize((389, 389), Image.ANTIALIAS)
-        user = Image.open(f"./src/assets/temp/{bruker.id}_raw.png").convert("RGBA")
+
+        # Prepare user avatar
+        user_avatar = await discord_utils.get_file_bytesio(bruker.display_avatar)
+        user = Image.open(user_avatar).convert("RGBA")
         user = user.resize((389, 389), Image.ANTIALIAS)
+
+        # Prepare heart image
         heart = Image.open("./src/assets/misc/heart.png")
         mask = Image.open("./src/assets/misc/heart.png", "r")
 
+        # Putting it all together
         image = Image.new("RGBA", (1024, 576))
         image.paste(invoker, (0, 94))
         image.paste(user, (635, 94))
@@ -253,18 +260,17 @@ class Misc(commands.Cog):
         font_size = ((image.size[0] - font_size[0]) / 2, (image.size[1] - font_size[1]) / 2)
         draw.text(font_size, f"{match_percent}%", font=font, fill=(255, 255, 255, 255))
 
-        image.save(f"./src/assets/temp/{interaction.user.id}_{bruker.id}_edit.png")
+        # Save image
+        output = BytesIO()
+        image.save(output, format="PNG")
+        output.seek(0)
 
-        f = discord.File(f"./src/assets/temp/{interaction.user.id}_{bruker.id}_edit.png")
+        # Send
+        f = discord.File(output, filename=f"{interaction.user.id}_{bruker.id}_match.png")
         embed = discord.Embed()
-        embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_edit.png")
+        embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_match.png")
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed, file=f)
-
-        with ignore_exception(OSError):
-            remove(f"./src/assets/temp/{bruker.id}_raw.png")
-            remove(f"./src/assets/temp/{interaction.user.id}_raw.png")
-            remove(f"./src/assets/temp/{interaction.user.id}_{bruker.id}_edit.png")
 
 
 async def setup(bot: commands.Bot):
