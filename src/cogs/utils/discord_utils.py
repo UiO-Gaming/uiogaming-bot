@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import discord
 
 from .misc_utils import Paginator
@@ -20,6 +22,25 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
         return discord_object.color
 
     return discord.Colour(0x99AAB5)
+
+
+async def get_file_bytesio(file: discord.Attachment | discord.Asset) -> BytesIO:
+    """
+    Returns a BytesIO object of the file
+
+    Parameters
+    -----------
+    file (discord.Attatchment | discord.Asset): The file to get the BytesIO object of
+
+    Returns
+    -----------
+    (BytesIO): The file as a BytesIO object
+    """
+
+    input = BytesIO()
+    input.write(await file.read())
+    input.seek(0)
+    return input
 
 
 class ScrollerButton(discord.ui.Button):
