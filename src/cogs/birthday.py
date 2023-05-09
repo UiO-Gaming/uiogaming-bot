@@ -146,7 +146,7 @@ class Birthday(commands.Cog):
             """
             SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_bday
             FROM birthdays
-            ORDER BY next_birthday ASC
+            ORDER BY next_bday ASC
             LIMIT 5
             """
         )
