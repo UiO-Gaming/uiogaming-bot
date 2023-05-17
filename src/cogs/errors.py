@@ -87,12 +87,12 @@ class Errors(commands.Cog):
             return await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_perms)
+            permissions = ", ".join(error.missing_permissions)
             text = "Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
             return await ctx.reply(text)
 
         elif isinstance(error, commands.MissingPermissions):
-            permissions = ", ".join(error.missing_perms)
+            permissions = ", ".join(error.missing_permissions)
             text = "Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
             return await ctx.reply(text)
 
@@ -139,14 +139,14 @@ class Errors(commands.Cog):
         await self.on_app_command_completion(interaction, interaction.command)
 
         if isinstance(error, app_commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_perms)
+           permissions = ", ".join(error.missing_permissions)
             embed = embed_templates.error_warning(
                 interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
             )
             return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.MissingPermissions):
-            permissions = ", ".join(error.missing_perms)
+            permissions = ", ".join(error.missing_permissions)
             embed = embed_templates.error_warning(
                 interaction, text="Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
             )
