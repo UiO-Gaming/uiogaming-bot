@@ -83,7 +83,7 @@ class Streak(commands.Cog):
             self.streak_cache[message.author.id]["latest_post_time"] = message.created_at
         else:
             self.streak_cache[message.author.id] = {
-                "first_post_id": message.id,
+                "first_post_id": f"{message.channel.id}-{message.id}",
                 "first_post_time": message.created_at,
                 "latest_post_time": message.created_at,
             }
@@ -199,6 +199,7 @@ class Streak(commands.Cog):
             )
 
         streak_msg_channel, streak_msg_id = streak[0].split("-")
+        streak_msg_channel, streak_msg_id = int(streak_msg_channel), int(streak_msg_id)
         try:
             streak_msg_channel = await interaction.guild.fetch_channel(streak_msg_channel)
             streak_message = await streak_msg_channel.fetch_message(streak_msg_id)
