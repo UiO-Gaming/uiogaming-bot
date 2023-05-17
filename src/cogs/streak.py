@@ -259,7 +259,7 @@ class Streak(commands.Cog):
             """
             SELECT discord_id, streak_start_time
             FROM streak 
-            ORDER BY streak_start_time DESC;
+            ORDER BY streak_start_time;
             """
         )
 
