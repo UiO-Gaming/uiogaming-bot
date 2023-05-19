@@ -139,7 +139,7 @@ class Errors(commands.Cog):
         await self.on_app_command_completion(interaction, interaction.command)
 
         if isinstance(error, app_commands.BotMissingPermissions):
-           permissions = ", ".join(error.missing_permissions)
+            permissions = ", ".join(error.missing_permissions)
             embed = embed_templates.error_warning(
                 interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
             )
