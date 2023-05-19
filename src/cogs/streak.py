@@ -56,7 +56,7 @@ class Streak(commands.Cog):
             FROM streak;
             """
         )
-        streaks = self.cursor.fetchmany()
+        streaks = self.cursor.fetchall()
 
         for streak in streaks:
             self.streak_cache[streak[0]] = {
@@ -134,7 +134,7 @@ class Streak(commands.Cog):
             FROM streak;
             """
         )
-        streaks = self.cursor.fetchmany()
+        streaks = self.cursor.fetchall()
 
         for streak in streaks:
             if (datetime.now() - datetime.fromtimestamp(streak[2])).days > 1:
@@ -263,7 +263,7 @@ class Streak(commands.Cog):
             """
         )
 
-        streaks = self.cursor.fetchmany()
+        streaks = self.cursor.fetchall()
 
         if not streaks:
             return await interaction.followup.send(
