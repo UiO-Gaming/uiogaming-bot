@@ -218,7 +218,7 @@ class Streak(commands.Cog):
         streak_days = (datetime.now(timezone.utc) - streak_msg_time).days
         streak_msg_timestamp = discord.utils.format_dt(streak_msg_time, "F")
 
-        embed = discord.Embed(title=f"Streak for {bruker.display_name}")
+        embed = discord.Embed(title="Streak", description=bruker.mention)
         embed.set_author(name=bruker.name, icon_url=bruker.avatar)
         embed.add_field(name="Antall dager", value=streak_days)
         embed.add_field(
