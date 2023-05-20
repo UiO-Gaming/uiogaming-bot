@@ -272,8 +272,8 @@ class Streak(commands.Cog):
 
         streaks_formatted = list(
             map(
-                lambda s: f"**#{s[0]+1}** <@{s[1]}> - {(datetime.now() - datetime.fromtimestamp(s[2]).days)} dager",
-                streaks,
+                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - {(datetime.now() - s[1][1]).days} dager",
+                enumerate(streaks),
             )
         )
 
