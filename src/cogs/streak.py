@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import discord
 from discord import app_commands
@@ -137,7 +137,7 @@ class Streak(commands.Cog):
         streaks = self.cursor.fetchall()
 
         for streak in streaks:
-            if (datetime.now() - datetime.fromtimestamp(streak[2])).days > 1:
+            if (datetime.now(timezone.utc) - streak[2]).days > 1:
                 self.cache.pop(streak[1])
                 self.cursor.execute(
                     """
@@ -215,7 +215,7 @@ class Streak(commands.Cog):
             streak_msg_link_txt = "Meldingen"
             streak_msg_link = streak_message.jump_url
 
-        streak_days = (datetime.now() - streak_msg_time).days
+        streak_days = (datetime.now(timezone.utc) - streak_msg_time).days
         streak_msg_timestamp = discord.utils.format_dt(streak_msg_time, "F")
 
         embed = discord.Embed(title=f"Streak for {bruker.display_name}")
