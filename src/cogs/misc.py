@@ -2,7 +2,6 @@ import re
 import urllib
 from datetime import datetime
 from io import BytesIO
-from os import remove
 
 import discord
 import requests
@@ -14,7 +13,6 @@ from PIL import ImageFont
 
 from cogs.utils import discord_utils
 from cogs.utils import embed_templates
-from cogs.utils.misc_utils import ignore_exception
 
 
 class Misc(commands.Cog):

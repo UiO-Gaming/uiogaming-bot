@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import discord
 from discord import app_commands
@@ -185,7 +186,7 @@ class Streak(commands.Cog):
         self.cursor.execute(
             """
             SELECT streak_start_id, streak_start_time
-            FROM streak 
+            FROM streak
             WHERE discord_id = %s;
             """,
             (bruker.id,),
@@ -258,7 +259,7 @@ class Streak(commands.Cog):
         self.cursor.execute(
             """
             SELECT discord_id, streak_start_time
-            FROM streak 
+            FROM streak
             ORDER BY streak_start_time;
             """
         )
