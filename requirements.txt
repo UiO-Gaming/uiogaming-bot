@@ -2,6 +2,7 @@ aiocron==1.8.*
 asyncio==3.4.*
 discord.py==2.1.*
 mcrcon==0.7.*
+moviepy==1.0.*
 nltk==3.6.*
 numpy==1.22.*
 pillow==9.3.*
