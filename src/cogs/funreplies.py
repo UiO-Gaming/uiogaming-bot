@@ -29,6 +29,7 @@ class FunReplies(commands.Cog):
             "olof palme": initial_datetime,
             "lesgo": initial_datetime,
             "yeet": initial_datetime,
+            "drikke": initial_datetime,
         }
 
     async def reply_to_triggers(self, message: discord.Message):
@@ -67,6 +68,11 @@ class FunReplies(commands.Cog):
             if (datetime.now() - self.previous_invokations["yeet"]).seconds > self.cooldown_seconds:
                 await message.reply("<:Nei:826593267642662912>")
                 self.previous_invokations["yeet"] = datetime.now()
+
+        elif re.search(r"(^|\W)skal aldri drikke\s?\w*\s?igjen($|\W)+", message_content, flags=re.IGNORECASE):
+            if (datetime.now() - self.previous_invokations["drikke"]).seconds > self.cooldown_seconds:
+                await message.reply(":billed_cap:")
+                self.previous_invokations["drikke"] = datetime.now()
 
 
 async def setup(bot: commands.Bot):
