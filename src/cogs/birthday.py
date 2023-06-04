@@ -65,7 +65,7 @@ class Birthday(commands.Cog):
             for birthday in birthdays:
                 user = await guild.fetch_member(birthday[0])
                 if user:
-                    await channel.send(f"Gratulrer med dagen {user.mention}!")
+                    await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
                 else:
                     self.bot.logger.warning(f"Birthday Check - Could not find user with ID {birthday[0]}")
 
