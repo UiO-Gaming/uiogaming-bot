@@ -63,7 +63,7 @@ class Birthday(commands.Cog):
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
             for birthday in birthdays:
-                user = self.bot.get_user(birthday[0])
+                user = await guild.fetch_member(birthday[0])
                 if user:
                     await channel.send(f"Gratulrer med dagen {user.mention}!")
 
