@@ -66,6 +66,8 @@ class Birthday(commands.Cog):
                 user = await guild.fetch_member(birthday[0])
                 if user:
                     await channel.send(f"Gratulrer med dagen {user.mention}!")
+                else:
+                    self.bot.logger.warning(f"Birthday Check - Could not find user with ID {birthday[0]}")
 
     @birthday_check.before_loop
     async def before_birthday_check(self):
