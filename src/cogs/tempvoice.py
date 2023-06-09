@@ -35,6 +35,7 @@ class TempVoice(commands.Cog):
 
         if len(channel.members) == 0:
             self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
+            self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 5 minutes")
 
     @tasks.loop(minutes=1)
     async def check_temp_vc_channels(self):
@@ -51,7 +52,10 @@ class TempVoice(commands.Cog):
                     await channel.delete(reason="tempvoice kanal inaktiv i 5 minutter")
                 except discord.Forbidden:
                     self.bot.logger.error(f"Failed to delete temporary voice channel {channel}")
-                del self.temp_vc_channels[channel]
+                else:
+                    self.bot.logger.info(f"Deleted temporary voice channel {channel}")
+                finally:
+                    del self.temp_vc_channels[channel]
 
     @commands.cooldown(1, 300, commands.BucketType.guild)
     @app_commands.command(name="tempvoice")
@@ -76,6 +80,8 @@ class TempVoice(commands.Cog):
                 embed_templates.error_fatal(interaction, text="Jeg har ikke tilgang til å opprette en talekanal")
             )
             return
+        
+        self.bot.logger.info(f"Created temporary voice channel {channel} in {interaction.guild}")
 
         self.temp_vc_channels[channel] = {"created": datetime.now(), "no_members_since": None}
 
