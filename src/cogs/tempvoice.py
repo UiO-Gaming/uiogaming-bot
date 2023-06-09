@@ -85,7 +85,10 @@ class TempVoice(commands.Cog):
             pass
 
         await interaction.response.send(
-            embed_templates.success(interaction, text=f"Talekanalen {channel.mention} ble opprettet")
+            embed_templates.success(
+                interaction,
+                text=f"Talekanalen {channel.mention} ble opprettet. Den vil bli slettet etter cirka 5 minutter uten aktivitet.",
+            )
         )
 
 
