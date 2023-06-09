@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.ext import tasks
 
@@ -53,7 +54,7 @@ class TempVoice(commands.Cog):
                 del self.temp_vc_channels[channel]
 
     @commands.cooldown(1, 300, commands.BucketType.guild)
-    @commands.command(name="tempvoice")
+    @app_commands.command(name="tempvoice")
     async def tempvoice(self, interaction: discord.Interaction, name: str, limit: int = 0):
         """
         Create a temporary voice channel
