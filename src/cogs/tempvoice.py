@@ -76,7 +76,7 @@ class TempVoice(commands.Cog):
             )
         except discord.Forbidden:
             self.bot.logger.error(f"Failed to create temporary voice channel in {interaction.guild}")
-            await interaction.response.send(
+            await interaction.response.send_message(
                 embed_templates.error_fatal(interaction, text="Jeg har ikke tilgang til å opprette en talekanal")
             )
             return
@@ -90,7 +90,7 @@ class TempVoice(commands.Cog):
         except discord.Forbidden:
             pass
 
-        await interaction.response.send(
+        await interaction.response.send_message(
             embed_templates.success(
                 interaction,
                 text=f"Talekanalen {channel.mention} ble opprettet. Den vil bli slettet etter cirka 5 minutter uten aktivitet.",
