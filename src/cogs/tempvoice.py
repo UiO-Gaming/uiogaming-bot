@@ -20,6 +20,7 @@ class TempVoice(commands.Cog):
 
         self.bot = bot
         self.temp_vc_channels = {}
+        self.check_temp_vc_channels.start()
 
     @commands.Cog.listener()
     async def on_voice_state_update(
