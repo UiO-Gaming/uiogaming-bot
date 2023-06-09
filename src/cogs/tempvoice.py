@@ -84,6 +84,10 @@ class TempVoice(commands.Cog):
         except discord.Forbidden:
             pass
 
+        await interaction.response.send(
+            embed_templates.success(interaction, text=f"Talekanalen {channel.mention} ble opprettet")
+        )
+
 
 async def setup(bot: commands.Bot):
     """
