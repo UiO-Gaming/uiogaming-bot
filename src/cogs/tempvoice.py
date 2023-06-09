@@ -80,7 +80,7 @@ class TempVoice(commands.Cog):
         self.temp_vc_channels[channel] = {"created": datetime.now(), "no_members_since": None}
 
         try:
-            await interaction.author.move_to(channel)
+            await interaction.user.move_to(channel)
         except discord.Forbidden:
             pass
 
