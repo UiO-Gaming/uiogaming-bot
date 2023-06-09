@@ -87,7 +87,13 @@ class TempVoice(commands.Cog):
         try:
             await interaction.user.move_to(channel)
         except discord.Forbidden:
-            pass
+            self.bot.logger.error(
+                f"Failed to move {interaction.user} to temporary voice channel {channel}. Missing permissions"
+            )
+        except discord.HTTPException:
+            self.bot.logger.error(
+                f"Failed to move {interaction.user} to temporary voice channel {channel}. User not connected to voice"
+            )
 
         await interaction.response.send_message(
             embed=embed_templates.success(
