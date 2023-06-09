@@ -30,13 +30,13 @@ class TempVoice(commands.Cog):
         Listen for disconnects from the temporary voice channels
         """
 
-        channel = after.channel
-        if channel not in self.temp_vc_channels:
-            return
+        for channel in (before.channel, after.channel):
+            if channel not in self.temp_vc_channels:
+                continue
 
-        if len(channel.members) == 0:
-            self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
-            self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 5 minutes")
+            if len(channel.members) == 0:
+                self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
+                self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 5 minutes")
 
     @tasks.loop(minutes=1)
     async def check_temp_vc_channels(self):
