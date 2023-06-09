@@ -72,7 +72,7 @@ class TempVoice(commands.Cog):
 
         try:
             channel = await interaction.guild.create_voice_channel(
-                name=name, user_limit=limit, reason="tempvoice kommando"
+                name=name, user_limit=limit, reason=f"tempvoice kommando av {interaction.user.name}"
             )
         except discord.Forbidden:
             self.bot.logger.error(f"Failed to create temporary voice channel in {interaction.guild}")
