@@ -15,9 +15,7 @@ def default_footer(interaction: discord.Interaction, embed: discord.Embed) -> di
     (discord.Embed): The passed in embed + footer
     """
 
-    return embed.set_footer(
-        icon_url=interaction.user.avatar, text=f"{interaction.user.name}#{interaction.user.discriminator}"
-    )
+    return embed.set_footer(icon_url=interaction.user.avatar, text=interaction.user.name)
 
 
 def error_warning(interaction: discord.Interaction, text: str) -> discord.Embed:

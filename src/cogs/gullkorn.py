@@ -66,7 +66,7 @@ class Gullkorn(commands.Cog):
         for i, row in enumerate(data):
             user = self.bot.get_user(row[0])
             if user:
-                formatted_string += f"**#{i+1}** {user.name}#{user.discriminator} - *{row[1]}*\n"
+                formatted_string += f"**#{i+1}** {user.name} - *{row[1]}*\n"
             else:
                 formatted_string += f"**#{i+1}** `Ukjent bruker` - *{row[1]}*\n"
 
@@ -141,7 +141,7 @@ class Gullkorn(commands.Cog):
                 )
 
             embed = discord.Embed(
-                title=f"Gullkornstatistikk for {bruker.name}#{bruker.discriminator}",
+                title=f"Gullkornstatistikk for {bruker.name}",
                 color=discord_utils.get_color(bruker),
             )
             embed.set_thumbnail(url=bruker.avatar)

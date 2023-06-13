@@ -66,7 +66,7 @@ class Info(commands.Cog):
         # Use map instead of list comprehension because I can divide the code into 2 lines
         boosters = list(
             map(
-                lambda b: f"{b.name}#{b.discriminator} - {discord.utils.format_dt(b.premium_since)}",
+                lambda b: f"{b.name} - {discord.utils.format_dt(b.premium_since)}",
                 sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since),
             )
         )
@@ -89,7 +89,7 @@ class Info(commands.Cog):
         if not members:
             return "**Ingen**"
 
-        members = [f"{member.name}#{member.discriminator}" for member in members]
+        members = [member.name for member in members]
 
         return ", ".join(members)
 
@@ -535,7 +535,7 @@ class Info(commands.Cog):
 
         emoji = await emoji.guild.fetch_emoji(emoji.id)
         try:
-            emoji_creator = f"{emoji.user.mention}\n{emoji.user.name}#{emoji.user.discriminator}"
+            emoji_creator = f"{emoji.user.mention}\n{emoji.user.name}"
         except AttributeError:
             emoji_creator = "Jeg trenger `manage_emojis`-tillatelsen på serveren den er fra for å hente dette"
 
@@ -588,7 +588,7 @@ class Info(commands.Cog):
         # Create list of members with index, name#discriminator and creation date
         members_formatted = list(
             map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].created_at, style="F")}',  # noqa: E501
+                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].created_at, style="F")}',  # noqa: E501
                 enumerate(members),
             )
         )
@@ -624,7 +624,7 @@ class Info(commands.Cog):
         # Create list of members with index, name#discriminator and creation date
         members_formatted = list(
             map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name}#{m[1].discriminator} - {discord.utils.format_dt(m[1].joined_at, style="F")}',  # noqa: E501
+                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].joined_at, style="F")}',  # noqa: E501
                 enumerate(members),
             )
         )
@@ -705,11 +705,9 @@ class Info(commands.Cog):
             color=discord_utils.get_color(bruker), description=f"{bruker.mention}\nID: {bruker.id}\n{status}\n{app}"
         )
         if bruker.display_name == bruker.name:
-            embed.set_author(name=f"{bruker.name}#{bruker.discriminator}", icon_url=bruker.display_avatar)
+            embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         else:
-            embed.set_author(
-                name=f"{bruker.name}#{bruker.discriminator} | {bruker.display_name}", icon_url=bruker.display_avatar
-            )
+            embed.set_author(name=f"{bruker.name} | {bruker.display_name}", icon_url=bruker.display_avatar)
         embed.set_thumbnail(url=bruker.display_avatar)
         embed.add_field(
             name="Opprettet",
@@ -767,7 +765,7 @@ class Info(commands.Cog):
         else:
             embed = discord.Embed(color=discord_utils.get_color(bruker), description=roles)
             embed.set_author(name=f"Roller ({len(bruker.roles)})", icon_url=bruker.display_avatar)
-            embed.set_footer(text=f"{bruker.name}#{bruker.discriminator}", icon_url=bruker.display_avatar)
+            embed.set_footer(text=bruker.name, icon_url=bruker.display_avatar)
             await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -787,7 +785,7 @@ class Info(commands.Cog):
             bruker = interaction.user
 
         embed = discord.Embed(color=discord_utils.get_color(bruker), description=f"[Lenke]({bruker.display_avatar})")
-        embed.set_author(name=f"{bruker.name}#{bruker.discriminator}", icon_url=bruker.display_avatar)
+        embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.set_image(url=bruker.display_avatar)
         embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
