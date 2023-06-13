@@ -216,13 +216,13 @@ class Meme(commands.Cog):
         user_id (int): The user ID
         """
 
-        font_path = "Noto-Sans-Bold"
+        font_path = "DejaVu-Sans-Bold"
         clip = VideoFileClip("./src/assets/misc/crab.mp4")
 
         top_part = (
             TextClip(top_text, fontsize=60, color="white", stroke_width=2, stroke_color="black", font=font_path)
             .set_start(11.0)
-            .set_position(("center", 290))
+            .set_position(("center", 300))
             .set_duration(26.0)
         )
         middle_part = (
@@ -239,7 +239,7 @@ class Meme(commands.Cog):
         bottom_part = (
             TextClip(bottom_text, fontsize=60, color="white", stroke_width=2, stroke_color="black", font=font_path)
             .set_start(11.0)
-            .set_position(("center", 380))
+            .set_position(("center", 400))
             .set_duration(26.0)
         )
 
