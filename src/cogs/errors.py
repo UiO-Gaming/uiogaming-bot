@@ -143,14 +143,12 @@ class Errors(commands.Cog):
             embed = embed_templates.error_warning(
                 interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
             )
-            return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.MissingPermissions):
             permissions = ", ".join(error.missing_permissions)
             embed = embed_templates.error_warning(
                 interaction, text="Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
             )
-            return await interaction.response.send_message(embed=embed)
 
         # TODO: figure this shit out. app_commands does not support this check
         # elif isinstance(error, app_commands.NotOwner):
@@ -162,10 +160,14 @@ class Errors(commands.Cog):
                 interaction,
                 text="Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
             )
-            return await interaction.response.send_message(embed=embed)
 
-        embed = embed_templates.error_fatal(interaction, text="En ukjent feil oppstod!")
-        await interaction.response.send_message(embed=embed)
+        else:
+            embed = embed_templates.error_fatal(interaction, text="En ukjent feil oppstod!")
+
+        if interaction.response.is_done():
+            await interaction.followup.send(embed=embed)
+        else:
+            await interaction.response.send_message(embed=embed)
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
