@@ -1,6 +1,6 @@
 aiocron==1.8.*
 asyncio==3.4.*
-discord.py==2.1.*
+discord.py==2.3.*
 mcrcon==0.7.*
 nltk==3.6.*
 numpy==1.22.*
