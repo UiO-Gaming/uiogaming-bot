@@ -8,8 +8,6 @@ from discord import app_commands
 from discord.ext import commands
 from psutil import Process
 
-from cogs.utils import embed_templates
-
 
 class BotInfo(commands.Cog):
     """View information about the bot"""
