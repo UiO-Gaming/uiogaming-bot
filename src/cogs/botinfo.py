@@ -84,9 +84,9 @@ class BotInfo(commands.Cog):
             embed.add_field(name="Docker", value="U+FE0F")
         embed.add_field(
             name=f"Brukere ({len(total_members)})",
-            value=f'{self.bot.emoji["online"]}{len(online_members)} '
-            + f'{self.bot.emoji["idle"]}{len(idle_members)} '
-            + f'{self.bot.emoji["dnd"]}{len(dnd_members)} '
+            value=f'{self.bot.emoji["online"]}{len(online_members)}\n'
+            + f'{self.bot.emoji["idle"]}{len(idle_members)}\n'
+            + f'{self.bot.emoji["dnd"]}{len(dnd_members)}\n'
             + f'{self.bot.emoji["offline"]}{len(offline_members)}',
         )
         embed.add_field(
