@@ -326,7 +326,7 @@ class Birthday(commands.Cog):
 
             timestamp = discord.utils.format_dt(next_birthday, style="D")
             relative_timestamp = discord.utils.format_dt(next_birthday, style="R")
-            birthday_string += f"{discord_user.name} - {timestamp} ({relative_timestamp})\n"
+            birthday_string += f"* {discord_user.name} - {timestamp} ({relative_timestamp})\n"
 
         if not birthday_string:
             return await interaction.response.send_message(

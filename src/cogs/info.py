@@ -66,7 +66,7 @@ class Info(commands.Cog):
         # Use map instead of list comprehension because I can divide the code into 2 lines
         boosters = list(
             map(
-                lambda b: f"{b.name} - {discord.utils.format_dt(b.premium_since)}",
+                lambda b: f"* {b.name} - {discord.utils.format_dt(b.premium_since)}",
                 sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since),
             )
         )
@@ -205,7 +205,7 @@ class Info(commands.Cog):
             }
             for feature in interaction.guild.features:
                 if translation := features.get(feature):
-                    features_string += f"{translation}\n"
+                    features_string += f"* {translation}\n"
 
         photos = {}
         if interaction.guild.splash:
@@ -227,10 +227,10 @@ class Info(commands.Cog):
 
         embed = discord.Embed(
             color=interaction.guild.me.color,
-            description=f"**Verifiseringskrav:** {verification}\n"
-            + f"**Innholdsfilter:** {content}\n"
-            + f"**Boost Tier:** {interaction.guild.premium_tier}\n"
-            + f"**Emoji:** {len(interaction.guild.emojis)}",
+            description=f"* **Verifiseringskrav:** {verification}\n"
+            + f"* **Innholdsfilter:** {content}\n"
+            + f"* **Boost Tier:** {interaction.guild.premium_tier}\n"
+            + f"* **Emoji:** {len(interaction.guild.emojis)}",
         )
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_thumbnail(url=interaction.guild.icon)
@@ -264,7 +264,7 @@ class Info(commands.Cog):
         if photos:
             photos_string = ""
             for key, value in photos.items():
-                photos_string += f"[{key}]({value})\n"
+                photos_string += f"* [{key}]({value})\n"
             embed.add_field(name="Bilder", value=photos_string)
         await interaction.response.send_message(embed=embed)
 

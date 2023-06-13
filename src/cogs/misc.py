@@ -194,7 +194,7 @@ class Misc(commands.Cog):
         holiday_str = ""
         for day in data:
             date = discord.utils.format_dt(datetime.strptime(day["date"], "%Y-%m-%d"), style="D")
-            holiday_str += f'**{date}**: {day["localName"]}\n'
+            holiday_str += f'* **{date}**: {day["localName"]}\n'
 
         embed = discord.Embed(
             color=interaction.client.user.color, title=f":flag_{country}: Helligdager {aar} :flag_{country}:"

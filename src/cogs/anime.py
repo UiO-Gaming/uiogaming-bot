@@ -204,11 +204,11 @@ class Anime(commands.Cog):
                 nsfwtag = "🔞" if node["isAdult"] else ""
                 anime_name = node["title"]["romaji"]
                 anime_url = node["siteUrl"]
-                favorite_media.append(f"[{anime_name}]({anime_url}){nsfwtag}")
+                favorite_media.append(f"* [{anime_name}]({anime_url}){nsfwtag}")
             except KeyError:
                 pass
 
-        return " | ".join(favorite_media)
+        return "\n".join(favorite_media)
 
     def __construct_favorite_entity_string(self, entities: list, studio: bool = False) -> str:
         """
@@ -232,11 +232,11 @@ class Anime(commands.Cog):
                 else:
                     entity_name = entity["name"]["full"]
                 entity_url = entity["siteUrl"]
-                favortie_entities.append(f"[{entity_name}]({entity_url})")
+                favortie_entities.append(f"* [{entity_name}]({entity_url})")
             except KeyError:
                 pass
 
-        return " | ".join(favortie_entities)
+        return "\n".join(favortie_entities)
 
     def __construct_release_schedule_string(self, numbers: dict) -> str:
         """
@@ -1012,10 +1012,10 @@ class Anime(commands.Cog):
                 voice_actor_name = voice_actor["name"]["full"]
                 if voice_actor["name"]["native"] != " " and voice_actor["name"]["native"] is not None:
                     voice_actor_name += f' ({voice_actor["name"]["native"]}'
-                voice_actors.append(f"{voice_actor_language} stemme: [{voice_actor_name}]({voice_actor_url})")
+                voice_actors.append(f"\t* {voice_actor_language} stemme: [{voice_actor_name}]({voice_actor_url})")
 
             voice_actors_string = "\n".join(voice_actors)
-            featured_in.append(f"[{media_name}]({media_url}){nsfwtag} som {media_role}\n{voice_actors_string}")
+            featured_in.append(f"* [{media_name}]({media_url}){nsfwtag} som {media_role}\n{voice_actors_string}")
 
         featured_in = "\n\n".join(featured_in)
 
@@ -1103,8 +1103,8 @@ class Anime(commands.Cog):
             media_name = media["node"]["title"]["romaji"]
             media_url = media["node"]["siteUrl"]
             media_role = media["staffRole"]
-            featured_in.append(f"[{media_name}]({media_url}){nsfwtag}\n{media_role}")
-        featured_in = "\n\n".join(featured_in)
+            featured_in.append(f"* [{media_name}]({media_url}){nsfwtag}\n{media_role}")
+        featured_in = "\n".join(featured_in)
 
         characters = []
         for character in data["characters"]["edges"]:
@@ -1112,8 +1112,8 @@ class Anime(commands.Cog):
             character_name = character["node"]["name"]["full"]
             if character["node"]["name"]["native"] != " " and character["node"]["name"]["native"] is not None:
                 character_name += f' ({character["node"]["name"]["native"]}'
-            characters.append(f"[{character_name}]({character_url})")
-        characters = "\n\n".join(characters)
+            characters.append(f"* [{character_name}]({character_url})")
+        characters = "\n".join(characters)
 
         embed = discord.Embed(color=0x02A9FF, title=name_romaji, url=url, description=name_native)
         embed.set_thumbnail(url=image)
