@@ -124,7 +124,7 @@ class BotInfo(commands.Cog):
         """
 
         embed = discord.Embed(color=interaction.client.user.color)
-        embed.add_field(name="📶 Ping", value=f"**Websocket ping:** {self.__get_ping()} ms")
+        embed.add_field(name="📶 Ping", value=f"* **Websocket ping:** {self.__get_ping()} ms\n* **I hodet:** ∞")
         await interaction.response.send_message(embed=embed, content=None)
 
     def __get_ping(self) -> int:
