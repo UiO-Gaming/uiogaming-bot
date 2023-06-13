@@ -408,7 +408,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Noen favorittstudioer", value=favourite_studio, inline=False)
         if favourite_studio:
             embed.add_field(name="Noen favorittskapere", value=favourite_staff, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -517,7 +516,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Mest sette sjangere", value=most_watched_genres, inline=False)
         if most_watched_studios:
             embed.add_field(name="Mest sette studioer", value=most_watched_studios, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -628,7 +626,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Mest leste sjangere", value=most_read_genres, inline=False)
         if most_read_staff:
             embed.add_field(name="Mest leste skapere", value=most_read_staff, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -794,7 +791,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Sammendrag", value=description, inline=False)
         if banner_image:
             embed.set_image(url=banner_image)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -934,7 +930,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Sammendrag", value=description, inline=False)
         if banner_image:
             embed.set_image(url=banner_image)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -1029,7 +1024,6 @@ class Anime(commands.Cog):
         embed.add_field(name="Antall favoritter på Anilist", value=favourites, inline=False)
         embed.add_field(name="Biografi", value=description, inline=False)
         embed.add_field(name="Er med i bl.a.", value=featured_in, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -1129,7 +1123,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Har vært stemmen til bl.a.", value=characters, inline=False)
         if featured_in:
             embed.add_field(name="Har deltatt i produksjonen av bl.a.", value=featured_in, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -1225,7 +1218,6 @@ class Anime(commands.Cog):
             embed.add_field(name="Nyeste Utgitte Anime", value=recent_media, inline=False)
         if upcoming_media:
             embed.add_field(name="Kommende Anime", value=upcoming_media, inline=False)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
 

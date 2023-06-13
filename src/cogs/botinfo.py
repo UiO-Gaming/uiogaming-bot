@@ -93,7 +93,6 @@ class BotInfo(commands.Cog):
             name="Lenker",
             value=f'[Nettside]({self.bot.misc["website"]}) | ' + f'[Kildekode]({self.bot.misc["source_code"]})',
         )
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -110,7 +109,6 @@ class BotInfo(commands.Cog):
 
         embed = discord.Embed(color=interaction.client.user.color)
         embed.add_field(name="🔌 Oppetid", value=self.__get_uptime())
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -127,7 +125,6 @@ class BotInfo(commands.Cog):
 
         embed = discord.Embed(color=interaction.client.user.color)
         embed.add_field(name="📶 Ping", value=f"**Websocket ping:** {self.__get_ping()} ms")
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed, content=None)
 
     def __get_ping(self) -> int:

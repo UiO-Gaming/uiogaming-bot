@@ -290,7 +290,6 @@ class Birthday(commands.Cog):
             value=f'{next_birthday_days} {"dager" if next_birthday_days != 1 else "dag"}',
             inline=False,
         )
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.guild_only()
@@ -335,7 +334,6 @@ class Birthday(commands.Cog):
             )
 
         embed = discord.Embed(title="Kommende bursdager", description=birthday_string)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
 

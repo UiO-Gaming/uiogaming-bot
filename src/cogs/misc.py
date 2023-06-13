@@ -64,7 +64,6 @@ class Misc(commands.Cog):
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.client.user.color, description=tekst)
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.cooldown(1, 5)
@@ -107,7 +106,6 @@ class Misc(commands.Cog):
         tekst = re.sub(" ", "👏", tekst)
 
         embed = discord.Embed(color=interation.client.user.color, description=f"**{tekst.upper()}**")
-        embed_templates.default_footer(interation, embed)
         await interation.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -154,7 +152,6 @@ class Misc(commands.Cog):
         embed.add_field(name="Vurdering på IMDb", value=f'{data["imdbRating"]}/10')
         release_date = datetime.strptime(data["Released"], "%d %b %Y")
         embed.add_field(name="Utgitt", value=discord.utils.format_dt(release_date, style="D"))
-        embed_templates.default_footer(interaction, embed)
 
         if data["Poster"] != "N/A":
             embed.set_thumbnail(url=data["Poster"])
@@ -203,7 +200,6 @@ class Misc(commands.Cog):
             color=interaction.client.user.color, title=f":flag_{country}: Helligdager {aar} :flag_{country}:"
         )
         embed.description = holiday_str
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -267,7 +263,6 @@ class Misc(commands.Cog):
         f = discord.File(output, filename=f"{interaction.user.id}_{bruker.id}_match.png")
         embed = discord.Embed()
         embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_match.png")
-        embed_templates.default_footer(interaction, embed)
         await interaction.response.send_message(embed=embed, file=f)
 
 
