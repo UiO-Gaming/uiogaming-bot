@@ -280,7 +280,7 @@ class Streak(commands.Cog):
 
         # Paginagorize the streaks
         paginator = misc_utils.Paginator(streaks_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)  # TODO: DRY
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)  # TODO: DRY
 
         embed = discord.Embed(title="Toppliste for streaks")
         embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)

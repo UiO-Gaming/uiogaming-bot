@@ -504,7 +504,7 @@ class Info(commands.Cog):
         roles_formatted = list(map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles)))
 
         paginator = misc_utils.Paginator(roles_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
 
         embed = discord.Embed(color=interaction.guild.me.color, title="Rollene med flest brukere på serveren")
         embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
@@ -588,7 +588,7 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
 
         # Send first page
         embed = discord.Embed(
@@ -624,7 +624,7 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
 
         # Send first page
         embed = discord.Embed(

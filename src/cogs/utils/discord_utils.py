@@ -51,6 +51,7 @@ class ScrollerButton(discord.ui.Button):
         paginator: Paginator,
         button_action: callable,
         content_constructor: callable,
+        owner: discord.User | discord.Member,
         label: str,
         disabled: bool = False,
     ):
@@ -60,12 +61,14 @@ class ScrollerButton(discord.ui.Button):
         paginator (Paginator): The paginator object that contains the data to be paginated
         button_action (callable): The function that returns the requested page
         content_constructor (callable): A function that takes a paginator object and a page number and returns an embed
+        owner (discord.User|discord.Member): The user that invoked the paginator. Only this user can use the button
         """
 
         super().__init__(label=label, disabled=disabled)
         self.paginator = paginator
         self.button_action = button_action
         self.content_constructor = content_constructor
+        self.owner = owner
 
     async def callback(self, interaction: discord.Interaction):
         """
@@ -76,20 +79,29 @@ class ScrollerButton(discord.ui.Button):
         interaction (discord.Interaction): Slash command context object
         """
 
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message(
+                "Bare den som skrev kommandoen kan bruke denne knappen", ephemeral=True
+            )
+
         await interaction.response.defer()
+
         content = self.content_constructor(self.paginator, self.button_action(), interaction.message.embeds[0])
-        await interaction.message.edit(embed=content, view=Scroller(self.paginator, self.content_constructor))
+        await interaction.message.edit(
+            embed=content, view=Scroller(self.paginator, self.content_constructor, self.owner)
+        )
 
 
 class Scroller(discord.ui.View):
     """View that allows scrolling through pages of data using the pagination module"""
 
-    def __init__(self, paginatior: Paginator, content_constructor: callable):
+    def __init__(self, paginatior: Paginator, content_constructor: callable, owner: discord.User | discord.Member):
         """
         Parameters
         -----------
         paginator (Paginator): The paginator object that contains the data to be paginated
         content_constructor (callable): A function that takes a paginator object and a page number and returns an embed
+        owner (discord.User|discord.Member): The user that invoked the paginator. Only this user can use the buttons
         """
 
         super().__init__()
@@ -100,6 +112,7 @@ class Scroller(discord.ui.View):
                 self.paginator,
                 self.paginator.first_page,
                 content_constructor,
+                owner,
                 label="<<",
                 disabled=self.paginator.current_page == 1,
             )
@@ -109,6 +122,7 @@ class Scroller(discord.ui.View):
                 self.paginator,
                 self.paginator.previous_page,
                 content_constructor,
+                owner,
                 label="<",
                 disabled=self.paginator.current_page == 1,
             )
@@ -118,6 +132,7 @@ class Scroller(discord.ui.View):
                 self.paginator,
                 self.paginator.next_page,
                 content_constructor,
+                owner,
                 label=">",
                 disabled=self.paginator.current_page == self.paginator.total_page_count,
             )
@@ -127,6 +142,7 @@ class Scroller(discord.ui.View):
                 self.paginator,
                 self.paginator.last_page,
                 content_constructor,
+                owner,
                 label=">>",
                 disabled=self.paginator.current_page == self.paginator.total_page_count,
             )
