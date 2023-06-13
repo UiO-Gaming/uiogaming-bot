@@ -141,7 +141,7 @@ class Gullkorn(commands.Cog):
                 )
 
             embed = discord.Embed(
-                title=f"Gullkornstatistikk for {bruker.name}",
+                title=f"Gullkornstatistikk for `{bruker.name}`",
                 color=discord_utils.get_color(bruker),
             )
             embed.set_thumbnail(url=bruker.avatar)
