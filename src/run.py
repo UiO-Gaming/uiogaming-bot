@@ -39,9 +39,17 @@ class Bot(commands.Bot):
         self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
 
         # Connect to database
+        # We assume the config file is valid and contains the needed keys, even if they are empty
         db = config.get("database")
 
-        if db is not None:
+        for db_credential in db.values():
+            if not db_credential:
+                self.db_connection = None
+                self.logger.warning(
+                    "No database credentials specified. " "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
+                )
+                break
+        else:
             self.db_connection = psycopg2.connect(
                 host=db["host"],
                 dbname=db["dbname"],
@@ -49,11 +57,6 @@ class Bot(commands.Bot):
                 password=db["password"],
             )
             self.db_connection.autocommit = True
-        else:
-            self.db_connection = None
-            self.logger.warning(
-                "No database credentials specified. " "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
-            )
 
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
