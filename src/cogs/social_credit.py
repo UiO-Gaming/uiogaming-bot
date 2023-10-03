@@ -149,6 +149,8 @@ class SocialCredit(commands.Cog):
     @social_credit_group.command(name="leaderboard", description="Sjekk hvem som er de beste og verste borgerne")
     async def leaderboard(self, interaction: discord.Interaction):
 
+        await interaction.response.defer()
+
         self.cursor.execute(
             f"""
             SELECT * FROM social_credit
