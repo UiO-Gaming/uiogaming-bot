@@ -75,7 +75,7 @@ class FunReplies(commands.Cog):
                 await message.reply(":billed_cap:")
                 self.previous_invokations["drikke"] = datetime.now()
         
-        elif re.search(r"(^|\W)spam($|\W)+"):
+        elif re.search(r"(^|\W)spam($|\W)+", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["spam"]).seconds > self.cooldown_seconds:
                 await message.reply("https://www.youtube.com/watch?v=zLih-WQwBSc")
                 self.previous_invokations["spam"] = datetime.now()
