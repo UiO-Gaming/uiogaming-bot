@@ -72,7 +72,7 @@ class SocialCredit(commands.Cog):
 
         return wrapper
 
-    def roll(percent=50):
+    def roll(percent: int=50):
         def decorator(func):
             async def wrapper(*args, **kwargs):
                 if randint(0, 100) <= percent:  # 25% chance
@@ -172,6 +172,23 @@ class SocialCredit(commands.Cog):
         embed = discord.Embed(title="Våre beste og verste borgere")
         embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
         await interaction.followup.send(embed=embed, view=view)
+
+    def __construct_ranking_embed(
+        self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed
+    ) -> discord.Embed:
+        """
+        Construct the ranking embed with the given page
+
+        Parameters
+        ----------
+        paginator (misc_utils.Paginator): Paginator dataclass
+        page (list): List of streaks to display on a page
+        embed (discord.Embed): Embed to add fields to
+        """
+
+        embed.description = "\n".join(page)
+        embed.set_footer(text=f"Side {paginator.current_page}/{paginator.total_page_count}")
+        return embed
 
     @commands.Cog.listener('on_message')
     async def on_message(self, message):
