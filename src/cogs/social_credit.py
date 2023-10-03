@@ -127,7 +127,7 @@ class SocialCredit(commands.Cog):
 
     social_credit_group = app_commands.Group(name="socialcredit", description="Trenger dette å forklares?")
 
-    @social_credit_group.command(name="credits", descrption="Sjekk hvor dårlig menneske du er")
+    @social_credit_group.command(name="credits", description="Sjekk hvor dårlig menneske du er")
     async def credits(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
 
         if not bruker:
@@ -146,7 +146,7 @@ class SocialCredit(commands.Cog):
         embed = discord.Embed(description=(f'{bruker.mention} har `{db_user.credit_score}` social credits'))
         await interaction.response.send_message(embed=embed)
 
-    @social_credit_group.command(name="leaderboard", description="")
+    @social_credit_group.command(name="leaderboard", description="Sjekk hvem som er de beste og verste borgerne")
     async def leaderboard(self, interaction: discord.Interaction):
 
         self.cursor.execute(
