@@ -61,6 +61,7 @@ class Bot(commands.Bot):
 
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
+        self.sanity = config["sanity"]
         self.presence = config["bot"].get("presence", {})
         self.api_keys = config.get("api", {})
         self.emoji = config.get("emoji", {})

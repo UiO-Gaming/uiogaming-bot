@@ -22,6 +22,12 @@ database:
 minecraft:
   rcon_password:
 
+# Sanity CMS credentials
+sanity:
+  api_token: 
+  project_id: 
+  dataset: production
+
 # Api keys
 api:
   clarifai:
