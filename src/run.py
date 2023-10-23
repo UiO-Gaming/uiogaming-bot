@@ -14,6 +14,7 @@ DATABASE_RELIANT_COGS = {
     "birthday.py",
     "gullkorn.py",
     "mc_whitelist.py",
+    "social_credit.py"
     "streak.py",
     "word_cloud.py",
 }
