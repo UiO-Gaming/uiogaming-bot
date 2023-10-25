@@ -71,9 +71,16 @@ class TempVoice(commands.Cog):
         limit (int): The user limit of the channel
         """
 
+        # Get the UiO Gaming server's VC category. If the command is not invoked in that server it should still be fine
+        # since the it will return None if not found.
+        vc_category = interaction.guild.get_channel(747542544291987601)
+
         try:
             channel = await interaction.guild.create_voice_channel(
-                name=name, user_limit=limit, reason=f"tempvoice kommando av {interaction.user.name}"
+                name=name,
+                user_limit=limit,
+                category=vc_category,
+                reason=f"tempvoice kommando av {interaction.user.name}",
             )
         except discord.Forbidden:
             self.bot.logger.error(f"Failed to create temporary voice channel in {interaction.guild}")
