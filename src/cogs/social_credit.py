@@ -1,3 +1,15 @@
+from dataclasses import dataclass
+from random import randint
+
+import discord
+from discord import app_commands
+from discord.ext import commands
+from discord.ext import tasks
+
+from cogs.utils import discord_utils
+from cogs.utils import embed_templates
+from cogs.utils import misc_utils
+
 """
 ------ GJORT ------
 - score for skriving om morgenen (kl. 5-9)
@@ -25,16 +37,6 @@
 
 daglig uthengig av laveste score
 """
-
-
-from discord.ext import commands, tasks
-import discord
-from discord import app_commands
-
-from random import randint
-
-from cogs.utils import discord_utils, embed_templates, misc_utils
-from dataclasses import dataclass
 
 
 @dataclass
@@ -65,14 +67,14 @@ class SocialCredit(commands.Cog):
     def add_new_citizen(func):
         async def wrapper(*args, **kwargs):
             self = args[0]
-            self.cursor.execute('SELECT user_id FROM social_credit WHERE user_id = %s', (args[1],))
+            self.cursor.execute("SELECT user_id FROM social_credit WHERE user_id = %s", (args[1],))
             if not self.cursor.fetchone():
                 self._add_citizen(args[1])
             await func(*args, **kwargs)
 
         return wrapper
 
-    def roll(percent: int=50):
+    def roll(percent: int = 50):
         def decorator(func):
             async def wrapper(*args, **kwargs):
                 if randint(0, 100) <= percent:  # 25% chance
@@ -94,7 +96,6 @@ class SocialCredit(commands.Cog):
 
     @tasks.loop(hours=24.0, reconnect=True)
     async def fuck_uwu(self):
-
         await self.bot.wait_until_ready()
 
         weeb_role = self.bot.get_guild(747542543750660178).get_role(803629993539403826)
@@ -103,7 +104,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_punishment(self, user_id, points):
-        print(f'{points} points deducted from {user_id}')
+        print(f"{points} points deducted from {user_id}")
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -115,7 +116,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_reward(self, user_id, points):
-        print(f'{points} points given to {user_id}')
+        print(f"{points} points given to {user_id}")
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -129,38 +130,38 @@ class SocialCredit(commands.Cog):
 
     @social_credit_group.command(name="credits", description="Sjekk hvor dårlig menneske du er")
     async def credits(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
-
         if not bruker:
             bruker = interaction.user
 
-        self.cursor.execute('SELECT * FROM social_credit WHERE user_id = %s', (bruker.id,))
+        self.cursor.execute("SELECT * FROM social_credit WHERE user_id = %s", (bruker.id,))
         result = self.cursor.fetchone()
 
         if not result:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, f'{bruker.mention} er ikke registrert i databasen')
+                embed=embed_templates.error_fatal(interaction, f"{bruker.mention} er ikke registrert i databasen")
             )
 
         db_user = CreditUser(*result)
 
-        embed = discord.Embed(description=(f'{bruker.mention} har `{db_user.credit_score}` social credits'))
+        embed = discord.Embed(description=(f"{bruker.mention} har `{db_user.credit_score}` social credits"))
         await interaction.response.send_message(embed=embed)
 
     @social_credit_group.command(name="leaderboard", description="Sjekk hvem som er de beste og verste borgerne")
     async def leaderboard(self, interaction: discord.Interaction):
-
         await interaction.response.defer()
 
         self.cursor.execute(
-            f"""
+            """
             SELECT * FROM social_credit
             ORDER BY credit_score DESC
             """
         )
 
         if not (result := self.cursor.fetchall()):
-            return await interaction.send(embed=embed_templates.error_fatal(interaction, 'Ingen brukere er registrert i databasen'))
-        
+            return await interaction.send(
+                embed=embed_templates.error_fatal(interaction, "Ingen brukere er registrert i databasen")
+            )
+
         leaderboard_formatted = list(
             map(
                 lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - {s[1][1]} poeng",
@@ -192,7 +193,7 @@ class SocialCredit(commands.Cog):
         embed.set_footer(text=f"Side {paginator.current_page}/{paginator.total_page_count}")
         return embed
 
-    @commands.Cog.listener('on_message')
+    @commands.Cog.listener("on_message")
     async def on_message(self, message):
         if message.author.bot:
             return
@@ -233,12 +234,12 @@ class SocialCredit(commands.Cog):
                 for mention in message.mentions:
                     await self.social_punishment(mention.id, 10)
 
-    @commands.Cog.listener('on_reaction_add')
+    @commands.Cog.listener("on_reaction_add")
     async def on_star_add(self, reaction, user):
         if user.bot:
             return
 
-        if reaction.emoji == '⭐':
+        if reaction.emoji == "⭐":
             if reaction.message.author == user:
                 await self.social_punishment(user.id, 100)
             else:
@@ -246,12 +247,12 @@ class SocialCredit(commands.Cog):
                     await self.social_punishment(user.id, (len(reaction.message.reactions) - 1) * 25)
                     await self.social_reward(user.id, 25 * len(reaction.message.reactions))
 
-    @commands.Cog.listener('on_reaction_remove')
+    @commands.Cog.listener("on_reaction_remove")
     async def on_star_remove(self, reaction, user):
         if user.bot:
             return
 
-        if reaction.emoji == '⭐':
+        if reaction.emoji == "⭐":
             if len(reaction.message.reactions) >= 3:
                 await self.social_punishment(user.id, 25)
 

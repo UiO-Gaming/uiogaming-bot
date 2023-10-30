@@ -24,8 +24,8 @@ minecraft:
 
 # Sanity CMS credentials
 sanity:
-  api_token: 
-  project_id: 
+  api_token:
+  project_id:
   dataset: production
 
 # Api keys

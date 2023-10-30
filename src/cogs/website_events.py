@@ -1,9 +1,9 @@
 import asyncio
 import json
-import pytz
-import requests
 
 import discord
+import pytz
+import requests
 from discord.ext import commands
 
 
@@ -18,8 +18,14 @@ class WebsiteEvents(commands.Cog):
         """
 
         self.bot = bot
-        self.auth_header = { "Authorization": f"Bearer {self.bot.sanity['api_token']}", "Content-Type": "application/json" }
-        self.api_url = f"https://{self.bot.sanity['project_id']}.api.sanity.io/v2021-03-25/data/mutate/{self.bot.sanity['dataset']}"
+        self.auth_header = {
+            "Authorization": f"Bearer {self.bot.sanity['api_token']}",
+            "Content-Type": "application/json",
+        }
+        self.api_url = (
+            f"https://{self.bot.sanity['project_id']}.api.sanity.io"
+            + f"/v2021-03-25/data/mutate/{self.bot.sanity['dataset']}"
+        )
 
     async def cog_load(self):
         asyncio.create_task(self.after_ready())
@@ -48,7 +54,7 @@ class WebsiteEvents(commands.Cog):
                 await self.delete_event(event)
             elif event.status == discord.EventStatus.scheduled:
                 await self.create_event(event)
-        
+
         self.bot.logger.info("WebsiteEvents.py - Finished syncing events! Note errors may have occured")
 
     async def create_event(self, event: discord.ScheduledEvent):
@@ -67,10 +73,7 @@ class WebsiteEvents(commands.Cog):
         document = {
             "_type": "event",
             "_id": str(event.id),
-            "slug": {
-                "_type": "slug",
-                "current": str(event.id)
-            },
+            "slug": {"_type": "slug", "current": str(event.id)},
             "title": event.name,
             "date": time.strftime("%Y-%m-%d %H:%M"),  # TODO
             "location": event.location,
@@ -89,8 +92,9 @@ class WebsiteEvents(commands.Cog):
         if response.status_code == 200:
             self.bot.logger.info(f"WebsiteEvents.py - Created Event in Sanity with ID: {event.id}")
         else:
-            self.bot.logger.error(f"WebsiteEvents.py - Failed to create event in Sanity with ID: {event.id}. Response: {response.text}")
-
+            self.bot.logger.error(
+                f"WebsiteEvents.py - Failed to create event in Sanity with ID: {event.id}. Response: {response.text}"
+            )
 
     async def delete_event(self, event: discord.ScheduledEvent):
         """
@@ -101,21 +105,15 @@ class WebsiteEvents(commands.Cog):
         event (discord.ScheduledEvent): The deleted event
         """
 
-        mutation = {
-            "mutations": [
-                {
-                    "delete": {
-                        "id": str(event.id)
-                    }
-                }
-            ]
-        }
+        mutation = {"mutations": [{"delete": {"id": str(event.id)}}]}
 
         response = requests.post(self.api_url, headers=self.auth_header, data=json.dumps(mutation))
         if response.status_code == 200:
             self.bot.logger.info(f"WebsiteEvents.py - Deleted Event in Sanity with ID: {event.id}")
         else:
-            self.bot.logger.error(f"WebsiteEvents.py - Failed to delete event in Sanity with ID: {event.id}. Response: {response.text}")
+            self.bot.logger.error(
+                f"WebsiteEvents.py - Failed to delete event in Sanity with ID: {event.id}. Response: {response.text}"
+            )
 
 
 async def setup(bot: commands.Bot):

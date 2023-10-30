@@ -13,7 +13,6 @@ class Wiki(commands.Cog):
         search = wikipedia.search(search_term)
         search = search[0]
         search = wikipedia.page(search)
-        title = search.title
         summary = wikipedia.summary(search_term, sentences=5)
         url = search.url
 
