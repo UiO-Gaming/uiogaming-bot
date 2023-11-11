@@ -77,7 +77,7 @@ class WebsiteEvents(commands.Cog):
             "title": event.name,
             "date": time.strftime("%Y-%m-%d %H:%M"),  # TODO
             "location": event.location,
-            "description": event.description if len(event.description) <= 120 else f"{event.description[:115]}...",
+            "description": event.description,
         }
 
         mutation = {
