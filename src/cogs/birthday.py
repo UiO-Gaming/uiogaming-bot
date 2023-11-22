@@ -10,6 +10,7 @@ from discord.ext import tasks
 
 from cogs.utils import discord_utils
 from cogs.utils import embed_templates
+from cogs.utils import misc_utils
 
 
 class Birthday(commands.Cog):
@@ -149,7 +150,6 @@ class Birthday(commands.Cog):
             SELECT *, CAST(birthday + ((EXTRACT(YEAR FROM AGE(birthday)) + 1) * interval '1' YEAR) AS DATE) AS next_bday
             FROM birthdays
             ORDER BY next_bday ASC
-            LIMIT 5
             """
         )
         results = self.cursor.fetchall()
@@ -292,12 +292,26 @@ class Birthday(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
+    def __construct_ranking_embed(
+        self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed
+    ) -> discord.Embed:
+        """
+        Constructs the embed for commands that show a ranking
+
+        Parameters
+        ----------
+        paginator (misc_utils.Paginator): Paginator dataclass
+        page (list): List of members to display
+        embed (discord.Embed): Embed to add fields to
+        """
+        embed.description = "\n".join(page)
+        embed.set_footer(text=f"Side {paginator.current_page}/{paginator.total_page_count}")
+        return embed
+
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @birthday_group.command(
-        name="kommende", description="Viser en liste over de opptil 5 kommende bursdager i serveren"
-    )
+    @birthday_group.command(name="kommende", description="Viser en liste over de kommende bursdager i serveren")
     async def birthdays_upcoming(self, interaction: discord.Interaction):
         """
         Lists up to 5 upcoming birthdays of users in the server.
@@ -307,14 +321,16 @@ class Birthday(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
+        await interaction.response.defer()
+
         next_birthdays = self.__fetch_next_birthdays()
 
         if not next_birthdays:
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
             )
 
-        birthday_string = ""
+        birthday_strings = []
         for user in next_birthdays:
             user_id, _, next_birthday = user
             try:
@@ -326,15 +342,19 @@ class Birthday(commands.Cog):
 
             timestamp = discord.utils.format_dt(next_birthday, style="D")
             relative_timestamp = discord.utils.format_dt(next_birthday, style="R")
-            birthday_string += f"* {discord_user.name} - {timestamp} ({relative_timestamp})\n"
+            birthday_strings.append(f"* {discord_user.name} - {timestamp} ({relative_timestamp})")
 
-        if not birthday_string:
-            return await interaction.response.send_message(
+        if not birthday_strings:
+            return await interaction.followup.send(
                 embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
             )
 
-        embed = discord.Embed(title="Kommende bursdager", description=birthday_string)
-        await interaction.response.send_message(embed=embed)
+        paginator = misc_utils.Paginator(birthday_strings)
+        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
+
+        embed = discord.Embed(title="Kommende bursdager")
+        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
+        await interaction.followup.send(embed=embed, view=view)
 
 
 async def setup(bot: commands.Bot):
