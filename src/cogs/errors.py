@@ -109,7 +109,7 @@ class Errors(commands.Cog):
                 text = "Denne kommandoen kan bare utføres i servere"
                 return await ctx.reply(text)
             except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
-                print("DM Blocked!")
+                self.bot.logger.info("DM Blocked!")
 
         elif isinstance(error, commands.DisabledCommand):
             pass

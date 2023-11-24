@@ -104,7 +104,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_punishment(self, user_id, points):
-        print(f"{points} points deducted from {user_id}")
+        self.bot.logger.info(f"{points} points deducted from {user_id}")
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -116,7 +116,7 @@ class SocialCredit(commands.Cog):
 
     @add_new_citizen
     async def social_reward(self, user_id, points):
-        print(f"{points} points given to {user_id}")
+        self.bot.logger.info(f"{points} points given to {user_id}")
         self.cursor.execute(
             """
             UPDATE social_credit
