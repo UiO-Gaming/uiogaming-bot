@@ -77,16 +77,7 @@ class Birthday(commands.Cog):
     async def before_birthday_check(self):
         """Syncs loop with the time of day"""
 
-        await self.bot.wait_until_ready()
-
-        now = datetime.datetime.now()
-        if now.hour > 0:
-            sleep_until = now + datetime.timedelta(days=1)
-            sleep_until = sleep_until.replace(hour=0, minute=0, second=0, microsecond=0)
-        else:
-            sleep_until = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-        await discord.utils.sleep_until(sleep_until)
+        await discord_utils.sleep_until_midnight(self.bot)
 
     def cog_unload(self):
         self.birthday_check.cancel()

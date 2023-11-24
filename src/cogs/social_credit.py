@@ -113,15 +113,19 @@ class SocialCredit(commands.Cog):
 
     @tasks.loop(hours=24.0, reconnect=True)
     async def fuck_uwu(self):
-        """
-        Deducts points from people with the weeb role every 24 hours
-        """
+        """Deducts points from people with the weeb role every 24 hours"""
 
         await self.bot.wait_until_ready()
 
         weeb_role = self.bot.get_guild(747542543750660178).get_role(803629993539403826)
         for weeb in weeb_role.members:
             await self.social_punishment(weeb.id, 1, "weeb")
+
+    @fuck_uwu.before_loop
+    async def before_fuck_uwu(self):
+        """Syncs loop with the time of day"""
+
+        await discord_utils.sleep_until_midnight(self.bot)
 
     @add_new_citizen
     async def social_punishment(self, user_id: int, points: int, reason: str):
