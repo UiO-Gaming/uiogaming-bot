@@ -100,11 +100,11 @@ class SocialCredit(commands.Cog):
 
         weeb_role = self.bot.get_guild(747542543750660178).get_role(803629993539403826)
         for weeb in weeb_role.members:
-            await self.social_punishment(weeb.id, 1)
+            await self.social_punishment(weeb.id, 1, "weeb")
 
     @add_new_citizen
-    async def social_punishment(self, user_id, points):
-        self.bot.logger.info(f"{points} points deducted from {user_id}")
+    async def social_punishment(self, user_id, points, reason):
+        self.bot.logger.info(f"{points} points deducted from {user_id} ({reason})")
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -115,8 +115,8 @@ class SocialCredit(commands.Cog):
         )
 
     @add_new_citizen
-    async def social_reward(self, user_id, points):
-        self.bot.logger.info(f"{points} points given to {user_id}")
+    async def social_reward(self, user_id, points, reason):
+        self.bot.logger.info(f"{points} points given to {user_id} ({reason})")
         self.cursor.execute(
             """
             UPDATE social_credit
@@ -207,32 +207,32 @@ class SocialCredit(commands.Cog):
     @roll(percent=50)
     async def politcal_content(self, message):
         if message.channel.id == 754706204349038644:
-            await self.social_punishment(message.author.id, 25)
+            await self.social_punishment(message.author.id, 25, "politics")
 
     @roll(percent=25)
     async def chad_message(self, message):
         if message.channel.id == 811606213665357824:
-            await self.social_reward(message.author.id, 10)
+            await self.social_reward(message.author.id, 10, "member-chat")
 
     @roll(percent=50)
     async def early_bird(self, message):
         illegal_hours = [5, 6, 7, 8, 9]
 
         if message.created_at.hour in illegal_hours:
-            await self.social_punishment(message.author.id, 10)
+            await self.social_punishment(message.author.id, 10, "early-bird")
 
     @roll(percent=50)
     async def night_owl(self, message):
         happy_hours = [1, 2, 3, 4]
 
         if message.created_at.hour in happy_hours:
-            await self.social_reward(message.author.id, 10)
+            await self.social_reward(message.author.id, 10, "night-owl")
 
     async def gullkorn(self, message):
         if message.channel.id == 865970753748074576:
             if message.mentions:
                 for mention in message.mentions:
-                    await self.social_punishment(mention.id, 10)
+                    await self.social_punishment(mention.id, 10, "gullkorn")
 
     @commands.Cog.listener("on_reaction_add")
     async def on_star_add(self, reaction, user):
@@ -241,11 +241,11 @@ class SocialCredit(commands.Cog):
 
         if reaction.emoji == "⭐":
             if reaction.message.author == user:
-                await self.social_punishment(user.id, 100)
+                await self.social_punishment(user.id, 100, "self-star")
             else:
                 if len(reaction.message.reactions) >= 3:
-                    await self.social_punishment(user.id, (len(reaction.message.reactions) - 1) * 25)
-                    await self.social_reward(user.id, 25 * len(reaction.message.reactions))
+                    await self.social_punishment(user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars")
+                    await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
 
     @commands.Cog.listener("on_reaction_remove")
     async def on_star_remove(self, reaction, user):
@@ -254,7 +254,7 @@ class SocialCredit(commands.Cog):
 
         if reaction.emoji == "⭐":
             if len(reaction.message.reactions) >= 3:
-                await self.social_punishment(user.id, 25)
+                await self.social_punishment(user.id, 25, "remove star")
 
 
 async def setup(bot: commands.Bot):
