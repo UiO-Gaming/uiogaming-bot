@@ -67,7 +67,10 @@ class SocialCredit(commands.Cog):
         )
 
     def add_new_citizen(func):
-        """Decorator that, when used, make sure that a user is inserted into the database before executing the function"""
+        """
+        Decorator that, when used, make sure that a user is inserted
+        into the database before executing the function
+        """
 
         async def wrapper(*args, **kwargs):
             self = args[0]
@@ -93,7 +96,7 @@ class SocialCredit(commands.Cog):
     def _add_citizen(self, user_id: int):
         """
         Adds a user to the database
-        
+
         Parameters
         ----------
         user_id (int): The user's Discord ID
@@ -356,7 +359,9 @@ class SocialCredit(commands.Cog):
                 await self.social_punishment(user.id, 100, "self-star")
             else:
                 if len(reaction.message.reactions) >= 3:
-                    await self.social_punishment(user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars")
+                    await self.social_punishment(
+                        user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars"
+                    )
                     await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
 
     @commands.Cog.listener("on_reaction_remove")
