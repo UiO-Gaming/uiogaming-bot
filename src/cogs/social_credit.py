@@ -209,10 +209,10 @@ class SocialCredit(commands.Cog):
         if message.channel.id == 754706204349038644:
             await self.social_punishment(message.author.id, 25)
 
-    @roll(percent=50)
+    @roll(percent=25)
     async def chad_message(self, message):
         if message.channel.id == 811606213665357824:
-            await self.social_reward(message.author.id, 25)
+            await self.social_reward(message.author.id, 10)
 
     @roll(percent=50)
     async def early_bird(self, message):
