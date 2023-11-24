@@ -164,7 +164,7 @@ class SocialCredit(commands.Cog):
 
         leaderboard_formatted = list(
             map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - {s[1][1]} poeng",
+                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` poeng",
                 enumerate(result),
             )
         )
