@@ -1,3 +1,4 @@
+import asyncio
 import random
 
 import aiocron
@@ -40,7 +41,10 @@ class RepeatedMessages(commands.Cog):
                 "https://cdn.discordapp.com/attachments/747542544291987597/1037866542328713256/fredag_i_norge.mp4",
             ]
 
-            await channel.send("NU ÄR DET FREDAG!\n" + random.choice(videos))
+            await asyncio.sleep(1)  # try to mitigate the same video being queued two weeks in a row
+            video = random.choice(videos)
+
+            await channel.send("NU ÄR DET FREDAG!\n" + video)
 
         @aiocron.crontab("0 0 * * 1")
         async def mandag():
