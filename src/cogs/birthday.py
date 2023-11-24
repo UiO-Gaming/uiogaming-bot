@@ -50,6 +50,8 @@ class Birthday(commands.Cog):
 
         await asyncio.sleep(1)  # Prevent sending message before date has really changed
 
+        self.bot.logger.info("Checking for birthdays")
+
         self.cursor.execute(
             """
             SELECT *
@@ -60,6 +62,7 @@ class Birthday(commands.Cog):
         )
 
         birthdays = self.cursor.fetchall()
+        self.bot.logger.info(f"Found the following birthdays: {birthdays}")  # TODO: Temporary. Remove
         if birthdays:
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
