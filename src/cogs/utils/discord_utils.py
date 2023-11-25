@@ -37,6 +37,8 @@ async def sleep_until_midnight(bot):
     else:
         sleep_until = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
+    bot.logger.info(f"Loop sleeping until {sleep_until}")
+
     await discord.utils.sleep_until(sleep_until)
 
 
