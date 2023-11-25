@@ -77,6 +77,7 @@ class Birthday(commands.Cog):
     async def before_birthday_check(self):
         """Syncs loop with the time of day"""
 
+        self.bot.logger.info("Postponing birthday check until midnight")
         await discord_utils.sleep_until_midnight(self.bot)
 
     def cog_unload(self):

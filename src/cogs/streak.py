@@ -152,6 +152,7 @@ class Streak(commands.Cog):
     async def before_streak_check(self):
         """Syncs loop to the time of day"""
 
+        self.bot.logger.info("Postponing streak check until midnight")
         await discord_utils.sleep_until_midnight(self.bot)
 
     streak_group = app_commands.Group(name="streak", description="Snapchat streaks, men for Discord")
