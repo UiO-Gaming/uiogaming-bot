@@ -76,13 +76,13 @@ class Aurora(commands.Cog):
             aurora_forecast_time = discord.utils.format_dt(datetime.fromisoformat(aurora_forecast_time), style="R")
         except ValueError as e:
             self.bot.logger.warning(e)
-            aurora_forecast_time = "`Ukjent`"
+            aurora_forecast_time = f"`{aurora_forecast_time}`"
 
         try:
             cloud_forecast_time = discord.utils.format_dt(datetime.fromisoformat(cloud_forecast_time), style="R")
         except ValueError as e:
             self.bot.logger.warning(e)
-            cloud_forecast_time = "`Ukjent`"
+            cloud_forecast_time = f"`{cloud_forecast_time}`"
 
         return {
             "aurora_forecast_time": aurora_forecast_time,
