@@ -72,8 +72,17 @@ class Aurora(commands.Cog):
         cloud_forecast_time = cloud_data["properties"]["timeseries"][0]["time"]
 
         # Convert time to discord timestamps
-        aurora_forecast_time = discord.utils.format_dt(datetime.fromisoformat(aurora_forecast_time), style="R")
-        cloud_forecast_time = discord.utils.format_dt(datetime.fromisoformat(cloud_forecast_time), style="R")
+        try:
+            aurora_forecast_time = discord.utils.format_dt(datetime.fromisoformat(aurora_forecast_time), style="R")
+        except ValueError as e:
+            self.bot.logger.warning(e)
+            aurora_forecast_time = "`Ukjent`"
+
+        try:
+            cloud_forecast_time = discord.utils.format_dt(datetime.fromisoformat(cloud_forecast_time), style="R")
+        except ValueError as e:
+            self.bot.logger.warning(e)
+            cloud_forecast_time = "`Ukjent`"
 
         return {
             "aurora_forecast_time": aurora_forecast_time,
