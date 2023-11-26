@@ -111,7 +111,7 @@ class Aurora(commands.Cog):
         aurora_percentage = forecast.get("aurora_percentage")
         cloud_percentage = forecast.get("cloud_cover_percentage")
 
-        embed = discord.Embed(title="Nordlysvarsel for Chateu Neuf", color=0x00EA8D)
+        embed = discord.Embed(title="Nordlysvarsel for Chateau Neuf", color=0x00EA8D)
         embed.description = f"Nordlysvarsel hentet: {aurora_time}\nSkydekkevarsel hentet: {cloud_time}"
         embed.add_field(name="Sjanse for å se nordlys", value=f"{aurora_percentage}%")
         embed.add_field(name="Skydekke", value=f"{cloud_percentage}%")
