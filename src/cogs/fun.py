@@ -108,6 +108,19 @@ class Fun(commands.Cog):
 
         await ctx.reply("https://twitter.com/erna_solberg/status/1075333228779765760")
 
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def snake(self, ctx: commands.Context):
+        """
+        snake
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply("A snake eating its own tail indicates that its excrement provides food for it")
+
 
 async def setup(bot: commands.Bot):
     """
