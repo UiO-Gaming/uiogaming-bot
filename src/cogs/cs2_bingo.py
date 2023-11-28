@@ -151,7 +151,7 @@ class BingoGenerator:
         y = y1
         for line in lines:
             draw.text((x1, y), line, fill=color, font=font)
-            y += font.getlength(line)
+            y += font.getbbox(line)[3]
 
         # Convert back to cv2 image format and update the original image
         cv2_image = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
