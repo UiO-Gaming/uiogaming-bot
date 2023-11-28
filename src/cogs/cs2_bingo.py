@@ -1,6 +1,7 @@
 import asyncio
 import json
 import random
+import textwrap
 from datetime import datetime
 from datetime import timedelta
 
@@ -107,7 +108,7 @@ class BingoGenerator:
         top_left: tuple,
         bottom_right: tuple,
         font_path: str,
-        font_size: int = 20,
+        font_size: int = 10,
         color: tuple = (0, 0, 0),
     ):
         """
@@ -126,32 +127,45 @@ class BingoGenerator:
         # Convert the cv2 image to a PIL image
         image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         draw = ImageDraw.Draw(image_pil)
-        font = ImageFont.truetype(font_path, font_size)
 
         # Calculate text size and wrapping
+        # TODO: Dry. This algorithm is ripped from the preferencememe command.
+        # Hence, this is not commented, for now
         x1, y1 = top_left
         x2, y2 = bottom_right
-        w, _ = x2 - x1, y2 - y1
-        lines = []
-        line = []
+        w, h = (x2 - x1) * 0.9, (y2 - y1) * 0.9
 
-        for word in text.split():
-            # Check if adding the word to the line would exceed the width
-            line_width = draw.textlength(" ".join(line + [word]), font=font)
-            if line_width <= w:
-                line.append(word)
-            else:
-                lines.append(" ".join(line))
-                line = [word]
+        font_width = 0
+        while font_width < w:
+            font = ImageFont.truetype(font_path, font_size)
 
-        # Add the last line
-        lines.append(" ".join(line))
+            font_box = font.getbbox(text)
+            font_width = draw.textlength(text, font=font)
 
-        # Draw text
-        y = y1
-        for line in lines:
-            draw.text((x1, y), line, fill=color, font=font)
-            y += font.getbbox(line)[3]
+            font_size += 2
+
+        text = textwrap.fill(text, width=font_size)
+
+        longest_line = max(text.split("\n"), key=lambda x: font.getbbox(x))
+        longest_line_font_box = font.getbbox(longest_line)
+        font_width = longest_line_font_box[2] - longest_line_font_box[0]
+
+        font_height = (font_box[3] - font_box[1] + 10) * text.count("\n")
+
+        while font_width < w and font_height < h:
+            font = ImageFont.truetype(font_path, font_size)
+
+            longest_line_font_box = font.getbbox(longest_line)
+            font_width = longest_line_font_box[2] - longest_line_font_box[0]
+
+            font_box = font.getbbox(text)
+            font_height = (font_box[3] - font_box[1] + 10) * text.count("\n")
+
+            font_size += 2
+
+        draw.multiline_textbbox((w, h), text=text, font=font, align="center", anchor="mm")
+        yeet = ((x1 + x2) // 2, (y1 + y2) // 2)
+        draw.multiline_text(yeet, text, font=font, fill=color, align="center", anchor="mm")
 
         # Convert back to cv2 image format and update the original image
         cv2_image = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
