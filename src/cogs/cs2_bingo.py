@@ -296,7 +296,7 @@ class BingoView(discord.ui.View):
         mention_players = " ".join([f"{p.mention}" for p in self.lobby["players"]])
         embed = embed_templates.success(
             interaction,
-            text="Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM."
+            text="Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
             + "Sørg for at jeg kan slide inn i dem :smirk:",
         )
         await interaction.response.send_message(content=mention_players, embed=embed)
