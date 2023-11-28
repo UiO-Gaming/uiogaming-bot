@@ -289,6 +289,10 @@ class BingoView(discord.ui.View):
             embed = embed_templates.error_warning(interaction, text="Du er allerede i lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
+        if len(self.lobby["players"]) >= 10:
+            embed = embed_templates.error_warning(interaction, text="Lobbyen er full")
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
+
         self.lobby["players"].append(interaction.user)
         await self.rerender_players(interaction)
 
