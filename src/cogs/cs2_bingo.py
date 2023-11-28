@@ -254,17 +254,17 @@ class BingoView(discord.ui.View):
     async def join_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if datetime.now() > self.lobby["ends"]:
             embed = embed_templates.error_warning(interaction, text="Lobbyen har allerede startet")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if (
             interaction.user.id in self.lobby["kicked_players"]
         ):  # We have to use the ID here to avoid fetching the member object in the selection menu
             embed = embed_templates.error_warning(interaction, text="Du er blitt sparket fra lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user in self.lobby["players"]:
             embed = embed_templates.error_warning(interaction, text="Du er allerede i lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby["players"].append(interaction.user)
         await self.rerender_players(interaction)
@@ -276,7 +276,7 @@ class BingoView(discord.ui.View):
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby["host"]:
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte bingoen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         await self.end_lobby()
 
@@ -312,11 +312,11 @@ class BingoView(discord.ui.View):
             embed = embed_templates.error_warning(
                 interaction, text="Du kan ikke forlate lobbyen som host. Slett lobbyen i stedet om ønskelig!"
             )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user not in self.lobby["players"]:
             embed = embed_templates.error_warning(interaction, text="Du er ikke i lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby["players"].remove(interaction.user)
         await self.rerender_players(interaction)
@@ -328,7 +328,7 @@ class BingoView(discord.ui.View):
     async def delete_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby["host"]:
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan slette lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby["ends"] = datetime.now()
         await interaction.message.delete()
@@ -360,11 +360,11 @@ class KickSelectMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.lobby["host"]:
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan kicke spillere")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if str(interaction.user.id) in interaction.data["values"][0]:
             embed = embed_templates.error_warning(interaction, text="Du kan ikke kicke deg selv")
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         print(interaction.data["values"])
         self.lobby["kicked_players"].append(int(interaction.data["values"][0]))
