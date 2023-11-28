@@ -269,9 +269,8 @@ class BingoView(discord.ui.View):
         self.lobby["players"].append(interaction.user)
         await self.rerender_players(interaction)
 
-        await interaction.response.send_message(
-            embed=embed_templates.success(interaction, text="Du har blitt med i lobbyen"), ephemeral=True
-        )
+        embed = embed_templates.success(interaction, text="Du har blitt med i lobbyen")
+        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
     @discord.ui.button(label="Start", style=discord.ButtonStyle.green)
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -323,7 +322,7 @@ class BingoView(discord.ui.View):
         await self.rerender_players(interaction)
 
         embed = embed_templates.success(interaction, text="Du har forlatt lobbyen")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
     @discord.ui.button(label="Slett", style=discord.ButtonStyle.red)
     async def delete_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -333,9 +332,9 @@ class BingoView(discord.ui.View):
 
         self.lobby["ends"] = datetime.now()
         await interaction.message.delete()
-        await interaction.response.send_message(
-            embed=embed_templates.success(interaction, text="Lobbyen har blitt slettet")
-        )
+
+        embed = embed_templates.success(interaction, text="Lobbyen har blitt slettet")
+        await interaction.response.send_message(embed=embed, delete_after=5)
 
 
 class KickSelectMenu(discord.ui.Select):
@@ -380,9 +379,9 @@ class KickSelectMenu(discord.ui.Select):
                 break
 
         await self.rerender_players(interaction)
-        await interaction.response.send_message(
-            embed=embed_templates.success(interaction, text="Brukeren har blitt kicket fra lobbyen"), ephemeral=True
-        )
+
+        embed = embed_templates.success(interaction, text="Brukeren har blitt kicket fra lobbyen")
+        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
 
 async def setup(bot: commands.Bot):
