@@ -47,7 +47,7 @@ class Bot(commands.Bot):
             if not db_credential:
                 self.db_connection = None
                 self.logger.warning(
-                    "No database credentials specified. " "Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
+                    f"No database credentials specified. Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
                 )
                 break
         else:
