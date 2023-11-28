@@ -7,7 +7,7 @@ nltk==3.8.*
 numpy==1.26.*
 pillow==10.1.*
 psutil==5.9.*
-psycopg2==2.9.*
+psycopg2-binary==2.9.*
 pyyaml==6.0.*
 requests==2.31.*
 wordcloud==1.9.*
