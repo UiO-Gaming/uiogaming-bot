@@ -236,7 +236,7 @@ class BingoView(discord.ui.View):
     async def on_timeout(self):
         await self.end_lobby()
 
-    async def end_lobby(self, interaction):
+    async def end_lobby(self):
         self.lobby["ends"] = datetime.now()
         for item in self.children:
             item.disabled = True
@@ -279,7 +279,7 @@ class BingoView(discord.ui.View):
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte bingoen")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        await self.end_lobby(interaction)
+        await self.end_lobby()
 
         embed = interaction.message.embeds[0]
         embed.description = "Bingoen har startet!"
