@@ -188,10 +188,10 @@ class BingoGenerator:
             player_space = default_space + [i for op in other_players for i in cls.CELLS.get(op, [])]
             other_players.append("du")
 
-            other_players = [
+            other_players_names = [
                 cls.NAMES.get(op, bot.get_user(int(op)).display_name) for op in other_players if op != "du"
             ]
-            player_space += [s.format(random.choice(other_players)) for s in cls.CELLS["parameterized"]]
+            player_space += [s.format(random.choice(other_players_names)) for s in cls.CELLS["parameterized"]]
 
             sampled_cells = np.random.choice(player_space, replace=False, size=25)
             player_cells[player] = list(sampled_cells)
