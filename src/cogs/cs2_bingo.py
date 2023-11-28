@@ -81,7 +81,7 @@ class CS2Bingo(commands.Cog):
         embed.set_author(name=interaction.user.global_name, icon_url=interaction.user.avatar)
         embed.add_field(name="Spillere", value=f"* {interaction.user.mention}", inline=False)
         await interaction.response.send_message(
-            embed=embed, view=BingoView(self.active_lobbies[str(interaction.user.id)])
+            embed=embed, view=BingoView(self.active_lobbies[str(interaction.user.id)], self.bot)
         )
 
 
@@ -90,10 +90,14 @@ class BingoGenerator:
     Generate bingo sheets for CS2
     """
 
-    BINGO_PATH = "./src/assets/cs2_bingo"
-    with open(f"{BINGO_PATH}/cells.json") as f:
-        cells = json.load(f)
     FONT_PATH = "./src/assets/fonts/comic.ttf"
+    BINGO_PATH = "./src/assets/cs2_bingo"
+
+    with open(f"{BINGO_PATH}/cells.json") as f:
+        CELLS = json.load(f)
+
+    with open(f"{BINGO_PATH}/names.json") as f:
+        NAMES = json.load(f)
 
     @classmethod
     async def put_text_in_box(
@@ -154,22 +158,26 @@ class BingoGenerator:
         np.copyto(image, cv2_image)
 
     @classmethod
-    async def sample_cells(cls, players: list[str]) -> dict[str, list[str]]:
+    async def sample_cells(cls, players: list[str], bot: commands.Bot) -> dict[str, list[str]]:
         assert 0 < len(players) <= 6  # TODO: fix?
 
-        default_space = cls.cells["all"]
+        default_space = cls.CELLS["all"]
 
         if len(players) < 5:
-            default_space += cls.cells["randoms"]
+            default_space += cls.CELLS["randoms"]
 
         player_cells = {}
 
         for player in players:
             other_players = players.copy()
             other_players.remove(player)
-            player_space = default_space + [i for op in other_players for i in cls.cells.get(op, [])]
+            player_space = default_space + [i for op in other_players for i in cls.CELLS.get(op, [])]
             other_players.append("du")
-            player_space += [s.format(random.choice(other_players)) for s in cls.cells["parameterized"]]
+
+            other_players = [
+                cls.NAMES.get(op, bot.get_user(int(op)).display_name) for op in other_players if op != "du"
+            ]
+            player_space += [s.format(random.choice(other_players)) for s in cls.CELLS["parameterized"]]
 
             sampled_cells = np.random.choice(player_space, replace=False, size=25)
             player_cells[player] = list(sampled_cells)
@@ -177,7 +185,7 @@ class BingoGenerator:
         return player_cells
 
     @classmethod
-    async def generate_sheets(cls, players: list[discord.Member]):
+    async def generate_sheets(cls, players: list[discord.Member], bot: commands.Bot):
         """
         Generate bingo sheets for each player
 
@@ -188,7 +196,7 @@ class BingoGenerator:
 
         players = [str(p.id) for p in players]
 
-        sample_space = await cls.sample_cells(players)
+        sample_space = await cls.sample_cells(players, bot)
         assert len(sample_space) == len(players)
         image = cv2.imread(f"{cls.BINGO_PATH}/cs2_bingo_sheet.png")
 
@@ -225,11 +233,12 @@ class BingoGenerator:
 
 
 class BingoView(discord.ui.View):
-    def __init__(self, lobby: dict):
+    def __init__(self, lobby: dict, bot: commands.Bot):
         lobby_end = (lobby.get("ends") - datetime.now()).total_seconds()
         super().__init__(timeout=lobby_end)
 
         self.lobby = lobby
+        self.bot = bot
 
         self.add_item(KickSelectMenu(self))
 
@@ -292,7 +301,7 @@ class BingoView(discord.ui.View):
         )
         await interaction.response.send_message(content=mention_players, embed=embed)
 
-        await BingoGenerator.generate_sheets(self.lobby["players"])
+        await BingoGenerator.generate_sheets(self.lobby["players"], self.bot)
         for player in self.lobby["players"]:
             try:
                 await player.send(file=discord.File(f"./src/assets/temp/{player.id}_bingo.png"))
