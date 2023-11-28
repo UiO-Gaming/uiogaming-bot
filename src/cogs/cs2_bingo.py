@@ -231,7 +231,7 @@ class BingoView(discord.ui.View):
 
         self.lobby = lobby
 
-        self.add_item(KickSelectMenu(self.lobby, self))
+        self.add_item(KickSelectMenu(self))
 
     async def on_timeout(self):
         await self.end_lobby()
@@ -338,27 +338,27 @@ class BingoView(discord.ui.View):
 
 
 class KickSelectMenu(discord.ui.Select):
-    def __init__(self, lobby: dict, parent_view: BingoView):
-        self.lobby = lobby
+    def __init__(self, parent_view: BingoView):
         self.parent_view = parent_view
         options = [
             discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨", description=f"Kick {p.display_name}")
-            for p in self.lobby["players"]
+            for p in self.parent_view.lobby["players"]
         ]
         super().__init__(placeholder="Kick en spiller", max_values=1, min_values=1, options=options)
 
     # TODO: DRY
     async def rerender_players(self, interaction: discord.Interaction):
         self.options = [
-            discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨") for p in self.lobby["players"]
+            discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨")
+            for p in self.parent_view.lobby["players"]
         ]
         embed = interaction.message.embeds[0].set_field_at(
-            0, name="Spillere", value="\n".join([f"* {p.mention}" for p in self.lobby["players"]])
+            0, name="Spillere", value="\n".join([f"* {p.mention}" for p in self.parent_view.lobby["players"]])
         )
         await interaction.message.edit(embed=embed, view=self.parent_view)
 
     async def callback(self, interaction: discord.Interaction):
-        if interaction.user != self.lobby["host"]:
+        if interaction.user != self.parent_view.lobby["host"]:
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan kicke spillere")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
@@ -366,16 +366,15 @@ class KickSelectMenu(discord.ui.Select):
             embed = embed_templates.error_warning(interaction, text="Du kan ikke kicke deg selv")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
-        print(interaction.data["values"])
-        self.lobby["kicked_players"].append(int(interaction.data["values"][0]))
+        self.parent_view.lobby["kicked_players"].append(int(interaction.data["values"][0]))
 
         # Remove the player from the lobby
         # Since we only have the ID, we have to iterate through the list
         # unless we want to fetch the member object from the API
         # which we don't :)
-        for i, member in enumerate(self.lobby["players"]):
+        for i, member in enumerate(self.parent_view.lobby["players"]):
             if member.id == int(interaction.data["values"][0]):
-                self.lobby["players"].pop(i)
+                self.parent_view.lobby["players"].pop(i)
                 break
 
         await self.rerender_players(interaction)
