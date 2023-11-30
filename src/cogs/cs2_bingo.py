@@ -124,48 +124,48 @@ class BingoGenerator:
         :return: Image with text (numpy array).
         """
 
+        # TODO: Dry. This algorithm is also seen in the memes cog
+
         # Convert the cv2 image to a PIL image
         image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         draw = ImageDraw.Draw(image_pil)
 
-        # Calculate text size and wrapping
-        # TODO: Dry. This algorithm is ripped from the preferencememe command.
-        # Hence, this is not commented, for now
+        # Get coordinates of the bounding box
         x1, y1 = top_left
         x2, y2 = bottom_right
+
+        # Get the width and height of the bounding box
+        # We multiply by 0.9 to give some padding
         w, h = (x2 - x1) * 0.9, (y2 - y1) * 0.9
 
+        # Initialize font width/height to 0 in order to run the while loops below at least once
         font_width = 0
-        while font_width < w:
-            font = ImageFont.truetype(font_path, font_size)
+        font_height = 0
 
-            font_box = font.getbbox(text)
-            font_width = draw.textlength(text, font=font)
+        # Add newlines to the text. Here we have gone with 15 characters per line
+        # This is arbitrary, but seems to work well
+        text = textwrap.fill(text, width=15)
 
-            font_size += 2
-
-        text = textwrap.fill(text, width=font_size)
-
-        longest_line = max(text.split("\n"), key=lambda x: font.getbbox(x))
-        longest_line_font_box = font.getbbox(longest_line)
-        font_width = longest_line_font_box[2] - longest_line_font_box[0]
-
-        font_height = (font_box[3] - font_box[1] + 10) * text.count("\n")
-
+        # Increase the font size until the longest line of text does not fit in the bounding box anymore
+        # We also have to check the height, since the text might be too tall for the box
         while font_width < w and font_height < h:
             font = ImageFont.truetype(font_path, font_size)
 
-            longest_line_font_box = font.getbbox(longest_line)
-            font_width = longest_line_font_box[2] - longest_line_font_box[0]
+            longest_line = max(text.split("\n"), key=lambda x: font.getlength(x))
+            font_width = font.getlength(longest_line)
 
+            # bbox doesn't work with multiline text, so we have to calculate the height manually
+            # take the height of the bounding box, multiply by 1.5 (our assumed line dividor height)
+            # since it's 1 it doesn't change anything, but it's there for clarity
+            # after that, we multiply by the number of lines
             font_box = font.getbbox(text)
-            font_height = (font_box[3] - font_box[1] + 10) * text.count("\n")
+            font_height = ((font_box[3] - font_box[1]) * 1.5) * text.count("\n")
 
-            font_size += 2
+            font_size += 1
 
         draw.multiline_textbbox((w, h), text=text, font=font, align="center", anchor="mm")
-        yeet = ((x1 + x2) // 2, (y1 + y2) // 2)
-        draw.multiline_text(yeet, text, font=font, fill=color, align="center", anchor="mm")
+        center_of_box = ((x1 + x2) // 2, (y1 + y2) // 2)
+        draw.multiline_text(center_of_box, text, font=font, fill=color, align="center", anchor="mm")
 
         # Convert back to cv2 image format and update the original image
         cv2_image = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
