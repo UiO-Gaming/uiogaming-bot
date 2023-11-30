@@ -189,7 +189,7 @@ class BingoGenerator:
             other_players.append("du")
 
             other_players_names = [
-                cls.NAMES.get(op, bot.get_user(int(op)).display_name) for op in other_players if op != "du"
+                cls.NAMES.get(op, bot.get_user(int(op)).display_name) if op != "du" else op for op in other_players
             ]
             player_space += [s.format(random.choice(other_players_names)) for s in cls.CELLS["parameterized"]]
 
