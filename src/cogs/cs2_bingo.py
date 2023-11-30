@@ -156,13 +156,13 @@ class BingoGenerator:
 
             # bbox doesn't work with multiline text, so we have to calculate the height manually
             # take the height of the bounding box, multiply by 1.5 (our assumed line dividor height)
-            # since it's 1 it doesn't change anything, but it's there for clarity
             # after that, we multiply by the number of lines
             font_box = font.getbbox(text)
             font_height = ((font_box[3] - font_box[1]) * 1.5) * text.count("\n")
 
             font_size += 1
 
+        # Actually draw the text
         draw.multiline_textbbox((w, h), text=text, font=font, align="center", anchor="mm")
         center_of_box = ((x1 + x2) // 2, (y1 + y2) // 2)
         draw.multiline_text(center_of_box, text, font=font, fill=color, align="center", anchor="mm")
