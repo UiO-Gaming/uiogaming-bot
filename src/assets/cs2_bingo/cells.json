@@ -45,7 +45,7 @@
     "Markus ber om nade drop"
   ],
   "437534010332151808": ["Lille skløtte", "Henrik tar over", "Helen deafener seg selv"],
-  "691652845350420491": ["Hanna tror hun spiller valo", "Hanna klarer ikke å klatre opp stigen"],
+  "691652845350420491": ["Hanna tror hun spiller valo", "Hanna klarer ikke å klatre opp stigen", "Hannas mic peaker"],
   "170506717140877312": [
     "Leander bommer et lett awp shot",
     "Leander er for redd for å bli hørt av fienden",
@@ -55,7 +55,8 @@
   "517390665160720415": ["Tita får >2 kills i en runde", "Tita snur ryggen til en fiende"],
   "694529292335579148": [
     "Thea får run n gun headshots med m4a1s",
-    "Thea prøver å banne overpass"
+    "Thea prøver å banne overpass",
+    "Theas mic kutter"
   ],
   "228185370058031114": ["Stash thrower clutchen"],
   "276061121776058370": ["Mathias får mer enn 2 kills med xm", "Mathias spiller cs2"],
@@ -69,5 +70,5 @@
     "Kristoffer caller strat"
   ],
   "280753175340908546": ["Sven spiller CS2"],
-  "randoms": ["Vi får en russer på laget"]
+  "randoms": ["Vi får en russer på laget", "Vi får en med anime pfp på laget", "Vi får en med furry pfp på laget", "Randomen på laget kjøper som han vil"]
 }
