@@ -22,6 +22,22 @@ class DevTools(commands.Cog):
 
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
+    @commands.cooldown(1, 10, commands.BucketType.guild)
+    @commands.command(name="gitpull", description="pull fra git internt i botten")
+    async def git_pull(self, ctx: commands.Context):
+        """
+        Pull from git internally within the bot
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await asyncio.create_subprocess_shell("git pull")
+        await ctx.reply("Done!")
+
+    @commands.is_owner()
+    @commands.bot_has_permissions(embed_links=True)
     @commands.command(
         name="custommsg",
         description="Send en melding til hvilken som helst kanal på hvilken som helst server botten er i",
