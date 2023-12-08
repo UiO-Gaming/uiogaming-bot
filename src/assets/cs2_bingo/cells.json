@@ -7,7 +7,6 @@
     "tirilnade",
     "CS2 bug",
     "\"DU HAR BOMBEN\"",
-    "A snake eating its own tail indicates that its excrement provides food for it",
     "\"MORRAPULER\"",
     "\"KLASKER\"",
     "\"HÆ? Er jeg den eneste igjen?\"",
@@ -24,7 +23,12 @@
     "Noen suicider",
     "Sivert joiner voice men spiller ikke",
     "\"Han er der\"",
-    "Bomba blir lagt igjen i spawn"
+    "Bomba blir lagt igjen i spawn",
+    "Noen disconnecter fra matchen i mer enn 1 min",
+    "Noen åpner en bjelle mens vi spiller",
+    "Mollykill",
+    "Nadekill",
+    "\"Kødder du!?\""
   ],
   "parameterized": [
     "{} acer",
@@ -51,9 +55,11 @@
   "170506717140877312": [
     "Leander bommer et lett awp shot",
     "Leander er for redd for å bli hørt av fienden",
-    "Leander accidentally hopper når han skyter noen"
+    "Leander accidentally hopper når han skyter noen",
+    "Leander caller en dum strat og den fungerer",
+    "Leander caller en dum strat og den flopper hardt"
   ],
-  "162337748781367296": ["Petter roper NÆÆÆÆÆÆÆIIIII", "Petter topfragger"],
+  "162337748781367296": ["Petter roper NÆÆÆÆÆÆÆIIIII", "Petter topfragger", "Petter lager mat"],
   "517390665160720415": ["Tita får >2 kills i en runde", "Tita snur ryggen til en fiende"],
   "694529292335579148": [
     "Thea får run n gun headshots med m4a1s",
@@ -69,7 +75,8 @@
   "183635579483848705": [
     "Kristoffer baiter oss bare for å ninja defuse",
     "Kristoffer ninja defuser",
-    "Kristoffer caller strat"
+    "Kristoffer caller strat",
+    "A snake eating its own tail indicates that its excrement provides food for it"
   ],
   "280753175340908546": ["Sven spiller CS2"],
   "randoms": ["Vi får en russer på laget", "Vi får en med anime pfp på laget", "Vi får en med furry pfp på laget", "Randomen på laget kjøper som han vil"]
