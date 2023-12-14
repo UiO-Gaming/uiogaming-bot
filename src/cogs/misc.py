@@ -86,10 +86,8 @@ class Misc(commands.Cog):
         # Må jo gi meg selv en stor kuk
         if bruker.id == 170506717140877312:
             dick_size = 69
-
-        if bruker.id == 327207142681608192:
+        elif bruker.id == 327207142681608192:
             dick_size = 1
-            
         else:
             dick_hash = md5(str(bruker.id).encode("utf-8")).hexdigest()
             dick_size = (
