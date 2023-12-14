@@ -1,6 +1,7 @@
 import re
 import urllib
 from datetime import datetime
+from hashlib import md5
 from io import BytesIO
 
 import discord
@@ -64,6 +65,38 @@ class Misc(commands.Cog):
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.client.user.color, description=tekst)
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="dicksize", description="Se hvor liten pikk du har")
+    async def dicksize(self, interaction: discord.Interaction, bruker: discord.Member | discord.User | None = None):
+        """
+        Get a totally accurate meassurement of a user's dick
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        bruker (discord.Member | discord.User | None): The user you want to see the dicksize of. Defaults to author
+        """
+
+        if not bruker:
+            bruker = interaction.user
+
+        # Må jo gi meg selv en stor kuk
+        if bruker.id == 170506717140877312:
+            dick_size = 69
+        else:
+            dick_hash = md5(str(bruker.id).encode("utf-8")).hexdigest()
+            dick_size = (
+                int(dick_hash[11:13], 16) * (25 - 2) // 255 + 2
+            )  # This is 5 year old code. I have no fucking idea what's going on
+
+        dick_drawing = "=" * dick_size
+
+        embed = discord.Embed(color=bruker.color)
+        embed.set_author(name=bruker.global_name, icon_url=bruker.avatar)
+        embed.add_field(name="Kukstørrelse", value=f"{dick_size} cm\n8{dick_drawing}D")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.cooldown(1, 5)
