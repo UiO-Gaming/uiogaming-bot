@@ -75,7 +75,7 @@ class WebsiteEvents(commands.Cog):
             "_id": str(event.id),
             "slug": {"_type": "slug", "current": str(event.id)},
             "title": event.name,
-            "date": time.strftime("%Y-%m-%d %H:%M"),  # TODO
+            "date": time.strftime("%Y-%m-%d %H:%M"),
             "location": event.location,
             "description": event.description,
         }
