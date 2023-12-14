@@ -113,8 +113,10 @@ class Info(commands.Cog):
         await interaction.response.send_message(file=txt_file)
 
         # Delete file
-        with misc_utils.ignore_exception(OSError):
+        try:
             remove(file_path)
+        except (FileNotFoundError, OSError, PermissionError):
+            pass
 
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
@@ -565,7 +567,7 @@ class Info(commands.Cog):
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(
-        name="lagd", description="Liste over de eldste brukerene på serveren basert på når de ble lagd"
+        name="yeet", description="Liste over de eldste brukerene på serveren basert på når de ble lagd"
     )
     async def guild_user_created_oldest(self, interaction: discord.Interaction):
         """
@@ -588,13 +590,13 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
+        view = discord_utils.Scroller(paginator, interaction.user, None)
 
         # Send first page
         embed = discord.Embed(
             color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"
         )
-        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
+        embed = view.construct_embed(embed)
         await interaction.response.send_message(embed=embed, view=view)
 
     @commands.guild_only()
