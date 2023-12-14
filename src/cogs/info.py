@@ -488,9 +488,9 @@ class Info(commands.Cog):
         embed.add_field(name="Antall koblet til", value=len(kanal.members))
         await interaction.response.send_message(embed=embed)
 
-    @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True)
-    @commands.cooldown(1, 5)
+    @app_commands.guild_only()
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 5)
     @guild_group.command(name="topproller", description="Viser rollene med flest brukere i kronologisk rekkefølge")
     async def guild_top_roles(self, interaction: discord.Interaction):
         """

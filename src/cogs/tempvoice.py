@@ -58,7 +58,7 @@ class TempVoice(commands.Cog):
                 finally:
                     del self.temp_vc_channels[channel]
 
-    @commands.cooldown(1, 300, commands.BucketType.guild)
+    @app_commands.checks.cooldown(1, 300)
     @app_commands.command(name="tempvoice")
     async def tempvoice(self, interaction: discord.Interaction, name: str, limit: int = 0):
         """
