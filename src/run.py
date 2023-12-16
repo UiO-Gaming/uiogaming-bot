@@ -16,6 +16,7 @@ DATABASE_RELIANT_COGS = {
     "mc_whitelist.py",
     "social_credit.py",
     "streak.py",
+    "user_facts.py",
     "word_cloud.py",
 }
 
