@@ -52,7 +52,7 @@ class TempVoice(commands.Cog):
                 try:
                     await channel.delete(reason="tempvoice kanal inaktiv i 5 minutter")
                 except discord.Forbidden:
-                    self.bot.logger.error(f"Failed to delete temporary voice channel {channel}")
+                    self.bot.logger.info(f"Failed to delete temporary voice channel {channel}")
                 else:
                     self.bot.logger.info(f"Deleted temporary voice channel {channel}")
                 finally:
@@ -95,11 +95,11 @@ class TempVoice(commands.Cog):
         try:
             await interaction.user.move_to(channel)
         except discord.Forbidden:
-            self.bot.logger.error(
+            self.bot.logger.info(
                 f"Failed to move {interaction.user} to temporary voice channel {channel}. Missing permissions"
             )
         except discord.HTTPException:
-            self.bot.logger.error(
+            self.bot.logger.info(
                 f"Failed to move {interaction.user} to temporary voice channel {channel}. User not connected to voice"
             )
 
