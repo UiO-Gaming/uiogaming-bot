@@ -217,23 +217,6 @@ class Streak(commands.Cog):
         )
         await interaction.followup.send(embed=embed)
 
-    def __construct_ranking_embed(
-        self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed
-    ) -> discord.Embed:
-        """
-        Construct the ranking embed with the given page
-
-        Parameters
-        ----------
-        paginator (misc_utils.Paginator): Paginator dataclass
-        page (list): List of streaks to display on a page
-        embed (discord.Embed): Embed to add fields to
-        """
-
-        embed.description = "\n".join(page)
-        embed.set_footer(text=f"Side {paginator.current_page}/{paginator.total_page_count}")
-        return embed
-
     @streak_group.command(name="topp", description="Se hvem som har høyest streak på serveren")
     async def streak_top(self, interaction: discord.Interaction):
         """
@@ -268,12 +251,10 @@ class Streak(commands.Cog):
             )
         )
 
-        # Paginagorize the streaks
         paginator = misc_utils.Paginator(streaks_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)  # TODO: DRY
+        view = discord_utils.Scroller(paginator, interaction.user)
 
-        embed = discord.Embed(title="Toppliste for streaks")
-        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
+        embed = view.construct_embed(discord.Embed(title="Toppliste for streaks"))
         await interaction.followup.send(embed=embed, view=view)
 
 

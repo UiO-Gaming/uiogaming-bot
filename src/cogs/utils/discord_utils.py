@@ -104,32 +104,35 @@ class ScrollerButton(discord.ui.Button):
 
         await interaction.response.defer()
 
-        content = self.content_constructor(self.paginator, self.button_action(), interaction.message.embeds[0])
+        content = self.content_constructor(self.button_action(), interaction.message.embeds[0])
         await interaction.message.edit(
-            embed=content, view=Scroller(self.paginator, self.content_constructor, self.owner)
+            embed=content, view=Scroller(self.paginator, self.owner, self.content_constructor)
         )
 
 
 class Scroller(discord.ui.View):
     """View that allows scrolling through pages of data using the pagination module"""
 
-    def __init__(self, paginatior: Paginator, content_constructor: callable, owner: discord.User | discord.Member):
+    def __init__(
+        self, paginatior: Paginator, owner: discord.User | discord.Member, content_constructor: callable = None
+    ):
         """
         Parameters
         -----------
         paginator (Paginator): The paginator object that contains the data to be paginated
-        content_constructor (callable): A function that takes a paginator object and a page number and returns an embed
         owner (discord.User|discord.Member): The user that invoked the paginator. Only this user can use the buttons
+        content_constructor (callable): A function that takes a paginator object and a page number and returns an embed
         """
 
         super().__init__()
         self.paginator = paginatior
+        self.content_constructor = content_constructor if content_constructor else self.__default_content_constructor
 
         self.add_item(
             ScrollerButton(
                 self.paginator,
                 self.paginator.first_page,
-                content_constructor,
+                self.content_constructor,
                 owner,
                 label="<<",
                 disabled=self.paginator.current_page == 1,
@@ -139,7 +142,7 @@ class Scroller(discord.ui.View):
             ScrollerButton(
                 self.paginator,
                 self.paginator.previous_page,
-                content_constructor,
+                self.content_constructor,
                 owner,
                 label="<",
                 disabled=self.paginator.current_page == 1,
@@ -149,7 +152,7 @@ class Scroller(discord.ui.View):
             ScrollerButton(
                 self.paginator,
                 self.paginator.next_page,
-                content_constructor,
+                self.content_constructor,
                 owner,
                 label=">",
                 disabled=self.paginator.current_page == self.paginator.total_page_count,
@@ -159,9 +162,35 @@ class Scroller(discord.ui.View):
             ScrollerButton(
                 self.paginator,
                 self.paginator.last_page,
-                content_constructor,
+                self.content_constructor,
                 owner,
                 label=">>",
                 disabled=self.paginator.current_page == self.paginator.total_page_count,
             )
         )
+
+    def construct_embed(self, base_embed: discord.Embed):
+        """
+        Constructs the embed to be displayed
+
+        Parameters
+        -----------
+        base_embed (discord.Embed): The base embed to add fields to
+        """
+
+        return self.content_constructor(self.paginator.get_current_page(), embed=base_embed)
+
+    def __default_content_constructor(self, page: list, embed: discord.Embed) -> discord.Embed:
+        """
+        Default embed template for the paginator
+
+        Parameters
+        ----------
+        paginator (Paginator): Paginator dataclass
+        page (list): List of streaks to display on a page
+        embed (discord.Embed): Embed to add fields to
+        """
+
+        embed.description = "\n".join(page)
+        embed.set_footer(text=f"Side {self.paginator.current_page}/{self.paginator.total_page_count}")
+        return embed

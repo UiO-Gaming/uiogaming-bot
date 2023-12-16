@@ -506,10 +506,11 @@ class Info(commands.Cog):
         roles_formatted = list(map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles)))
 
         paginator = misc_utils.Paginator(roles_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
+        view = discord_utils.Scroller(paginator, interaction.user)
 
-        embed = discord.Embed(color=interaction.guild.me.color, title="Rollene med flest brukere på serveren")
-        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
+        embed = view.construct_embed(
+            discord.Embed(color=interaction.guild.me.color, title="Rollene med flest brukere på serveren")
+        )
         await interaction.response.send_message(embed=embed, view=view)
 
     # NOTE: This command is implemented using the old command framework
@@ -547,22 +548,6 @@ class Info(commands.Cog):
         name="eldst", description="Viser de eldste medlemmene på serveren", parent=guild_group
     )
 
-    def __construct_ranking_embed(
-        self, paginator: misc_utils.Paginator, page: list, embed: discord.Embed
-    ) -> discord.Embed:
-        """
-        Constructs the embed for commands that show a ranking
-
-        Parameters
-        ----------
-        paginator (misc_utils.Paginator): Paginator dataclass
-        page (list): List of members to display
-        embed (discord.Embed): Embed to add fields to
-        """
-        embed.description = "\n".join(page)
-        embed.set_footer(text=f"Side {paginator.current_page}/{paginator.total_page_count}")
-        return embed
-
     @commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
@@ -590,13 +575,14 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, interaction.user, None)
+        view = discord_utils.Scroller(paginator, interaction.user)
 
         # Send first page
-        embed = discord.Embed(
-            color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"
+        embed = view.construct_embed(
+            discord.Embed(
+                color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"
+            )
         )
-        embed = view.construct_embed(embed)
         await interaction.response.send_message(embed=embed, view=view)
 
     @commands.guild_only()
@@ -626,13 +612,12 @@ class Info(commands.Cog):
         )
 
         paginator = misc_utils.Paginator(members_formatted)
-        view = discord_utils.Scroller(paginator, self.__construct_ranking_embed, interaction.user)
+        view = discord_utils.Scroller(paginator, interaction.user)
 
         # Send first page
-        embed = discord.Embed(
-            color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble med"
+        embed = view.construct_embed(
+            discord.Embed(color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble med")
         )
-        embed = self.__construct_ranking_embed(paginator, paginator.get_current_page(), embed)
         await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.guild_only()
