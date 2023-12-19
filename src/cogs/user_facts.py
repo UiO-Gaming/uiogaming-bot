@@ -78,7 +78,7 @@ class UserFacts(commands.Cog):
             return await interaction.response.send_message(
                 embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn høyden sin")
             )
-        
+
         height = height[0]
 
         inches = height * (1 / 2.54)
