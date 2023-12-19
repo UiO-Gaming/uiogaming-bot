@@ -6,7 +6,7 @@ COPY requirements.txt .
 
 RUN python3 -m pip install -r requirements.txt
 
-RUN apt update && apt install -y imagemagick ffmpeg libsm6 libxext6
+RUN apt update && apt install -y imagemagick ffmpeg libsm6 libxext6 graphviz
 
 COPY . .
 
