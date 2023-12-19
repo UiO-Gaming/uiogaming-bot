@@ -314,6 +314,26 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed_templates.success(interaction, text="MBTI fjernet!"))
 
+    @mbti_group.command(name="forklaring", description="Skjønner du ikke hva MBTI er? Her er en forklaring")
+    async def mbti_explanation(self, interaction: discord.Interaction):
+        """
+        Get an explanation of MBTI
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): The interaction object
+        """
+
+        embed = discord.Embed(title="Hva er MBTI?", color=discord.Color.blurple())
+        embed.description = (
+            "MBTI er en forkortelse for Myers-Briggs Type Indicator. Det er en personlighetstest som"
+            + " deler inn personligheter i 16 forskjellige typer. Hver type har fire bokstaver, og hver bokstav "
+            + "representerer en egenskap. Egenskapene er:\n\n**I**ntrovert/**E**xtrovert\n**S**ensing/i**N**tuition\n"
+            + "**T**hinking/**F**eeling\n**J**udging/**P**erceiving\n\nEr det vitenskapelig? Ikke akkurat. Er det gøy?"
+            + " Definitvt.\n\nDu kan en personlighetstest [her](https://www.16personalities.com/free-personality-test)"
+        )
+        await interaction.response.send_message(embed=embed)
+
     def _create_similarity_matrix(self):
         def similarity(mbti_1, mbti_2):
             similarity = 0
