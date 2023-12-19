@@ -105,7 +105,8 @@ class UserFacts(commands.Cog):
 
         self.cursor.execute(
             """
-            DELETE FROM user_facts
+            UPDATE user_facts
+            SET height = NULL
             WHERE discord_id = %s;
             """,
             (interaction.user.id,),
