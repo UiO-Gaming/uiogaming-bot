@@ -45,22 +45,27 @@ class UserFacts(commands.Cog):
         self.cursor.execute(
             """
             SELECT height FROM user_facts
-            WHERE discord_id = %s;
+            WHERE discord_id = %s and height IS NOT NULL;
             """,
             (bruker.id,),
         )
+        height = self.cursor.fetchone()
 
-        if not (height := self.cursor.fetchone()):
-            embed = embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn høyden sin")
-        else:
-            inches = height[0] * (1 / 2.54)
-            feet = int(inches * (1 / 12))
-            inches = int(inches - (feet * 12))
+        if not height:
+            return await interaction.response.send_message(
+                embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn høyden sin")
+            )
+        
+        height = height[0]
 
-            embed = discord.Embed(color=bruker.color)
-            embed.add_field(name="Høyde", value=f"{height[0]} cm")
-            embed.add_field(name="Høyde (🦅🦅🇺🇸🦅🦅)", value=f"{feet}' {inches}\"")
-            embed.set_author(name=bruker.display_name, icon_url=bruker.avatar)
+        inches = height * (1 / 2.54)
+        feet = int(inches * (1 / 12))
+        inches = int(inches - (feet * 12))
+
+        embed = discord.Embed(color=bruker.color)
+        embed.add_field(name="Høyde", value=f"{height} cm")
+        embed.add_field(name="Høyde (🦅🦅🇺🇸🦅🦅)", value=f"{feet}'{inches}\"")
+        embed.set_author(name=bruker.global_name, icon_url=bruker.avatar)
 
         await interaction.response.send_message(embed=embed)
 
