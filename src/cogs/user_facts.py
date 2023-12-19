@@ -134,6 +134,7 @@ class UserFacts(commands.Cog):
         self.cursor.execute(
             """
             SELECT discord_id, height FROM user_facts
+            WHERE height IS NOT NULL
             ORDER BY height DESC;
             """
         )
