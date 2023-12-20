@@ -53,9 +53,11 @@ class RepeatedMessages(commands.Cog):
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
             await channel.send(
-                "ENDELIG MANDAG!\n\n"
+                "ENDELIG ~~MANDAG~~ JUL (i usa elns)\n\n"
+                + "https://cdn.discordapp.com/attachments/678396498089738250/1187065697776455780/endelig_jul.png"
+                #"ENDELIG MANDAG!\n\n"
                 # + "https://cdn.discordapp.com/attachments/678396498089738250/862853827278929940/hvorfor_de_rike_br_spises.mp4"  # noqa: E501
-                + "https://cdn.discordapp.com/attachments/678396498089738250/1168644637687283762/Snapchat-1787493720.mp4"  # noqa: E501
+                #+ "https://cdn.discordapp.com/attachments/678396498089738250/1168644637687283762/Snapchat-1787493720.mp4"  # noqa: E501
             )
 
         @aiocron.crontab("0 0 1 1 *")
