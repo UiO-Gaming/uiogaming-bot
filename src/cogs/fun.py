@@ -121,6 +121,19 @@ class Fun(commands.Cog):
 
         await ctx.reply("A snake eating its own tail indicates that its excrement provides food for it")
 
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def memes(self, ctx: commands.Context):
+        """
+        Youtube meme playlist
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply("https://youtube.com/playlist?list=PLFV_L_I9qjsoVvh0KT5kHC2_VB8ZGtQoG&si=CpioMM0k3-XTrHCL")
+
 
 async def setup(bot: commands.Bot):
     """
