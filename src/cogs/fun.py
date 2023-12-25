@@ -134,6 +134,19 @@ class Fun(commands.Cog):
 
         await ctx.reply("https://youtube.com/playlist?list=PLFV_L_I9qjsoVvh0KT5kHC2_VB8ZGtQoG&si=CpioMM0k3-XTrHCL")
 
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def hf(self, ctx: commands.Context):
+        """
+        ekte HF moment
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply("https://media.discordapp.net/attachments/811606213665357824/1188473225030680586/Screenshot_2023-12-24-14-28-01-33_a23b203fd3aafc6dcb84e438dda678b6.jpg")
+
 
 async def setup(bot: commands.Bot):
     """
