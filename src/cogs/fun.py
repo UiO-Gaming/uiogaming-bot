@@ -145,7 +145,9 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply("https://media.discordapp.net/attachments/811606213665357824/1188473225030680586/Screenshot_2023-12-24-14-28-01-33_a23b203fd3aafc6dcb84e438dda678b6.jpg")
+        await ctx.reply(
+            "https://media.discordapp.net/attachments/811606213665357824/1188473225030680586/Screenshot_2023-12-24-14-28-01-33_a23b203fd3aafc6dcb84e438dda678b6.jpg"
+        )
 
 
 async def setup(bot: commands.Bot):
