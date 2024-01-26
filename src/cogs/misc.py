@@ -267,12 +267,12 @@ class Misc(commands.Cog):
         # Prepare invoker avatar
         invoker_avatar = await discord_utils.get_file_bytesio(interaction.user.display_avatar)
         invoker = Image.open(invoker_avatar).convert("RGBA")
-        invoker = invoker.resize((389, 389), Image.ANTIALIAS)
+        invoker = invoker.resize((389, 389))
 
         # Prepare user avatar
         user_avatar = await discord_utils.get_file_bytesio(bruker.display_avatar)
         user = Image.open(user_avatar).convert("RGBA")
-        user = user.resize((389, 389), Image.ANTIALIAS)
+        user = user.resize((389, 389))
 
         # Prepare heart image
         heart = Image.open("./src/assets/misc/heart.png")
