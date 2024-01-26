@@ -285,8 +285,8 @@ class Misc(commands.Cog):
         image.paste(heart, (311, 94), mask=mask)
         draw = ImageDraw.Draw(image)
         font = ImageFont.truetype("./src/assets/fonts/RobotoMono-Medium.ttf", 86)
-        font_size = font.getsize(f"{match_percent}%")
-        font_size = ((image.size[0] - font_size[0]) / 2, (image.size[1] - font_size[1]) / 2)
+        font_size = font.getbbox(f"{match_percent}%")
+        font_size = ((image.size[0] - font_size[2]) / 2, (image.size[1] - font_size[3]) / 2)
         draw.text(font_size, f"{match_percent}%", font=font, fill=(255, 255, 255, 255))
 
         # Save image
