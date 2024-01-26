@@ -4,7 +4,6 @@ from datetime import timedelta
 import discord
 import pytz
 import requests
-from discord import app_commands
 from discord.ext import commands
 from discord.ext import tasks
 
@@ -42,13 +41,13 @@ class Aurora(commands.Cog):
         for interval in data["shortIntervals"]:
             # Convert to datetime objects, convert timezone to utc and strip timezone info
             start = datetime.fromisoformat(interval["start"]).astimezone(pytz.utc).replace(tzinfo=None)
-            end = datetime.fromisoformat(interval["end"]).astimezone(pytz.utc).replace(tzinfo=None)
+            # end = datetime.fromisoformat(interval["end"]).astimezone(pytz.utc).replace(tzinfo=None)
 
             # If sighting is not in within the next 12 hours ignore
             if (start - datetime.now()) > timedelta(hours=12):
                 continue
 
-            # We're gonna trust this value. Hopefully it takes sunlight, cloud cover as well as solar activity into account
+            # We're gonna trust this value. Hopefully it takes sunlight, cloud cover and solar activity into account
             # We're using an undocumented API so who knows. They probably know what they're doing over there.
             if interval["auroraValue"] >= 0.5:
                 valid_sightings.append(interval)
