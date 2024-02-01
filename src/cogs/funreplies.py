@@ -30,6 +30,7 @@ class FunReplies(commands.Cog):
             "lesgo": initial_datetime,
             "yeet": initial_datetime,
             "drikke": initial_datetime,
+            "sivert": initial_datetime,
             "spam": initial_datetime,
         }
 
@@ -74,6 +75,11 @@ class FunReplies(commands.Cog):
             if (datetime.now() - self.previous_invokations["drikke"]).seconds > self.cooldown_seconds:
                 await message.reply(":billed_cap:")
                 self.previous_invokations["drikke"] = datetime.now()
+
+        elif re.search(r"/(^|\W)jeg er sivert arntzen($|\W)+/gmi", message_content, flags=re.IGNORECASE):
+            if (datetime.now() - self.previous_invokations["sivert"]).seconds > self.cooldown_seconds:
+                await message.reply("Nei, jeg er Sivert Arntzen!")
+                self.previous_invokations["sivert"] = datetime.now()
 
         elif re.search(r"(^|\W)spam($|\W)+", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["spam"]).seconds > self.cooldown_seconds:
