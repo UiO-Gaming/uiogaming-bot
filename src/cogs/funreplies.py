@@ -76,7 +76,7 @@ class FunReplies(commands.Cog):
                 await message.reply(":billed_cap:")
                 self.previous_invokations["drikke"] = datetime.now()
 
-        elif re.search(r"/(^|\W)jeg er sivert arntzen($|\W)+/gmi", message_content, flags=re.IGNORECASE):
+        elif re.search(r"(^|\W)jeg er sivert arntzen($|\W)+"gmi, message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["sivert"]).seconds > self.cooldown_seconds:
                 await message.reply("Nei, jeg er Sivert Arntzen!")
                 self.previous_invokations["sivert"] = datetime.now()
