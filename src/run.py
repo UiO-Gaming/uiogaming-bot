@@ -34,6 +34,7 @@ class Bot(commands.Bot):
             command_prefix=commands.when_mentioned_or(config["bot"]["prefix"]),
             case_insensitive=True,
             intents=discord.Intents.all(),
+            allowed_mentions=discord.AllowedMentions(everyone=False)
         )
 
         self.logger = BotLogger().logger  # Initialize logger
