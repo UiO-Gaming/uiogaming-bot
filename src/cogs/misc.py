@@ -144,6 +144,36 @@ class Misc(commands.Cog):
         await interation.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="mock", description="vEt dU iKkE hVa mOcKtEkSt eR eLlEr?")
+    async def mock(self, interation: discord.Interaction, tekst: str, bruker: discord.User | None = None):
+        """
+        dO i rEaLlY nEeD tO eXpLaIn??
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        tekst (str): Text to clapify
+        """
+
+        
+        words = tekst.split(" ")
+        for i, word in enumerate(words):
+            word = list(word)
+            for j, char in enumerate(word):
+                if j % 2 == 0:
+                    word[j] = char.lower()
+                else:
+                    word[j] = char.upper()
+            words[i] = "".join(word)
+
+        text = " ".join(words)
+        mention = bruker.mention if bruker else ""
+
+        embed = discord.Embed(color=interation.client.user.color, description=words)
+        await interation.response.send_message(content=mention, embed=embed)
+
+    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="imdb", description="Søk etter filmer på IMDB")
     async def imdb(self, interaction: discord.Interaction, tittel: str):
