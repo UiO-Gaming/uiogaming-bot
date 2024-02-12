@@ -170,7 +170,7 @@ class Misc(commands.Cog):
         text = " ".join(words)
         mention = bruker.mention if bruker else ""
 
-        embed = discord.Embed(color=interation.client.user.color, description=words)
+        embed = discord.Embed(color=interation.client.user.color, description=text)
         await interation.response.send_message(content=mention, embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
