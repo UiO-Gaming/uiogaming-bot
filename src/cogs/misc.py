@@ -159,17 +159,20 @@ class Misc(commands.Cog):
         
         words = tekst.split(" ")
         for i, word in enumerate(words):
+            karakter = 0
             word = list(word)
             for j, char in enumerate(word):
-                if j % 2 == 0:
-                    word[j] = char.lower()
-                else:
-                    word[j] = char.upper()
+                if char.isalpha():         
+                    if karakter % 2 == 0:
+                        word[j] = char.lower()
+                    else:
+                        word[j] = char.upper()
+                    karakter += 1
             words[i] = "".join(word)
 
         text = " ".join(words)
         mention = bruker.mention if bruker else ""
-
+        
         embed = discord.Embed(color=interation.client.user.color, description=text)
         await interation.response.send_message(content=mention, embed=embed)
 
