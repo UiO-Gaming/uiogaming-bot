@@ -4,19 +4,27 @@ UiO Gaming Discord Bot er en chattebot for ulike formål. Hvilke formål det er,
 
 ## Installasjon
 
-1. Fjern `.example` fra [config.yaml.example](src/config/config.yaml) i configmappen
+1. Lag en kopi av filen [config.yaml.example](src/config/config.yaml.example) i "config" mappen og fjern `.example` fra enden av filnavnet til kopien
 
-2. Fyll inn verdiene i denne configfilen
+2. Fyll inn verdiene i denne konfiguarsjonsfilen
 
-Du kan så bevege deg videre til ett av to alternativer.
+Merk at konfigurasjonsfilen har felt for bl.a. databasekobling. Disse er ikke påkrevd, men du vil derimot miste funksjonalitet om de ikke er fylt inn. Det eneste man *må* fylle inn, som ikke er fylt inn fra før, er `token`.
 
-### Valgmulighet 1 - Manuelt
+Gitt en bruker med tilgang til å skrive og lese fra databasen vil botten lage alle tabeller den trenger for å fungere.
+
+Når token er fylt inn kan du så bevege deg videre til ett av to alternativer.
+
+### Valgmulighet 1 - Docker (Anbefalt)
+
+```
+docker-compose up
+```
+
+### Valgmulighet 2 - Manuelt
 
 Du bør ha gjort følgende:
 
 - Installert Python 3.12+
-- Ha en Postgresql database satt opp
-
 
 1. Installer avhengigheter
 
@@ -28,12 +36,6 @@ pip install -r requirements.txt -U
 
 ```
 python src/run.py
-```
-
-### Valgmulighet 2 - Docker
-
-```
-docker-compose up
 ```
 
 ## Bidra
