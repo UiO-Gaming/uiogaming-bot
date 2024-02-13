@@ -4,6 +4,7 @@ import random
 import textwrap
 from datetime import datetime
 from datetime import timedelta
+from typing import override
 
 import cv2
 import discord
@@ -16,6 +17,8 @@ from PIL import ImageFont
 
 from cogs.utils import discord_utils
 from cogs.utils import embed_templates
+from cogs.utils.discord_utils import Lobby
+from cogs.utils.discord_utils import LobbyView
 
 
 class CS2Bingo(commands.Cog):
@@ -29,7 +32,7 @@ class CS2Bingo(commands.Cog):
         """
 
         self.bot = bot
-        self.active_lobbies = {}
+        self.active_lobbies = {}  # dict[str, discord_utils.Lobby]
 
     bingo_group = app_commands.Group(name="cs2bingo", description="Bingo commands for CS2")
 
@@ -46,7 +49,7 @@ class CS2Bingo(commands.Cog):
         """
 
         if lobby := self.active_lobbies.get(str(interaction.user.id), None):
-            if lobby["ends"] < datetime.now():
+            if lobby.ends < datetime.now():
                 self.active_lobbies.pop(str(interaction.user.id))
             else:
                 return await interaction.response.send_message(
@@ -57,7 +60,7 @@ class CS2Bingo(commands.Cog):
                 )
 
         for lobby in self.active_lobbies.values():
-            if interaction.user.id in lobby["players"]:
+            if interaction.user.id in lobby.players:
                 return await interaction.response.send_message(
                     embed=embed_templates.error_warning(
                         interaction,
@@ -65,14 +68,14 @@ class CS2Bingo(commands.Cog):
                     )
                 )
 
-        self.active_lobbies[str(interaction.user.id)] = {
-            "host": interaction.user,
-            "players": [interaction.user],
-            "ends": datetime.now() + timedelta(minutes=10),
-            "kicked_players": [],
-        }
+        self.active_lobbies[str(interaction.user.id)] = Lobby(
+            host=interaction.user,
+            players=[interaction.user],
+            ends=datetime.now() + timedelta(minutes=10),
+            kicked_players=[],
+        )
 
-        time_left = discord.utils.format_dt(self.active_lobbies[str(interaction.user.id)]["ends"], "R")
+        time_left = discord.utils.format_dt(self.active_lobbies[str(interaction.user.id)].ends, "R")
 
         embed = discord.Embed(
             title="Bingolobby",
@@ -246,62 +249,14 @@ class BingoGenerator:
         return image
 
 
-class BingoView(discord.ui.View):
-    def __init__(self, lobby: dict, bot: commands.Bot):
-        lobby_end = (lobby.get("ends") - datetime.now()).total_seconds()
-        super().__init__(timeout=lobby_end)
-
-        self.lobby = lobby
-        self.bot = bot
-
-        self.add_item(KickSelectMenu(self))
-
-    async def on_timeout(self):
-        await self.end_lobby()
-
-    async def end_lobby(self):
-        self.lobby["ends"] = datetime.now()
-        for item in self.children:
-            item.disabled = True
-
-    async def rerender_players(self, interaction: discord.Interaction):
-        self.children[-1].options = [
-            discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨") for p in self.lobby["players"]
-        ]
-        embed = interaction.message.embeds[0].set_field_at(
-            0, name="Spillere", value="\n".join([f"* {p.mention}" for p in self.lobby["players"]])
-        )
-        await interaction.message.edit(embed=embed, view=self)
-
-    @discord.ui.button(label="Bli med", style=discord.ButtonStyle.blurple)
-    async def join_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if datetime.now() > self.lobby["ends"]:
-            embed = embed_templates.error_warning(interaction, text="Lobbyen har allerede startet")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        if (
-            interaction.user.id in self.lobby["kicked_players"]
-        ):  # We have to use the ID here to avoid fetching the member object in the selection menu
-            embed = embed_templates.error_warning(interaction, text="Du er blitt sparket fra lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        if interaction.user in self.lobby["players"]:
-            embed = embed_templates.error_warning(interaction, text="Du er allerede i lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        if len(self.lobby["players"]) >= 10:
-            embed = embed_templates.error_warning(interaction, text="Lobbyen er full")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        self.lobby["players"].append(interaction.user)
-        await self.rerender_players(interaction)
-
-        embed = embed_templates.success(interaction, text="Du har blitt med i lobbyen")
-        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
+class BingoView(LobbyView):
+    def __init__(self, lobby: Lobby, bot: commands.Bot):
+        super().__init__(lobby, bot)
 
     @discord.ui.button(label="Start", style=discord.ButtonStyle.green)
+    @override
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user != self.lobby["host"]:
+        if interaction.user != self.lobby.host:
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte bingoen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
@@ -311,7 +266,7 @@ class BingoView(discord.ui.View):
         embed.description = "Bingoen har startet!"
         await interaction.message.edit(embed=embed, view=self)
 
-        mention_players = " ".join([f"{p.mention}" for p in self.lobby["players"]])
+        mention_players = " ".join([f"{p.mention}" for p in self.lobby.players])
         embed = embed_templates.success(
             interaction,
             text="Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
@@ -319,8 +274,8 @@ class BingoView(discord.ui.View):
         )
         await interaction.response.send_message(content=mention_players, embed=embed)
 
-        await BingoGenerator.generate_sheets(self.lobby["players"], self.bot)
-        for player in self.lobby["players"]:
+        await BingoGenerator.generate_sheets(self.lobby.players, self.bot)
+        for player in self.lobby.players:
             try:
                 await player.send(file=discord.File(f"./src/assets/temp/{player.id}_bingo.png"))
             except discord.Forbidden:
@@ -332,82 +287,6 @@ class BingoView(discord.ui.View):
                 )
             finally:
                 await asyncio.sleep(1)
-
-    @discord.ui.button(label="Forlat", style=discord.ButtonStyle.gray)
-    async def leave_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user == self.lobby["host"]:
-            embed = embed_templates.error_warning(
-                interaction, text="Du kan ikke forlate lobbyen som host. Slett lobbyen i stedet om ønskelig!"
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        if interaction.user not in self.lobby["players"]:
-            embed = embed_templates.error_warning(interaction, text="Du er ikke i lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        self.lobby["players"].remove(interaction.user)
-        await self.rerender_players(interaction)
-
-        embed = embed_templates.success(interaction, text="Du har forlatt lobbyen")
-        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
-
-    @discord.ui.button(label="Slett", style=discord.ButtonStyle.red)
-    async def delete_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user != self.lobby["host"]:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan slette lobbyen")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        self.lobby["ends"] = datetime.now()
-        await interaction.message.delete()
-
-        embed = embed_templates.success(interaction, text="Lobbyen har blitt slettet")
-        await interaction.response.send_message(embed=embed, delete_after=5)
-
-
-class KickSelectMenu(discord.ui.Select):
-    def __init__(self, parent_view: BingoView):
-        self.parent_view = parent_view
-        options = [
-            discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨", description=f"Kick {p.display_name}")
-            for p in self.parent_view.lobby["players"]
-        ]
-        super().__init__(placeholder="Kick en spiller", max_values=1, min_values=1, options=options)
-
-    # TODO: DRY
-    async def rerender_players(self, interaction: discord.Interaction):
-        self.options = [
-            discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨")
-            for p in self.parent_view.lobby["players"]
-        ]
-        embed = interaction.message.embeds[0].set_field_at(
-            0, name="Spillere", value="\n".join([f"* {p.mention}" for p in self.parent_view.lobby["players"]])
-        )
-        await interaction.message.edit(embed=embed, view=self.parent_view)
-
-    async def callback(self, interaction: discord.Interaction):
-        if interaction.user != self.parent_view.lobby["host"]:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan kicke spillere")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        if str(interaction.user.id) in interaction.data["values"][0]:
-            embed = embed_templates.error_warning(interaction, text="Du kan ikke kicke deg selv")
-            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
-
-        self.parent_view.lobby["kicked_players"].append(int(interaction.data["values"][0]))
-
-        # Remove the player from the lobby
-        # Since we only have the ID, we have to iterate through the list
-        # unless we want to fetch the member object from the API
-        # which we don't :)
-        for i, member in enumerate(self.parent_view.lobby["players"]):
-            if member.id == int(interaction.data["values"][0]):
-                self.parent_view.lobby["players"].pop(i)
-                break
-
-        await self.rerender_players(interaction)
-
-        embed = embed_templates.success(interaction, text="Brukeren har blitt kicket fra lobbyen")
-        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
 
 async def setup(bot: commands.Bot):
