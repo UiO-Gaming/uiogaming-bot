@@ -19,6 +19,7 @@ DATABASE_RELIANT_COGS = {
     "user_facts.py",
     "word_cloud.py",
 }
+SANITY_RELIANT_COGS = {"website_events.py"}
 
 
 # Load config file
@@ -61,11 +62,20 @@ class Bot(commands.Bot):
             )
             self.db_connection.autocommit = True
 
+        for sanity_credential in config.get("sanity").values():
+            if not sanity_credential:
+                self.has_sanity_credentials = False
+                self.logger.warning(
+                    f"No Sanity credentials specified. Disabling sanity reliant cogs\n{SANITY_RELIANT_COGS}"
+                )
+                break
+            else:
+                self.has_sanity_credentials = True
+
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
         self.sanity = config["sanity"]
         self.presence = config["bot"].get("presence", {})
-        self.api_keys = config.get("api", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
         self.config_mode = config.get("config_mode")
@@ -75,6 +85,8 @@ class Bot(commands.Bot):
 
         if self.db_connection is None:
             cog_files = set(cog_files) - DATABASE_RELIANT_COGS
+        if not self.has_sanity_credentials:
+            cog_files = set(cog_files) - SANITY_RELIANT_COGS
 
         # Load cogs
         for file in cog_files:
