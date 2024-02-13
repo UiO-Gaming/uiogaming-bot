@@ -28,10 +28,6 @@ sanity:
   project_id:
   dataset: production
 
-# Api keys
-api:
-  clarifai:
-
 # Emoji
 emoji:
   online: <:online:516328785910431754>
