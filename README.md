@@ -14,7 +14,7 @@ Du kan så bevege deg videre til ett av to alternativer.
 
 Du bør ha gjort følgende:
 
-- Installert Python 3.10+
+- Installert Python 3.12+
 - Ha en Postgresql database satt opp
 
 
