@@ -2,7 +2,9 @@
 
 UiO Gaming Discord Bot er en chattebot for ulike formål. Hvilke formål det er, er jeg ikke helt sikker på.
 
-## Installasjon
+## Kom i gang
+
+0. Lag en botbruker / skaff en token. [Se her](https://discordpy.readthedocs.io/en/stable/discord.html)
 
 1. Lag en kopi av filen [config.yaml.example](src/config/config.yaml.example) i "config" mappen og fjern `.example` fra enden av filnavnet til kopien
 
