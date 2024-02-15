@@ -455,3 +455,41 @@ class TempVoiceHelper:
             )
 
         return channel
+
+    async def move_players(
+        self, interaction: discord.Interaction, channel: discord.VoiceChannel, users: list[discord.User]
+    ):
+        """
+        Atteampts to move a list of users to a desired voice channel
+
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): The interaction object
+        channel (discord.VoiceChannel): The channel the users should be moved to
+        users (list[discord.User]): A list of users to be moved
+        """
+
+        failed_users = []
+
+        for user in users:
+            try:
+                await user.move_to(channel)
+            except discord.Forbidden:
+                self.bot.logger.info(f"Failed to move {user} to temporary voice channel {channel}. Missing permissions")
+                failed_users.append(user)
+            except discord.HTTPException:
+                self.bot.logger.info(
+                    f"Failed to move {user} to temporary voice channel {channel}. User not connected to voice"
+                )
+                failed_users.append(user)
+
+        if failed_users:
+            failed_users = "\n".join([f"* {user.mention}" for user in failed_users])
+            embed = embed_templates.error_warning(
+                interaction,
+                text=f"Klarte ikke å flytte følgende brukere til kanalen:\n{failed_users}\n\n"
+                + "Dette kan være fordi brukere(ne) ikke er koblet til en kanal fra før"
+                + "eller at jeg ikke har tillatelse til å flytte",
+            )
+            await interaction.response.send_message(embed=embed, delete_after=10)
