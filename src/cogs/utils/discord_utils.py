@@ -381,21 +381,21 @@ class TempVoiceHelper:
 
             if len(channel.members) == 0:
                 self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
-                self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 5 minutes")
+                self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 1 minutes")
 
     @tasks.loop(minutes=1)
     async def check_temp_vc_channels(self):
         """
-        Check for temporary voice channels that have been inactive for 5 minutes
+        Check for temporary voice channels that have been inactive for 1 minute
         """
 
         for channel, data in self.temp_vc_channels.copy().items():
             if not data["no_members_since"]:
                 continue
 
-            if (datetime.now() - data["no_members_since"]).total_seconds() >= 300:
+            if (datetime.now() - data["no_members_since"]).total_seconds() >= 60:
                 try:
-                    await channel.delete(reason="tempvoice kanal inaktiv i 5 minutter")
+                    await channel.delete(reason="tempvoice kanal inaktiv i 1 minutt")
                 except discord.Forbidden:
                     self.bot.logger.info(f"Failed to delete temporary voice channel {channel}")
                 else:
