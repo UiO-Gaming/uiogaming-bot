@@ -243,6 +243,10 @@ class LobbyView(discord.ui.View):
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
+        if len(self.lobby.players) < 3:
+            embed = embed_templates.error_warning(interaction, text="Det må være mer enn 2 i lobbyen")
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
+
         await self.end_lobby()
 
         embed = interaction.message.embeds[0]
