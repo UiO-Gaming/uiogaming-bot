@@ -35,9 +35,9 @@ class WebsiteEvents(commands.Cog):
         Wait for the bot's cache to be ready before syncing events
         """
 
-        self.bot.logger.info("WebsiteEvents.py - Waiting for bot to be ready")
+        self.bot.logger.info("Waiting for bot to be ready")
         await self.bot.wait_until_ready()
-        self.bot.logger.info("WebsiteEvents.py - Ready")
+        self.bot.logger.info("Ready")
         await self.sync_events()
 
     async def sync_events(self):
@@ -45,7 +45,7 @@ class WebsiteEvents(commands.Cog):
         Sync events from Discord to Sanity CMS
         """
 
-        self.bot.logger.info("WebsiteEvents.py - Syncing events to Sanity CMS")
+        self.bot.logger.info("Syncing events to Sanity CMS")
 
         guild = self.bot.get_guild(self.bot.guild_id)
 
