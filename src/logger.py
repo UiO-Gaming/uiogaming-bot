@@ -9,7 +9,11 @@ class BotLogger:
     def __init__(self):
         logger = logging.getLogger("discord")
         logger.setLevel(logging.INFO)
-        formatter = logging.Formatter("[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{")
+        formatter = logging.Formatter(
+            "[{asctime}] [{levelname:<8}] {name} - [{filename}] - [{funcName}] - {message}",
+            "%Y-%m-%d %H:%M:%S",
+            style="{",
+        )
 
         file_handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
         file_handler.setFormatter(formatter)

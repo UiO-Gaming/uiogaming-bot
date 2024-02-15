@@ -71,7 +71,7 @@ class Birthday(commands.Cog):
                 if user:
                     await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
                 else:
-                    self.bot.logger.warning(f"Birthday Check - Could not find user with ID {birthday[0]}")
+                    self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
 
     @birthday_check.before_loop
     async def before_birthday_check(self):
