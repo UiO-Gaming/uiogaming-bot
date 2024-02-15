@@ -20,6 +20,7 @@ DATABASE_RELIANT_COGS = {
     "word_cloud.py",
 }
 SANITY_RELIANT_COGS = {"website_events.py"}
+MINECRAFT_RELIANT_COGS = {"mc_whitelist.py"}
 
 
 # Load config file
@@ -72,6 +73,14 @@ class Bot(commands.Bot):
             else:
                 self.has_sanity_credentials = True
 
+        if not config.get("minecraft").get("rcon_password"):
+            self.has_minecraft_credentials = False
+            self.logger.warning(
+                f"No Minecraft credentials specified. Disabling minecraft reliatn cogs\n{MINECRAFT_RELIANT_COGS}"
+            )
+        else:
+            self.has_minecraft_credentials = True
+
         # Fetch misc config values
         self.mc_rcon_password = config["minecraft"]["rcon_password"]
         self.sanity = config["sanity"]
@@ -87,6 +96,8 @@ class Bot(commands.Bot):
             cog_files = set(cog_files) - DATABASE_RELIANT_COGS
         if not self.has_sanity_credentials:
             cog_files = set(cog_files) - SANITY_RELIANT_COGS
+        if not self.has_minecraft_credentials:
+            cog_files = set(cog_files) - MINECRAFT_RELIANT_COGS
 
         # Load cogs
         for file in cog_files:
