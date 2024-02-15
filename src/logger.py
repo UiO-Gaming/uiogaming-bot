@@ -1,6 +1,8 @@
 import logging
 import logging.handlers
+import os
 import sys
+from datetime import datetime
 
 
 class BotLogger:
@@ -15,7 +17,12 @@ class BotLogger:
             style="{",
         )
 
-        file_handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
+        if not os.path.exists(".logs"):
+            os.makedirs(".logs")
+
+        file_handler = logging.FileHandler(
+            filename=f".logs/{datetime.now().strftime('%Y-%m-%d %H:%M')}.log", encoding="utf-8", mode="w"
+        )
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
