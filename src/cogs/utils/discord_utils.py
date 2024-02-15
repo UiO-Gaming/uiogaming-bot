@@ -204,7 +204,7 @@ class LobbyView(discord.ui.View):
             discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨") for p in self.lobby.players
         ]
         embed = interaction.message.embeds[0].set_field_at(
-            0, name="Spillere", value="\n".join([f"* {p.mention}" for p in self.lobby.players])
+            0, name=f"Spillere ({len(self.lobby.players)})", value="\n".join([f"* {p.mention}" for p in self.lobby.players])
         )
         await interaction.message.edit(embed=embed, view=self)
 
