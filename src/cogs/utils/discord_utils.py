@@ -243,6 +243,10 @@ class LobbyView(discord.ui.View):
             embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
+        if len(self.lobby.players) < 3:
+            embed = embed_templates.error_warning(interaction, text="Det må være mer enn 2 i lobbyen")
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
+
         await self.end_lobby()
 
         embed = interaction.message.embeds[0]
@@ -422,8 +426,7 @@ class TempVoiceHelper:
 
         # Get the UiO Gaming server's VC category. If the command is not invoked in that server it should still be fine
         # since the it will return None if not found.
-        # vc_category = interaction.guild.get_channel(747542544291987601)
-        vc_category = interaction.guild.get_channel(412646637333250050)
+        vc_category = interaction.guild.get_channel(747542544291987601)
 
         try:
             channel = await interaction.guild.create_voice_channel(

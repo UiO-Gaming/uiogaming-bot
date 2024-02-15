@@ -215,7 +215,7 @@ class _TeamSelectMenu(discord.ui.Select):
             self.parent_view.clear_items()
             self.parent_view.teams_ready(interaction)
         else:
-            embed.description = f"Det er {self.parent_view.team_leaders[self.parent_view.turn].mention} sin tur"
+            embed.description = f"Det er {self.parent_view.teams[self.parent_view.turn][0].mention} sin tur"
 
         await interaction.message.edit(embed=embed, view=self.parent_view)
 
