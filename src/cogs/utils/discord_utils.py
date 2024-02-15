@@ -4,6 +4,7 @@ from io import BytesIO
 
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 
 from . import embed_templates
 from .misc_utils import Paginator
@@ -204,7 +205,9 @@ class LobbyView(discord.ui.View):
             discord.SelectOption(label=p.display_name, value=str(p.id), emoji="🔨") for p in self.lobby.players
         ]
         embed = interaction.message.embeds[0].set_field_at(
-            0, name=f"Spillere ({len(self.lobby.players)})", value="\n".join([f"* {p.mention}" for p in self.lobby.players])
+            0,
+            name=f"Spillere ({len(self.lobby.players)})",
+            value="\n".join([f"* {p.mention}" for p in self.lobby.players]),
         )
         await interaction.message.edit(embed=embed, view=self)
 
@@ -349,3 +352,106 @@ def __default_content_constructor(self, page: list, embed: discord.Embed) -> dis
     embed.description = "\n".join(page)
     embed.set_footer(text=f"Side {self.paginator.current_page}/{self.paginator.total_page_count}")
     return embed
+
+
+class TempVoiceHelper:
+    """Allows users to create a temporary channel that will be deleted after 5 minutes of inactivity"""
+
+    def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
+        self.bot = bot
+        self.temp_vc_channels = {}
+        self.check_temp_vc_channels.start()
+
+    async def on_voice_state_update(
+        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+    ):
+        """
+        Listen for disconnects from the temporary voice channels
+        """
+
+        for channel in (before.channel, after.channel):
+            if channel not in self.temp_vc_channels:
+                continue
+
+            if len(channel.members) == 0:
+                self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
+                self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 5 minutes")
+
+    @tasks.loop(minutes=1)
+    async def check_temp_vc_channels(self):
+        """
+        Check for temporary voice channels that have been inactive for 5 minutes
+        """
+
+        for channel, data in self.temp_vc_channels.copy().items():
+            if not data["no_members_since"]:
+                continue
+
+            if (datetime.now() - data["no_members_since"]).total_seconds() >= 300:
+                try:
+                    await channel.delete(reason="tempvoice kanal inaktiv i 5 minutter")
+                except discord.Forbidden:
+                    self.bot.logger.info(f"Failed to delete temporary voice channel {channel}")
+                else:
+                    self.bot.logger.info(f"Deleted temporary voice channel {channel}")
+                finally:
+                    del self.temp_vc_channels[channel]
+
+    async def create_temp_voice(
+        self, interaction: discord.Interaction, name: str, limit: int = 0
+    ) -> discord.VoiceChannel | None:
+        """
+        Create a temporary voice channel
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): The interaction object
+        name (str): The name of the channel
+        limit (int): The user limit of the channel
+
+        Returns
+        ----------
+        (discord.VoiceChannel) | None: The object for the newly created channel. None if failed
+        """
+
+        # Get the UiO Gaming server's VC category. If the command is not invoked in that server it should still be fine
+        # since the it will return None if not found.
+        # vc_category = interaction.guild.get_channel(747542544291987601)
+        vc_category = interaction.guild.get_channel(412646637333250050)
+
+        try:
+            channel = await interaction.guild.create_voice_channel(
+                name=name,
+                user_limit=limit,
+                category=vc_category,
+                reason=f"tempvoice kommando av {interaction.user.name}",
+            )
+        except discord.Forbidden:
+            self.bot.logger.error(f"Failed to create temporary voice channel in {interaction.guild}")
+            await interaction.response.send_message(
+                embed=embed_templates.error_fatal(interaction, text="Jeg har ikke tilgang til å opprette en talekanal")
+            )
+            return
+
+        self.bot.logger.info(f"Created temporary voice channel {channel} in {interaction.guild}")
+
+        self.temp_vc_channels[channel] = {"created": datetime.now(), "no_members_since": None}
+
+        try:
+            await interaction.user.move_to(channel)
+        except discord.Forbidden:
+            self.bot.logger.info(
+                f"Failed to move {interaction.user} to temporary voice channel {channel}. Missing permissions"
+            )
+        except discord.HTTPException:
+            self.bot.logger.info(
+                f"Failed to move {interaction.user} to temporary voice channel {channel}. User not connected to voice"
+            )
+
+        return channel
