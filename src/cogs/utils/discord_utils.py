@@ -65,6 +65,34 @@ async def get_file_bytesio(file: discord.Attachment | discord.Asset) -> BytesIO:
     return input
 
 
+def construct_embed(self, base_embed: discord.Embed):
+    """
+    Constructs the embed to be displayed
+
+    Parameters
+    -----------
+    base_embed (discord.Embed): The base embed to add fields to
+    """
+
+    return self.content_constructor(self.paginator.get_current_page(), embed=base_embed)
+
+
+def __default_content_constructor(self, page: list, embed: discord.Embed) -> discord.Embed:
+    """
+    Default embed template for the paginator
+
+    Parameters
+    ----------
+    paginator (Paginator): Paginator dataclass
+    page (list): List of streaks to display on a page
+    embed (discord.Embed): Embed to add fields to
+    """
+
+    embed.description = "\n".join(page)
+    embed.set_footer(text=f"Side {self.paginator.current_page}/{self.paginator.total_page_count}")
+    return embed
+
+
 class ScrollerButton(discord.ui.Button):
     """Button that scrolls through pages in a scroller view"""
 
@@ -328,34 +356,6 @@ class _KickSelectMenu(discord.ui.Select):
 
         embed = embed_templates.success(interaction, text="Brukeren har blitt sparket fra lobbyen")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
-
-
-def construct_embed(self, base_embed: discord.Embed):
-    """
-    Constructs the embed to be displayed
-
-    Parameters
-    -----------
-    base_embed (discord.Embed): The base embed to add fields to
-    """
-
-    return self.content_constructor(self.paginator.get_current_page(), embed=base_embed)
-
-
-def __default_content_constructor(self, page: list, embed: discord.Embed) -> discord.Embed:
-    """
-    Default embed template for the paginator
-
-    Parameters
-    ----------
-    paginator (Paginator): Paginator dataclass
-    page (list): List of streaks to display on a page
-    embed (discord.Embed): Embed to add fields to
-    """
-
-    embed.description = "\n".join(page)
-    embed.set_footer(text=f"Side {self.paginator.current_page}/{self.paginator.total_page_count}")
-    return embed
 
 
 class TempVoiceHelper:
