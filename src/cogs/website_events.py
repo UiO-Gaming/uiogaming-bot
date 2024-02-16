@@ -55,7 +55,7 @@ class WebsiteEvents(commands.Cog):
             elif event.status == discord.EventStatus.scheduled:
                 await self.create_event(event)
 
-        self.bot.logger.info("WebsiteEvents.py - Finished syncing events! Note errors may have occured")
+        self.bot.logger.info("Finished syncing events! Note errors may have occured")
 
     async def create_event(self, event: discord.ScheduledEvent):
         """
