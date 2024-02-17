@@ -71,12 +71,12 @@ class FunReplies(commands.Cog):
                 await message.reply("<:Nei:826593267642662912>")
                 self.previous_invokations["yeet"] = datetime.now()
 
-        elif re.search(r"(^|\W)skal aldri drikke[\w\s]*igjen($|\W)+", message_content, flags=re.IGNORECASE):
+        elif re.search(r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["drikke"]).seconds > self.cooldown_seconds:
                 await message.reply(":billed_cap:")
                 self.previous_invokations["drikke"] = datetime.now()
 
-        elif re.search(r"(^|\W)jeg er sivert arntzen($|\W)+", message_content, flags=re.IGNORECASE):
+        elif re.search(r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["sivert"]).seconds > self.cooldown_seconds:
                 await message.reply("Nei, jeg er Sivert Arntzen!")
                 self.previous_invokations["sivert"] = datetime.now()
