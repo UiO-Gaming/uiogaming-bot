@@ -111,6 +111,26 @@ class WebsiteEvents(commands.Cog):
         else:
             self.bot.logger.error(f"Failed to delete event in Sanity with ID: {event.id}. Response: {response.text}")
 
+    async def update_event(self, before: discord.ScheduledEvent, after: discord.ScheduledEvent):
+        """
+        Updates an event in Sanity when edited on discord
+
+        Parameters
+        ----------
+        before (discord.ScheduledEvent): The event before editing
+        after (discord.ScheduleEvent): The new event
+        """
+
+        if before.id != after.id:
+            # This might be redundant as events aren't supposed to change its id
+            # However for some odd reason it seems to be the case with recurring events
+            # As all events have the same id up until around 48 hours before its start time
+            # I have not looked into this though
+            await self.delete_event(before)
+            await self.create_event(after)
+        else:
+            await self.create_event(after)
+
 
 async def setup(bot: commands.Bot):
     """
@@ -122,6 +142,6 @@ async def setup(bot: commands.Bot):
     """
 
     bot.add_listener(WebsiteEvents(bot).create_event, "on_scheduled_event_create")
-    bot.add_listener(WebsiteEvents(bot).create_event, "on_scheduled_event_update")
+    bot.add_listener(WebsiteEvents(bot).update_event, "on_scheduled_event_update")
     bot.add_listener(WebsiteEvents(bot).delete_event, "on_scheduled_event_delete")
     await bot.add_cog(WebsiteEvents(bot))
