@@ -76,11 +76,6 @@ class FunReplies(commands.Cog):
                 await message.reply("Nei, jeg er Sivert Arntzen!")
                 self.previous_invokations["sivert"] = datetime.now()
 
-        elif re.search(r"(^|\W)spam($|\W)+", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["spam"]).seconds > self.cooldown_seconds:
-                await message.reply("https://www.youtube.com/watch?v=zLih-WQwBSc")
-                self.previous_invokations["spam"] = datetime.now()
-
 
 async def setup(bot: commands.Bot):
     """
