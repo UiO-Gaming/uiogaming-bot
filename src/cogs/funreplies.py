@@ -25,13 +25,11 @@ class FunReplies(commands.Cog):
             2000, 9, 11
         )  # Set initial datetime far in the past to allow triggering right after boot
         self.previous_invokations = {
-            "borgerlønn": initial_datetime,
             "olof palme": initial_datetime,
             "lesgo": initial_datetime,
             "yeet": initial_datetime,
             "drikke": initial_datetime,
             "sivert": initial_datetime,
-            "spam": initial_datetime,
         }
 
     async def reply_to_triggers(self, message: discord.Message):
