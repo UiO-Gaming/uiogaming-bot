@@ -47,20 +47,15 @@ class FunReplies(commands.Cog):
 
         message_content = message.content.lower()
 
-                if re.search(r"(^|\W)borgerlønn(\W|$)", message_content, flags=re.IGNORECASE):
+        if re.search(r"(^|\W)borgerlønn(\W|$)", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["borgerlønn"]).seconds > self.cooldown_seconds:
                 await message.reply("<@267415183931080715> DE SNAKKER OM BORGERLØNN")
                 self.previous_invokations["borgerlønn"] = datetime.now()
 
         elif re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
-        if re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["olof palme"]).seconds > self.cooldown_seconds:
                 await message.reply("Jeg vet hvem som drepte Olof Palme 👀")
                 self.previous_invokations["olof palme"] = datetime.now()
-                
-
-
-        elif re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
 
         elif re.search(r"(\W|\s)*le+s+go+(\s|\W)*", message_content):
             if (datetime.now() - self.previous_invokations["lesgo"]).seconds > self.cooldown_seconds:
