@@ -26,6 +26,7 @@ class Birthday(commands.Cog):
         self.bot = bot
         self.cursor = self.bot.db_connection.cursor()
         self.init_db()
+        self.cursor.execute("SET timezone TO 'Europe/Oslo';")
         self.birthday_check.start()
 
     def init_db(self):
