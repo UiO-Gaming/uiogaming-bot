@@ -46,6 +46,14 @@ class Streak(commands.Cog):
             """
         )
 
+    async def cog_unload(self):
+        """Stop the loops and close the database connection"""
+
+        await self.streak_update()
+        self.streak_check.cancel()
+        self.streak_update_loop.cancel()
+        self.cursor.close()
+
     def populate_cache(self):
         """
         Populate the cache with the current streaks

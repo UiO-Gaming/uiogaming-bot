@@ -73,6 +73,15 @@ class WordCloud(commands.Cog):
             """
         )
 
+    async def cog_unload(self):
+        """
+        Insert cache to db, stop tasks and close the database connection on cog unload
+        """
+
+        await self.batch_update_word_freqs()
+        self.batch_update_word_freqs_loop.cancel()
+        self.cursor.close()
+
     def populate_consenting_users(self):
         """
         Populates the cached list of consenting users
