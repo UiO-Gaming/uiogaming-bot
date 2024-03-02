@@ -12,8 +12,9 @@ jobs:
     steps:
       - name: Set up SSH
         run: |
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519  # This should be redundant but seems to do the trick.
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
       - name: Connect, pull, build and deploy
