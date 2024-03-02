@@ -50,8 +50,16 @@
     "Markus sier \"check it out\" og taper clutchen",
     "Markus sier \"check it out\" og vinner clutchen"
   ],
-  "437534010332151808": ["Lille skløtte", "Henrik tar over", "Helen deafener seg selv"],
-  "691652845350420491": ["Hanna tror hun spiller valo", "Hanna klarer ikke å klatre opp stigen", "Hannas mic peaker"],
+  "437534010332151808": [
+    "Lille skløtte",
+    "Henrik tar over",
+    "Helen deafener seg selv"
+  ],
+  "691652845350420491": [
+    "Hanna tror hun spiller valo",
+    "Hanna klarer ikke å klatre opp stigen",
+    "Hannas mic peaker"
+  ],
   "170506717140877312": [
     "Leander bommer et lett awp shot",
     "Leander er for redd for å bli hørt av fienden",
@@ -59,15 +67,21 @@
     "Leander caller en dum strat og den fungerer",
     "Leander caller en dum strat og den flopper hardt"
   ],
-  "162337748781367296": ["Petter roper NÆÆÆÆÆÆÆIIIII", "Petter topfragger", "Petter lager mat"],
-  "517390665160720415": ["Tita får >2 kills i en runde", "Tita snur ryggen til en fiende"],
+  "162337748781367296": ["Petter roper NÆÆÆÆÆÆÆIIIII", "Petter lager mat"],
+  "517390665160720415": [
+    "Tita får >2 kills i en runde",
+    "Tita snur ryggen til en fiende"
+  ],
   "694529292335579148": [
     "Thea får run n gun headshots med m4a1s",
     "Thea prøver å banne overpass",
     "Theas mic kutter"
   ],
   "228185370058031114": ["Stash thrower clutchen"],
-  "276061121776058370": ["Mathias får mer enn 2 kills med xm", "Mathias spiller cs2"],
+  "276061121776058370": [
+    "Mathias får mer enn 2 kills med xm",
+    "Mathias spiller cs2"
+  ],
   "248549153158856704": [
     "Seb kjøper shotgun",
     "Seb ignorerer strat og løper alene inn på en site"
@@ -79,5 +93,10 @@
     "A snake eating its own tail indicates that its excrement provides food for it"
   ],
   "280753175340908546": ["Sven spiller CS2"],
-  "randoms": ["Vi får en russer på laget", "Vi får en med anime pfp på laget", "Vi får en med furry pfp på laget", "Randomen på laget kjøper som han vil"]
+  "randoms": [
+    "Vi får en russer på laget",
+    "Vi får en med anime pfp på laget",
+    "Vi får en med furry pfp på laget",
+    "Randomen på laget kjøper som han vil"
+  ]
 }
