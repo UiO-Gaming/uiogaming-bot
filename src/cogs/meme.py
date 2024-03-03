@@ -57,6 +57,9 @@ class Meme(commands.Cog):
             await interaction.followup.send(embed=embed_templates.error_warning(interaction, text="Bildet er ugyldig"))
             return
 
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+
         # Apply various deepfrying filters
         enhancer = ImageEnhance.Color(image)
         image = enhancer.enhance(2.0)
