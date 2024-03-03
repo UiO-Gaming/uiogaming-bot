@@ -12,4 +12,6 @@ COPY . .
 
 RUN mv /app/src/assets/misc/policy.xml /etc/ImageMagick-6/policy.xml
 
+VOLUME logs
+
 CMD ["python3", "src/run.py"]

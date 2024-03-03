@@ -7,3 +7,5 @@ services:
     network_mode: "host"
     environment:
       - TZ=Europe/Oslo
+    volumes:
+      - ./logs:/app/logs
