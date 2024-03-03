@@ -17,11 +17,13 @@ class BotLogger:
             style="{",
         )
 
-        if not os.path.exists(".logs"):
-            os.makedirs(".logs")
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
 
         file_handler = logging.FileHandler(
-            filename=f".logs/{datetime.now().strftime('%Y-%m-%d %H:%M')}.log", encoding="utf-8", mode="w"
+            filename=f"logs/{datetime.now().strftime('%Y-%m-%d %H-%M')}.log",
+            encoding="utf-8",
+            mode="w",
         )
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
