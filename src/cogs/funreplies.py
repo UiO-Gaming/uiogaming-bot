@@ -49,7 +49,7 @@ class FunReplies(commands.Cog):
 
         if re.search(r"(^|\W)borgerlønn(\W|$)", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["borgerlønn"]).seconds > self.cooldown_seconds:
-                await message.reply("<@267415183931080715> DE SNAKKER OM BORGERLØNN")
+                await message.reply("@ sivert DE SNAKKER OM BORGERLØNN")
                 self.previous_invokations["borgerlønn"] = datetime.now()
 
         elif re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
