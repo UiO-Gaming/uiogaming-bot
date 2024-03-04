@@ -71,7 +71,7 @@ class TenMan(commands.Cog):
         self.active_lobbies[str(interaction.user.id)] = Lobby(
             host=interaction.user,
             players=[interaction.user],
-            ends=datetime.now() + timedelta(minutes=15),
+            ends=datetime.now() + timedelta(minutes=30),
             kicked_players=[],
         )
 
