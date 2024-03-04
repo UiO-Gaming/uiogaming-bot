@@ -122,9 +122,11 @@ class TeamLeaderView(discord.ui.View):
         self.add_item(TeamLeaderSelectMenu(self))
 
     async def on_timeout(self):
+        self.bot.logger.info("TeamLeaderView timed out")
         self.disable_interaction()
 
     def disable_interaction(self):
+        self.bot.logger.info("TeamLeaderView disabled")
         for item in self.children:
             item.disabled = True
 
@@ -182,13 +184,16 @@ class TeamSelectView(discord.ui.View):
         self.add_item(TeamSelectMenu(self))
 
     async def on_timeout(self):
+        self.bot.logger.info("TeamSelectView timed out")
         self.disable_interaction()
 
     def disable_interaction(self):
+        self.bot.logger.info("TeamSelectView disabled")
         for item in self.children:
             item.disabled = True
 
     def teams_ready(self, interaction):
+        self.bot.logger("Teams ready!")
         embed = interaction.message.embeds[0]
         embed.title = "10 Man Lobby"
         embed.description = "Lagene er valgt!"
