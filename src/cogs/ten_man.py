@@ -119,7 +119,7 @@ class TeamLeaderView(discord.ui.View):
         self.lobby = lobby
         self.bot = bot
 
-        self.add_item(_TeamLeaderSelectMenu(self))
+        self.add_item(TeamLeaderSelectMenu(self))
 
     async def on_timeout(self):
         self.disable_interaction()
@@ -129,7 +129,7 @@ class TeamLeaderView(discord.ui.View):
             item.disabled = True
 
 
-class _TeamLeaderSelectMenu(discord.ui.Select):
+class TeamLeaderSelectMenu(discord.ui.Select):
     def __init__(self, parent_view: TeamLeaderView):
         self.parent_view = parent_view
         options = [
@@ -144,10 +144,10 @@ class _TeamLeaderSelectMenu(discord.ui.Select):
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         team_leaders = []
-        for player in interaction.data["values"]:
-            for user in self.parent_view.lobby.players:
-                if int(player) == user.id:
-                    team_leaders.append(user)
+        for selected_player in interaction.data["values"]:
+            for player in self.parent_view.lobby.players:
+                if int(selected_player) == player.id:
+                    team_leaders.append(player)
                     break
 
         self.parent_view.disable_interaction()
@@ -163,7 +163,7 @@ class _TeamLeaderSelectMenu(discord.ui.Select):
         embed.add_field(name="Lag 1", value=f"* {team_leaders[0].mention}", inline=False)
         embed.add_field(name="Lag 2", value=f"* {team_leaders[1].mention}", inline=False)
         await interaction.response.send_message(
-            embed=embed, view=TeamSelectView(self.parent_view.lobby, team_leaders, turn, self.parent_view.bot)
+            embed=embed, view=TeamSelectView(self.parent_view.lobby, self.parent_view.bot, team_leaders, turn)
         )
 
 
@@ -171,15 +171,15 @@ class _TeamLeaderSelectMenu(discord.ui.Select):
 
 
 class TeamSelectView(discord.ui.View):
-    def __init__(self, lobby: Lobby, team_leaders: list[discord.User], turn: int, bot: commands.Bot):
+    def __init__(self, lobby: Lobby, bot: commands.Bot, team_leaders: list[discord.User], turn: int):
         super().__init__(timeout=15)
         self.lobby = lobby
-        self.turn = turn
         self.bot = bot
         self.players = [p for p in self.lobby.players if p not in team_leaders]
         self.teams = [[team_leaders[0]], [team_leaders[1]]]
+        self.turn = turn
 
-        self.add_item(_TeamSelectMenu(self))
+        self.add_item(TeamSelectMenu(self))
 
     async def on_timeout(self):
         self.disable_interaction()
@@ -195,7 +195,7 @@ class TeamSelectView(discord.ui.View):
         self.add_item(MoveTeamVoiceButton(self))
 
 
-class _TeamSelectMenu(discord.ui.Select):
+class TeamSelectMenu(discord.ui.Select):
     def __init__(self, parent_view: TeamSelectView):
         self.parent_view = parent_view
         options = [
