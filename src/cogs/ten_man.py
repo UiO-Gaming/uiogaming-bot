@@ -203,7 +203,7 @@ class TeamSelectView(discord.ui.View):
         await interaction.reponse.send_message(embed=embed, delete_after=10)
 
     def teams_ready(self, interaction):
-        self.bot.logger("Teams ready!")
+        self.bot.logger.info("Teams ready!")
         embed = interaction.message.embeds[0]
         embed.title = "10 Man Lobby"
         embed.description = "Lagene er valgt!"
@@ -262,6 +262,9 @@ class TeamSelectMenu(discord.ui.Select):
 
         embed = embed_templates.success(interaction, text="Bruker valgt!")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
+
+
+# ------------------------------------------------------------------------------
 
 
 class MoveTeamVoiceButton(discord.ui.Button):
