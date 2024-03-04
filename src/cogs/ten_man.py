@@ -110,6 +110,9 @@ class TenManView(LobbyView):
         await interaction.response.send_message(embed=embed, view=TeamLeaderView(self.lobby, self.bot))
 
 
+# ------------------------------------------------------------------------------
+
+
 class TeamLeaderView(discord.ui.View):
     def __init__(self, lobby: Lobby, bot: commands.Bot):
         super().__init__(timeout=15)
@@ -162,6 +165,9 @@ class _TeamLeaderSelectMenu(discord.ui.Select):
         await interaction.response.send_message(
             embed=embed, view=TeamSelectView(self.parent_view.lobby, team_leaders, turn, self.parent_view.bot)
         )
+
+
+# ------------------------------------------------------------------------------
 
 
 class TeamSelectView(discord.ui.View):
