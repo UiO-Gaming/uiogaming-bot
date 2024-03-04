@@ -26,7 +26,6 @@ class FunReplies(commands.Cog):
         )  # Set initial datetime far in the past to allow triggering right after boot
         self.previous_invokations = {
             "olof palme": initial_datetime,
-            "lesgo": initial_datetime,
             "yeet": initial_datetime,
             "drikke": initial_datetime,
             "sivert": initial_datetime,
@@ -56,14 +55,6 @@ class FunReplies(commands.Cog):
             if (datetime.now() - self.previous_invokations["olof palme"]).seconds > self.cooldown_seconds:
                 await message.reply("Jeg vet hvem som drepte Olof Palme 👀")
                 self.previous_invokations["olof palme"] = datetime.now()
-
-        elif re.search(r"(\W|\s)*le+s+go+(\s|\W)*", message_content):
-            if (datetime.now() - self.previous_invokations["lesgo"]).seconds > self.cooldown_seconds:
-                await message.reply(
-                    "https://cdn.discordapp.com/attachments/750052141346979850/"
-                    + "824764933513281596/3xhpwbakz2361.png"
-                )
-                self.previous_invokations["lesgo"] = datetime.now()
 
         elif re.search(r"(^|\W)+ye+et($|\W)+", message_content, flags=re.IGNORECASE):
             if (datetime.now() - self.previous_invokations["yeet"]).seconds > self.cooldown_seconds:
