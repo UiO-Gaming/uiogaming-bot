@@ -200,7 +200,7 @@ class TeamSelectView(discord.ui.View):
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item):
         self.bot.logger.error("TeamSelectView error", exc_info=error)
         embed = embed_templates.error_warning(interaction, text="Oopsie woopsie, we made a fucky wucky")
-        await interaction.reponse.send_message(embed=embed, delete_after=10)
+        await interaction.response.send_message(embed=embed, delete_after=10)
 
     def teams_ready(self, interaction):
         self.bot.logger.info("Teams ready!")
