@@ -288,7 +288,17 @@ class MoveTeamVoiceButton(discord.ui.Button):
         if not self.clicked[team["number"]]:
             channel = await temp_voice.create_temp_voice(interaction, name=f"10 man - Lag {team['number']}")
             self.clicked[team["number"]] = channel
-        await temp_voice.move_players(interaction, self.clicked[team["number"]], team["players"])
+            failed_users = await temp_voice.move_players(interaction, self.clicked[team["number"]], team["players"])
+
+        if failed_users:
+            failed_users = "\n".join([f"* {user.mention}" for user in failed_users])
+            embed = embed_templates.error_warning(
+                interaction,
+                text=f"Klarte ikke å flytte følgende brukere til kanalen:\n{failed_users}\n\n"
+                + "Dette kan være fordi brukere(ne) ikke er koblet til en kanal fra før"
+                + "eller at jeg ikke har tillatelse til å flytte",
+            )
+            return await interaction.response.send_message(embed=embed, delete_after=10)
 
         embed = embed_templates.success(interaction, text=f"Flyttet lag {team['number']} til voice!")
         await interaction.response.send_message(embed=embed, delete_after=10)
