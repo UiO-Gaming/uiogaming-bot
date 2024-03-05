@@ -271,7 +271,7 @@ class MoveTeamVoiceButton(discord.ui.Button):
     def __init__(self, parent_view: TeamSelectView):
         self.parent_view = parent_view
         self.clicked = {"1": None, "2": None}
-        super().__init__(style=discord.ButtonStyle.primary, label="Flytt laget til egen kanal", emoji="🔊")
+        super().__init__(style=discord.ButtonStyle.primary, label="Opprett kanal og flytt lag", emoji="🔊")
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.parent_view.teams[0][0] and interaction.user != self.parent_view.teams[1][0]:
