@@ -1,9 +1,9 @@
-import re
-import urllib
 from datetime import datetime
 from hashlib import md5
 from io import BytesIO
 import random
+import re
+import urllib
 
 import discord
 import requests
@@ -344,16 +344,16 @@ class Misc(commands.Cog):
         ----------
         interaction (discord.Interaction): Slash command context object
         """
-        
+
         links = [
-            "https://cdn.discordapp.com/attachments/747542544291987597/973603487541772369/leanderbad.png?ex=65f9ab68&is=65e73668&hm=8557b40aeab3b4b1ce70d1649d1a7409ec623dcb7a31eca55847aa22cf22493a&",
-            "https://cdn.discordapp.com/attachments/747542544291987597/973603305467043850/unknown.png?ex=65f9ab3c&is=65e7363c&hm=8f7f06dd01fdcd9f2f2d6fb0740a1b7986a28277e271229ddb03822a268f0f6a&",
-            "https://cdn.discordapp.com/attachments/811606213665357824/955206225681875015/73D1B4ED-BD2E-4BCB-9032-67BF9AEAF4B2.jpg?ex=65f7571f&is=65e4e21f&hm=9677e9d8f4ff0a6ac17095e8572e904b7bd2b49134e972201113cc8666e66319&",
-            "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg?ex=65f43414&is=65e1bf14&hm=831c0f74dfc5a590a564aa8713c29fe1a759ba9d8aa0febd49d6186b3aeddaed&"
+            "https://cdn.discordapp.com/attachments/747542544291987597/973603487541772369/leanderbad.png",
+            "https://cdn.discordapp.com/attachments/747542544291987597/973603305467043850/unknown.png",
+            "https://cdn.discordapp.com/attachments/811606213665357824/955206225681875015/73D1B4ED-BD2E-4BCB-9032-67BF9AEAF4B2.jpg",
+            "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg"
         ]
-        
+
         random_link = random.choice(links)
-        
+
         await interaction.response.send_message(random_link)
 
 
