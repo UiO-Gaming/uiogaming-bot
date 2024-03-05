@@ -1,8 +1,9 @@
-import re
-import urllib
 from datetime import datetime
 from hashlib import md5
 from io import BytesIO
+import random
+import re
+import urllib
 
 import discord
 import requests
@@ -331,6 +332,29 @@ class Misc(commands.Cog):
         embed = discord.Embed()
         embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_match.png")
         await interaction.response.send_message(embed=embed, file=f)
+
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="ifonlyyouknew", description="How bad things really are")
+    async def howbadthingsreallyare(self, interaction: discord.Interaction):
+        """
+        If only you knew how bad things really are.
+        
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
+        links = [
+            "https://cdn.discordapp.com/attachments/747542544291987597/973603487541772369/leanderbad.png",
+            "https://cdn.discordapp.com/attachments/747542544291987597/973603305467043850/unknown.png",
+            "https://cdn.discordapp.com/attachments/811606213665357824/955206225681875015/73D1B4ED-BD2E-4BCB-9032-67BF9AEAF4B2.jpg",
+            "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg"
+        ]
+
+        random_link = random.choice(links)
+
+        await interaction.response.send_message(random_link)
 
 
 async def setup(bot: commands.Bot):
