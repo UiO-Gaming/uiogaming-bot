@@ -384,6 +384,8 @@ class TempVoiceHelper:
             if len(channel.members) == 0:
                 self.temp_vc_channels[channel]["no_members_since"] = datetime.now()
                 self.bot.logger.info(f"Temporary voice channel {channel} has no members. Will be deleted in 1 minutes")
+            else:
+                self.temp_vc_channels[channel]["no_members_since"] = None
 
     @tasks.loop(minutes=1)
     async def check_temp_vc_channels(self):
