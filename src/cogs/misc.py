@@ -336,7 +336,7 @@ class Misc(commands.Cog):
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command(name="ifonlyyouknew", description="How bad things really are")
-    async def weeb(self, interaction: discord.Interaction):
+    async def howbadthingsreallyare(self, interaction: discord.Interaction):
     	"""
     	If only you knew how bad things really are.
     
