@@ -289,6 +289,11 @@ class MoveTeamVoiceButton(discord.ui.Button):
             channel = await temp_voice.create_temp_voice(interaction, name=f"10 man - Lag {team['number']}")
             self.clicked[team["number"]] = channel
             failed_users = await temp_voice.move_players(interaction, self.clicked[team["number"]], team["players"])
+        else:
+            embed = embed_templates.error_warning(
+                interaction, text=f"Kanal for lag {team['number']} allerede opprettet og spillere flyttet!"
+            )
+            return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if failed_users:
             failed_users = "\n".join([f"* {user.mention}" for user in failed_users])
