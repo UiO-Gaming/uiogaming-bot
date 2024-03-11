@@ -552,7 +552,7 @@ class Info(commands.Cog):
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
     @guild_oldest_group.command(
-        name="yeet", description="Liste over de eldste brukerene på serveren basert på når de ble lagd"
+        name="lagd", description="Liste over de eldste brukerene på serveren basert på når de ble lagd"
     )
     async def guild_user_created_oldest(self, interaction: discord.Interaction):
         """
