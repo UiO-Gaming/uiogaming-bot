@@ -419,7 +419,7 @@ class Info(commands.Cog):
         embed.add_field(
             name="Opprettet",
             value=f"{created_at_timestamp}\n{since_created_days} "
-            + f'{"dager" if since_created_days > 1 else "dag"} siden',
+            + f'{"dager" if since_created_days != 1 else "dag"} siden',
         )
         embed.add_field(name="Posisjon", value=rolle.position)
         embed.add_field(name="Nevnbar", value="Ja" if rolle.mentionable else "Nei")
