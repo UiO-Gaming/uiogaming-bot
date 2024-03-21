@@ -1,12 +1,11 @@
 import discord
-from discord import app_commands
-from discord.ext import commands
 import pypandoc
 import regex  # This should be redundant as re now supports recursive patterns, but apparently it doesn't
 import requests
+from discord import app_commands
+from discord.ext import commands
 
 from cogs.utils import embed_templates
-
 
 WIKI_BASE_URL = "https://viteboka.studentersamfundet.no"
 API_URL = f"{WIKI_BASE_URL}/w/api.php"
@@ -48,7 +47,8 @@ async def fetch_article(title: str):
     image = f"{WIKI_BASE_URL}/w/images/{parse.get('images')[0]}" if parse.get("images") else None
     text = parse.get("wikitext")["*"]
 
-    # If you're reading this, know that I'm on my way to your house right now to erase your memories of ever reading this shit
+    # If you're reading this, know that I'm on my way
+    # to your house right now to erase your memories of ever reading this shit.
     # Parsing text fucking sucks. Even more so when it's wiki text with no consistencies whatsoever
     # This is wildly inefficent but I don't. fucking. care. Just make it work
     text = regex.sub(
