@@ -114,13 +114,25 @@ class Misc(commands.Cog):
         emnekode (str): UiO course code
         """
 
-        data = requests.get(f"https://data.uio.no/studies/v1/course/{emnekode}", timeout=10)
+        params = {"action": "autocomplete", "service": "emner", "scope": "/studier/emner", "q": emnekode, "limit": 1}
+        data = requests.get("https://www.uio.no/studier/", params=params, timeout=10)
         if data.status_code != 200:
+            return await interaction.response.send_message(
+                embed=embed_templates.error_fatal(interaction, text="Kunne ikke nå API")
+            )
+
+        results = data.text.strip("\n").split("\n")[:-1]
+        if not results:
             return await interaction.response.send_message(
                 embed=embed_templates.error_fatal(interaction, text="Fant ikke emnekode")
             )
 
-        await interaction.response.send_message(data.json()["info"]["name"])
+        for result in results:
+            code, name, _ = result.split(";")
+            if code.lower() == emnekode.lower():
+                break
+
+        await interaction.response.send_message(name)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
@@ -339,7 +351,7 @@ class Misc(commands.Cog):
     async def howbadthingsreallyare(self, interaction: discord.Interaction):
         """
         If only you knew how bad things really are.
-        
+
         Parameters
         ----------
         interaction (discord.Interaction): Slash command context object
@@ -349,7 +361,7 @@ class Misc(commands.Cog):
             "https://cdn.discordapp.com/attachments/747542544291987597/973603487541772369/leanderbad.png",
             "https://cdn.discordapp.com/attachments/747542544291987597/973603305467043850/unknown.png",
             "https://cdn.discordapp.com/attachments/811606213665357824/955206225681875015/73D1B4ED-BD2E-4BCB-9032-67BF9AEAF4B2.jpg",
-            "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg"
+            "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg",
         ]
 
         random_link = random.choice(links)
