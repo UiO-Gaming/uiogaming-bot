@@ -151,9 +151,33 @@ class WordCloud(commands.Cog):
         message (discord.Message): Message to count
         """
 
-        if message.author.id not in self.consenting_users:
+        if not self.can_count_message(message):
             return
 
+        tokens = self.tokenize(message.clean_content)
+
+        for token in tokens:
+            # Enter into cache
+            # This may take a performance hit but who tf cares. We're using python anyway
+            self.word_freq_cache[message.author.id][token] += 1
+
+    def can_count_message(self, message: discord.Message) -> bool:
+        """
+        Check if a message can be counted
+
+        Parameters
+        ----------
+        message (discord.Message): Message to check
+
+        Returns
+        ----------
+        bool: Whether the message can be counted
+        """
+
+        return (
+            message.author.id in self.consenting_users
+            and not message.clean_content[:2].isalpha()  # Naive check for traditional bot commands
+        )
 
     def tokenize(self, text: str) -> list[str]:
         """
