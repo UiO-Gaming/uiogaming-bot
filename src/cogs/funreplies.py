@@ -15,8 +15,6 @@ class FunReplies(commands.Cog):
         bot (commands.Bot): The bot instance
         """
 
-        self.bot = bot
-
         # Cooldowns for trigger words
         #
         # This is kind of a shitty way to do it but I'm too lazy to implement anything good right now
