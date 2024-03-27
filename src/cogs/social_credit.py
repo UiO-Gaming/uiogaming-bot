@@ -19,23 +19,10 @@ from cogs.utils import misc_utils
 - score for å bli pinged i uio gullkorn
 + score for å få melding på stjernetavla/bli stjerna. multiplier per stjerne
 - score hver dag med weebrolle (lite)
-"""
 
-"""
 ------ TO-DO ------
-+ score for guten tag
-
 - score sitte i afk
 + score for å sitte i voice per time
-
----------------
-- score for winiie the pooh
-- score for memes i general
-- score for å snakke negativt om borgerlønn
-- score for å snakke negativt om styret
-* hvis lav score, spiller av kinesisk nasjonalsang på voicechannel når joiner
-
-daglig uthengig av laveste score
 """
 
 
