@@ -76,9 +76,18 @@ class MCWhitelist(commands.Cog):
 
         # Whitelist user on minecraft server
         # Unfortunately, this requires an active connection to the server, with correct credentials
-        with MCRcon(host="127.0.0.1", password=self.bot.mc_rcon_password, port=25575) as mcr:
-            mcr.command(f'whitelist add {data["name"]}')
-            mcr.command("whitelist reload")
+        # Also unfortunate, we seemingly need to wrap the context manager like this to catch any exceptions
+        try:
+            with MCRcon(host="127.0.0.1", password=self.bot.mc_rcon_password, port=25575) as mcr:
+                mcr.command(f'whitelist add {data["name"]}')
+                mcr.command("whitelist reload")
+        except Exception as e:
+            self.bot.logger.error(f"Failed to use RCON: {e}")
+            return await interaction.response.send_message(
+                embed=embed_templates.error_fatal(
+                    "Klarte ikke å koble til minecraftserveren. Ta kontakt med din lokale teknisk ansvarlige",
+                )
+            )
 
         # Add user to db
         self.cursor.execute(
