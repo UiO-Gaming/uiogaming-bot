@@ -149,7 +149,7 @@ class Info(commands.Cog):
 
         # Features
         features_string = ""
-        if interaction.guild.features is not []:
+        if interaction.guild.features != []:
             features = {
                 "ANIMATED_BANNER": "Animer serverbanner",
                 "ANIMATED_ICON": "Animert serverikon",
@@ -548,7 +548,6 @@ class Info(commands.Cog):
         paginator = misc_utils.Paginator(members_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
 
-        # Send first page
         embed = view.construct_embed(
             discord.Embed(
                 color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"

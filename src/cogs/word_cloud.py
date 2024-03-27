@@ -20,8 +20,6 @@ from wordcloud import WordCloud as WCloud  # Avoid naming conflicts with cog cla
 
 from cogs.utils import embed_templates
 
-# from wordcloud import ImageColorGenerator
-
 
 class WordCloud(commands.Cog):
     """Generate a wordcloud based on the most frequent words posted"""
@@ -41,6 +39,8 @@ class WordCloud(commands.Cog):
         # The user's defaultdict has a default value of 0
         self.word_freq_cache = defaultdict(lambda: defaultdict(int))
 
+        # We cache the consenting users to avoid querying the database every 16:36
+        # It's frail but it works unless you have a skill issue
         self.consenting_users = []
         self.populate_consenting_users()
 
@@ -48,6 +48,7 @@ class WordCloud(commands.Cog):
 
         self.insert_cache_loop.start()
 
+        self.MSG_NO_DATA = "Fant ingen data om deg"  # SonarCloud recommended this LMAO. Makes sense but also not
 
     def init_db(self):
         """
@@ -127,7 +128,6 @@ class WordCloud(commands.Cog):
                 word_freqs,
             )
         except psycopg2.Error as err:
-            self.bot.db_connection.rollback()
             self.bot.logger.error(f"Failed to insert wordcloud cache into database - {err}")
 
         self.word_freq_cache.clear()
@@ -330,11 +330,13 @@ class WordCloud(commands.Cog):
 
         freq_list = {f"{word}": freq for word, freq in result}
 
-        embed = discord.Embed(description="Her er dataen jeg har lagret om deg")
+        # Create Json file
         buffer = StringIO()
         buffer.write(json.dumps(freq_list, indent=4))
         buffer.seek(0)
         file = discord.File(buffer, filename=f"uiog_word_freqs_{interaction.user.id}.json")
+
+        embed = discord.Embed(description="Her er dataen jeg har lagret om deg")
         await interaction.response.send_message(embed=embed, file=file, ephemeral=True)
 
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
@@ -373,6 +375,8 @@ class WordCloud(commands.Cog):
             )
 
         # Fetch tracking start time metadata
+        # This doesn't work most of the time so consider using the API call instead of cache call
+        # Or consider removing this feature entirely
         self.cursor.execute(
             """
             SELECT tracked_since_message_channel_id, tracked_since_message_id
@@ -402,13 +406,11 @@ class WordCloud(commands.Cog):
 
         word_cloud_file = discord.File(word_cloud, filename=f"wordcloud_{interaction.user.id}.png")
         embed = discord.Embed(title="☁️ Her er ordskyen din! ☁️")
+        embed.description = "Basert på de 4000 mest frekvente ordene dine siden "
         if origin_found:
-            embed.description = (
-                f"Basert på de 4000 mest frekvente ordene dine siden {origin_msg_timestamp}\n"
-                + f"[Se melding]({origin_msg.jump_url})"
-            )
+            embed.description += f"{origin_msg_timestamp}\n[Se melding]({origin_msg.jump_url})"
         else:
-            embed.description = "Basert på de 4000 mest frekvente ordene dine siden `ukjent dato`"
+            embed.description += "`ukjent dato`"
         embed.set_image(url=f"attachment://wordcloud_{interaction.user.id}.png")
         await interaction.followup.send(embed=embed, file=word_cloud_file)
 
@@ -433,7 +435,7 @@ class WordCloud(commands.Cog):
         # This shouldn't be hard coded but eh
         board_member_role = interaction.guild.get_role(779849617651138601)
 
-        # Fetch last 1000 messages
+        # This is horrible but there's a lot of edge cases to handle so spare me pls
         all_messages = ""
         for channel in interaction.guild.text_channels:
             if not channel.permissions_for(interaction.user).send_messages:

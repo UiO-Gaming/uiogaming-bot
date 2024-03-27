@@ -26,6 +26,7 @@ class Streak(commands.Cog):
         self.cursor = self.bot.db_connection.cursor()
         self.init_db()
 
+        # Cache to avoid having to insert to the db for every message
         self.streak_cache = {}
         self.populate_cache()
 
@@ -195,7 +196,6 @@ class Streak(commands.Cog):
             """,
             (bruker.id,),
         )
-
         streak = self.cursor.fetchone()
 
         if not streak:
@@ -250,7 +250,6 @@ class Streak(commands.Cog):
             ORDER BY streak_start_time;
             """
         )
-
         streaks = self.cursor.fetchall()
 
         if not streaks:

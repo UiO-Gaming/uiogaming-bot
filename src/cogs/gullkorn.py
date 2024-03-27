@@ -180,10 +180,10 @@ class Gullkorn(commands.Cog):
         most_cited_string = self.construct_data_string(most_cited)
         citations_posted_string = self.construct_data_string(citations_posted)
 
-        gullkorn_first_msg = "https://canary.discord.com/channels/747542543750660178/865970753748074576/1034587913285025912"  # noqa: E501
+        GULLKORN_FIRST_MSG = "https://canary.discord.com/channels/747542543750660178/865970753748074576/1034587913285025912"  # noqa: E501
 
         embed = discord.Embed(title="Gullkornstatistikk for serveren")
-        embed.description = f"Antall gullkorn siden [denne meldingen]({gullkorn_first_msg}): *{summary[0]}*"
+        embed.description = f"Antall gullkorn siden [denne meldingen]({GULLKORN_FIRST_MSG}): *{summary[0]}*"
         embed.add_field(name="Mest sitert", value=most_cited_string, inline=False)
         embed.add_field(name="Postet mest", value=citations_posted_string, inline=False)
         await interaction.response.send_message(embed=embed, ephemeral=False)

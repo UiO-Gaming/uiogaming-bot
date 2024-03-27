@@ -144,7 +144,7 @@ class Meme(commands.Cog):
             font_size += 2
 
         # Draw textbox and text
-        text_box = draw.multiline_textbbox(box_size, text=text, font=font, align="center", anchor="mm")
+        draw.multiline_textbbox(box_size, text=text, font=font, align="center", anchor="mm")  # TODO: remove?
         text_box = box.size[0] // 2, box.size[1] // 2
         draw.multiline_text(text_box, text, font=font, fill=(0, 0, 0, 255), align="center", anchor="mm")
 
@@ -206,7 +206,6 @@ class Meme(commands.Cog):
             os.remove(temp_file)
         except (FileNotFoundError, PermissionError):
             self.bot.logger.warn(f"Failed to remove temporary file {temp_file}")
-            pass
 
     @staticmethod
     def make_crab(top_text: str, bottom_text: str, user_id: int):

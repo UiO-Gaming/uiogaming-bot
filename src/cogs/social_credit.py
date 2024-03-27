@@ -221,8 +221,9 @@ class SocialCredit(commands.Cog):
             ORDER BY credit_score DESC
             """
         )
+        result = self.cursor.fetchall()
 
-        if not (result := self.cursor.fetchall()):
+        if not result:
             return await interaction.send(
                 embed=embed_templates.error_warning("Ingen brukere er registrert i databasen")
             )
@@ -324,10 +325,10 @@ class SocialCredit(commands.Cog):
         message (discord.Message): The message object
         """
 
-        if message.channel.id == 865970753748074576:
-            if message.mentions:
-                for mention in message.mentions:
-                    await self.social_punishment(mention.id, 10, "gullkorn")
+        # This only works in the UiO Gaming server as well
+        if message.channel.id == 865970753748074576 and message.mentions:
+            for mention in message.mentions:
+                await self.social_punishment(mention.id, 10, "gullkorn")
 
     @commands.Cog.listener("on_reaction_add")
     async def on_star_add(self, reaction: discord.Reaction, user: discord.User | discord.Member):
@@ -346,12 +347,11 @@ class SocialCredit(commands.Cog):
         if reaction.emoji == "⭐":
             if reaction.message.author == user:
                 await self.social_punishment(user.id, 100, "self-star")
-            else:
-                if len(reaction.message.reactions) >= 3:
-                    await self.social_punishment(
-                        user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars"
-                    )
-                    await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
+            elif reaction.count == 3:
+                await self.social_punishment(
+                    user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars"
+                )
+                await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
 
     @commands.Cog.listener("on_reaction_remove")
     async def on_star_remove(self, reaction: discord.Reaction, user: discord.User | discord.Member):
@@ -362,9 +362,8 @@ class SocialCredit(commands.Cog):
         if user.bot:
             return
 
-        if reaction.emoji == "⭐":
-            if len(reaction.message.reactions) >= 3:
-                await self.social_punishment(user.id, 25, "remove star")
+        if reaction.emoji == "⭐" and reaction.count >= 3:
+            await self.social_punishment(user.id, 25, "remove star")
 
 
 async def setup(bot: commands.Bot):

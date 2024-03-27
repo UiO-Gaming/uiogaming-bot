@@ -22,6 +22,7 @@ class Aurora(commands.Cog):
 
         self.notified = datetime(2000, 9, 11)  # Used to prevent spamming aurora alerts
         # self.aurora_alarm.start()
+        self.AURORA_CHANNEL = 747542544291987599
 
     async def get_forecast(self) -> dict | None:
         """
@@ -76,7 +77,7 @@ class Aurora(commands.Cog):
             self.bot.logger.info("aurora_alarm: Fetch forecast")
             return
 
-        channel = self.bot.get_channel(747542544291987599)
+        channel = self.bot.get_channel(self.AURORA_CHANNEL)
         if not channel:
             self.bot.logger.warning("aurora_alarm: Failed to get aurora channel")
             return
