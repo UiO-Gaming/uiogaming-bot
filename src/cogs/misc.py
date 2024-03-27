@@ -28,7 +28,6 @@ class Misc(commands.Cog):
 
         self.bot = bot
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command(name="weeb", description="Kjeft på weebs")
     async def weeb(self, interaction: discord.Interaction):
@@ -230,7 +229,7 @@ class Misc(commands.Cog):
         embed.description = holiday_str
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="match", description="Se hvor mye du matcher med en annen")
     async def match(self, interaction: discord.Interaction, bruker: discord.Member):

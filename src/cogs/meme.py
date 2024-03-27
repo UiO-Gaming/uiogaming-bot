@@ -31,7 +31,7 @@ class Meme(commands.Cog):
 
         self.bot = bot
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="deepfry", description="Friter et bilde til hundre og helvete")
     async def deepfry(self, interaction: discord.Interaction, bilde: discord.Attachment):
