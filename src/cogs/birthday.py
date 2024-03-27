@@ -30,7 +30,9 @@ class Birthday(commands.Cog):
         self.birthday_check.start()
 
     def init_db(self):
-        """Create the necessary tables for the birthday cog to work"""
+        """
+        Create the necessary tables for the birthday cog to work
+        """
 
         self.cursor.execute(
             """
@@ -47,7 +49,9 @@ class Birthday(commands.Cog):
 
     @tasks.loop(hours=24)
     async def birthday_check(self):
-        """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
+        """
+        Check if it's someone's birthday every day at midgnight and send a greeting if it is
+        """
 
         await asyncio.sleep(1)  # Prevent sending message before date has really changed
 
@@ -76,7 +80,9 @@ class Birthday(commands.Cog):
 
     @birthday_check.before_loop
     async def before_birthday_check(self):
-        """Syncs loop with the time of day"""
+        """
+        Syncs loop with the time of day
+        """
 
         self.bot.logger.info("Postponing birthday check until midnight")
         await discord_utils.sleep_until_midnight(self.bot)

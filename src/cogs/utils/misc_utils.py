@@ -2,6 +2,8 @@ from math import ceil
 
 
 class Paginator:
+    """Interface for managing content. Divides your content into pages of 10 items each"""
+
     def __init__(self, content: list):
         self.content = content
         self.total_page_count = ceil(len(content) / 10)

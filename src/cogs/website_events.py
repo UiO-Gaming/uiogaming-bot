@@ -8,7 +8,7 @@ from discord.ext import commands
 
 
 class WebsiteEvents(commands.Cog):
-    """Miscellaneous commands that don"t fit anywhere else"""
+    """Uploads Discord events to Sanity CMS"""
 
     def __init__(self, bot: commands.Bot):
         """

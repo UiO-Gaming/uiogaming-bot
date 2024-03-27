@@ -37,7 +37,9 @@ class UserFacts(commands.Cog):
         self.similarity_matrix = self.create_similarity_matrix()
 
     def init_db(self):
-        """Create the necessary tables for the birthday cog to work"""
+        """
+        Create the necessary tables for the birthday cog to work
+        """
 
         self.cursor.execute(
             """

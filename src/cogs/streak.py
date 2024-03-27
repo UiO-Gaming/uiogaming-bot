@@ -33,7 +33,9 @@ class Streak(commands.Cog):
         self.streak_update_loop.start()
 
     def init_db(self):
-        """Create the necessary tables for the streak cog to work."""
+        """
+        Create the necessary tables for the streak cog to work
+        """
 
         self.cursor.execute(
             """
@@ -47,7 +49,9 @@ class Streak(commands.Cog):
         )
 
     async def cog_unload(self):
-        """Stop the loops and close the database connection"""
+        """
+        Stop the loops and close the database connection
+        """
 
         await self.streak_update()
         self.streak_check.cancel()
@@ -100,7 +104,7 @@ class Streak(commands.Cog):
     @tasks.loop(minutes=10)
     async def streak_update_loop(self):
         """
-        Inserts cache into the database
+        Inserts cache into the database every 10 minutes
         """
 
         await self.streak_update()
@@ -158,7 +162,9 @@ class Streak(commands.Cog):
 
     @streak_check.before_loop
     async def before_streak_check(self):
-        """Syncs loop to the time of day"""
+        """
+        Syncs loop to the time of day
+        """
 
         self.bot.logger.info("Postponing streak check until midnight")
         await discord_utils.sleep_until_midnight(self.bot)

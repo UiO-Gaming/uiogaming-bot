@@ -55,7 +55,9 @@ class SocialCredit(commands.Cog):
         self.init_db()
 
     def init_db(self):
-        """Create the necessary tables for the social credit cog to work"""
+        """
+        Create the necessary tables for the social credit cog to work
+        """
 
         self.cursor.execute(
             """
@@ -82,7 +84,9 @@ class SocialCredit(commands.Cog):
         return wrapper
 
     def roll(percent: int = 50):
-        """Decorator that executes the function with a given percent chance"""
+        """
+        Decorator that executes the function with a given percent chance
+        """
 
         def decorator(func):
             async def wrapper(*args, **kwargs):
@@ -113,7 +117,9 @@ class SocialCredit(commands.Cog):
 
     @tasks.loop(hours=24.0, reconnect=True)
     async def fuck_uwu(self):
-        """Deducts points from people with the weeb role every 24 hours"""
+        """
+        Deducts points from people with the weeb role every 24 hours
+        """
 
         await self.bot.wait_until_ready()
 
@@ -123,7 +129,9 @@ class SocialCredit(commands.Cog):
 
     @fuck_uwu.before_loop
     async def before_fuck_uwu(self):
-        """Syncs loop with the time of day"""
+        """
+        Syncs loop with the time of day
+        """
 
         await discord_utils.sleep_until_midnight(self.bot)
 

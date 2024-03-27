@@ -30,7 +30,9 @@ def get_color(discord_object: discord.User | discord.Member | discord.Role) -> d
 
 
 async def sleep_until_midnight(bot):
-    """Syncs loop with the time of day"""
+    """
+    Syncs loop with the time of day
+    """
 
     await bot.wait_until_ready()
 

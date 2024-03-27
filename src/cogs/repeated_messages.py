@@ -23,7 +23,9 @@ class RepeatedMessages(commands.Cog):
 
         @aiocron.crontab("0 0 * * 5")
         async def fredag():
-            """Sends a message on Friday at 00:00"""
+            """
+            Sends a message on Friday at 00:00
+            """
 
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
@@ -48,7 +50,9 @@ class RepeatedMessages(commands.Cog):
 
         @aiocron.crontab("0 0 * * 1")
         async def mandag():
-            """Sends a message on Monday at 00:00"""
+            """
+            Sends a message on Monday at 00:00
+            """
 
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)
@@ -60,7 +64,9 @@ class RepeatedMessages(commands.Cog):
 
         @aiocron.crontab("0 0 1 1 *")
         async def new_year():
-            """Sends a message on New Year's Day at 00:00"""
+            """
+            Sends a message on New Year's Day at 00:00
+            """
 
             guild = self.bot.get_guild(747542543750660178)
             channel = guild.get_channel(747542544291987597)

@@ -22,7 +22,9 @@ class MCWhitelist(commands.Cog):
         self.init_db()
 
     def init_db(self):
-        """Create the necessary tables for the mc_whitelist cog to work."""
+        """
+        Create the necessary tables for the mc_whitelist cog to work
+        """
 
         self.cursor.execute(
             """

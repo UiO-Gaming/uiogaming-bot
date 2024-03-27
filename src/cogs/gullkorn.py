@@ -7,7 +7,7 @@ from cogs.utils import embed_templates
 
 
 class Gullkorn(commands.Cog):
-    """Stand alone cog for handling whitelisting of Discord users on the Minecraft server"""
+    """Tracks stats for gullkorn"""
 
     def __init__(self, bot: commands.Bot):
         """
@@ -21,7 +21,9 @@ class Gullkorn(commands.Cog):
         self.init_db()
 
     def init_db(self):
-        """Create the necessary tables for the gullkorn cog to work."""
+        """
+        Create the necessary tables for the gullkorn cog to work
+        """
 
         self.cursor.execute(
             """
