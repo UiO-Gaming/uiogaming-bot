@@ -47,12 +47,10 @@ class Meme(commands.Cog):
         await interaction.response.defer()
 
         # Fetch image
-        input = await discord_utils.get_file_bytesio(bilde)
+        input_image = await discord_utils.get_file_bytesio(bilde)
 
-        # Open image
-        # Check if image is valid
         try:
-            image = Image.open(input)
+            image = Image.open(input_image)
         except UnidentifiedImageError:
             await interaction.followup.send(embed=embed_templates.error_warning("Bildet er ugyldig"))
             return
