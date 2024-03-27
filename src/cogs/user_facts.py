@@ -53,6 +53,8 @@ class UserFacts(commands.Cog):
 
     height_group = app_commands.Group(name="høyde", description="Se, endre eller fjern høyde for brukere på serveren")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="se", description="Se høyden til en bruker")
     async def height_see(self, interaction: discord.Interaction, bruker: discord.Member = None):
         """
@@ -94,6 +96,8 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="sett", description="Sett høyden din")
     @app_commands.rename(height_cm="høyde_cm")
     async def height_set(self, interaction: discord.Interaction, height_cm: app_commands.Range[int, 50, 250]):
@@ -118,6 +122,8 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed_templates.success("Høyde satt!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="fjern", description="Fjern høyden din")
     async def height_remove(self, interaction: discord.Interaction):
         """
@@ -144,6 +150,8 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed_templates.success("Høyde fjernet!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="leaderboard", description="Se en leaderboard over høyder")
     async def height_leaderboard(self, interaction: discord.Interaction):
         """
@@ -177,6 +185,8 @@ class UserFacts(commands.Cog):
 
     mbti_group = app_commands.Group(name="mbti", description="Se, endre eller fjern MBTI for brukere på serveren")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="se", description="Se MBTI-en til en bruker")
     async def mbti_see(self, interaction: discord.Interaction, bruker: discord.Member = None):
         """
@@ -238,6 +248,8 @@ class UserFacts(commands.Cog):
         embed.set_image(url=f"attachment://{bruker.id}_mbti.png")
         await interaction.response.send_message(embed=embed, file=image)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="sett", description="Sett MBTI-en din")
     async def mbti_set(self, interaction: discord.Interaction, mbti: str):
         """
@@ -279,6 +291,8 @@ class UserFacts(commands.Cog):
             app_commands.Choice(name=mbti, value=mbti) for mbti in self.mbti_codes if mbti.startswith(current.upper())
         ]
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="fjern", description="Fjern MBTI-en din")
     async def mbti_remove(self, interaction: discord.Interaction):
         """
@@ -305,6 +319,8 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed_templates.success("MBTI fjernet!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="forklaring", description="Skjønner du ikke hva MBTI er? Her er en forklaring")
     async def mbti_explanation(self, interaction: discord.Interaction):
         """

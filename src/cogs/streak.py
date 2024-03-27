@@ -229,6 +229,8 @@ class Streak(commands.Cog):
         )
         await interaction.followup.send(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @streak_group.command(name="topp", description="Se hvem som har høyest streak på serveren")
     async def streak_top(self, interaction: discord.Interaction):
         """

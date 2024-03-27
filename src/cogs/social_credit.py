@@ -201,6 +201,8 @@ class SocialCredit(commands.Cog):
         embed = discord.Embed(description=(f"{bruker.mention} har `{db_user.credit_score}` social credits"))
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @social_credit_group.command(name="leaderboard", description="Sjekk hvem som er de beste og verste borgerne")
     async def leaderboard(self, interaction: discord.Interaction):
         """

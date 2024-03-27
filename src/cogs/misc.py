@@ -291,7 +291,6 @@ class Misc(commands.Cog):
         embed.set_image(url=f"attachment://{interaction.user.id}_{bruker.id}_match.png")
         await interaction.response.send_message(embed=embed, file=f)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 2)
     @app_commands.command(name="ifonlyyouknew", description="How bad things really are")
     async def howbadthingsreallyare(self, interaction: discord.Interaction):

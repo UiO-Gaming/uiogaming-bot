@@ -241,7 +241,7 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.guild_only()
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="roller", description="Se rollene på serveren")
     async def guild_roles(self, interaction: discord.Interaction):

@@ -182,7 +182,7 @@ class Meme(commands.Cog):
         # Send image
         await interaction.followup.send(file=discord.File(output, "sivert_goodbad.jpg"))
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(attach_files=True)
     @app_commands.checks.cooldown(1, 60)
     @app_commands.command(name="crabrave", description="Generer en crab rave video basert på tekst")
     async def crab_rave(self, interaction: discord.Interaction, topptekst: str, bunntekst: str):
