@@ -62,14 +62,11 @@ class Info(commands.Cog):
         if not interaction.guild.premium_subscribers:
             return "**Ingen boostere**"
 
-        # Sort boosters by boost date and put name#discrim as well as date of boost into a list of stirngs
-        # Use map instead of list comprehension because I can divide the code into 2 lines
-        boosters = list(
-            map(
-                lambda b: f"* {b.name} - {discord.utils.format_dt(b.premium_since)}",
-                sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since),
-            )
-        )
+        # Sort boosters by boost date and put name as well as date of boost into a list of stirngs
+        boosters = [
+            f"* {b.name} - {discord.utils.format_dt(b.premium_since)}"
+            for b in sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since)
+        ]
 
         return join_method(boosters)
 
@@ -499,9 +496,10 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        roles = list(filter(lambda r: r.name != "@everyone", interaction.guild.roles))
-        roles = sorted(roles, key=lambda x: len(x.members), reverse=True)
-        roles_formatted = list(map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles)))
+        roles = sorted(
+            [r for r in interaction.guild.roles if r.name != "@everyone"], key=lambda x: len(x.members), reverse=True
+        )
+        roles_formatted = [f"**#{i + 1}** {r.mention} - {len(r.members)}" for i, r in enumerate(roles)]
 
         paginator = misc_utils.Paginator(roles_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
@@ -564,13 +562,10 @@ class Info(commands.Cog):
         # Sort members by creation date
         members = sorted(interaction.guild.members, key=lambda m: m.created_at)
 
-        # Create list of members with index, name#discriminator and creation date
-        members_formatted = list(
-            map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].created_at, style="F")}',  # noqa: E501
-                enumerate(members),
-            )
-        )
+        # Create list of members with index, name and creation date
+        members_formatted = [
+            f"**#{i+1}** {m.name} - {discord.utils.format_dt(m.created_at, style='F')}" for i, m in enumerate(members)
+        ]
 
         paginator = misc_utils.Paginator(members_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
@@ -602,12 +597,9 @@ class Info(commands.Cog):
         members = sorted(interaction.guild.members, key=lambda m: m.joined_at)
 
         # Create list of members with index, name#discriminator and creation date
-        members_formatted = list(
-            map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].joined_at, style="F")}',  # noqa: E501
-                enumerate(members),
-            )
-        )
+        members_formatted = [
+            f"**#{i+1}** {m.name} - {discord.utils.format_dt(m.joined_at, style='F')}" for i, m in enumerate(members)
+        ]
 
         paginator = misc_utils.Paginator(members_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)

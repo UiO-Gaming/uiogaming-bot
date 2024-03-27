@@ -167,14 +167,9 @@ class UserFacts(commands.Cog):
                 embed=embed_templates.error_warning("Ingen har lagt inn høyden sin enda")
             )
 
-        result_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` cm",
-                enumerate(result),
-            )
-        )
+        results_formatted = [f"**#{i+1}** <@{row[0]}> - `{row[1]}` cm" for i, row in enumerate(result)]
 
-        paginator = misc_utils.Paginator(result_formatted)
+        paginator = misc_utils.Paginator(results_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
 
         embed = view.construct_embed(discord.Embed(title="Våre høyeste og laveste (👑)"))

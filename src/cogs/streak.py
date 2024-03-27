@@ -254,12 +254,9 @@ class Streak(commands.Cog):
         if not streaks:
             return await interaction.followup.send(embed=embed_templates.error_warning("Ingen har noen streak enda"))
 
-        streaks_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - {(datetime.now() - s[1][1]).days} dager",
-                enumerate(streaks),
-            )
-        )
+        streaks_formatted = [
+            f"**#{s[0]+1}** <@{s[1][0]}> - {(datetime.now() - s[1][1]).days} dager" for s in enumerate(streaks)
+        ]
 
         paginator = misc_utils.Paginator(streaks_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
