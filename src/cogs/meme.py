@@ -54,7 +54,7 @@ class Meme(commands.Cog):
         try:
             image = Image.open(input)
         except UnidentifiedImageError:
-            await interaction.followup.send(embed=embed_templates.error_warning(interaction, text="Bildet er ugyldig"))
+            await interaction.followup.send(embed=embed_templates.error_warning("Bildet er ugyldig"))
             return
 
         if image.mode != "RGB":

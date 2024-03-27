@@ -76,7 +76,7 @@ class UserFacts(commands.Cog):
 
         if not height:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn høyden sin")
+                embed=embed_templates.error_warning("Brukeren har ikke lagt inn høyden sin")
             )
 
         height = height[0]
@@ -114,7 +114,7 @@ class UserFacts(commands.Cog):
             (interaction.user.id, height_cm, height_cm),
         )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="Høyde satt!"))
+        await interaction.response.send_message(embed=embed_templates.success("Høyde satt!"))
 
     @height_group.command(name="fjern", description="Fjern høyden din")
     async def height_remove(self, interaction: discord.Interaction):
@@ -137,12 +137,10 @@ class UserFacts(commands.Cog):
 
         if self.cursor.rowcount == 0:
             return await interaction.response.send_message(
-                embed=embed_templates.success(
-                    interaction, text="Du hadde ikke lagt inn høyden din fra før av men ok :)"
-                )
+                embed=embed_templates.success("Du hadde ikke lagt inn høyden din fra før av men ok :)")
             )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="Høyde fjernet!"))
+        await interaction.response.send_message(embed=embed_templates.success("Høyde fjernet!"))
 
     @height_group.command(name="leaderboard", description="Se en leaderboard over høyder")
     async def height_leaderboard(self, interaction: discord.Interaction):
@@ -164,7 +162,7 @@ class UserFacts(commands.Cog):
 
         if not (result := self.cursor.fetchall()):
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Ingen har lagt inn høyden sin enda")
+                embed=embed_templates.error_warning("Ingen har lagt inn høyden sin enda")
             )
 
         result_formatted = list(
@@ -207,7 +205,7 @@ class UserFacts(commands.Cog):
 
         if not user_mbti:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn MBTI-en sin")
+                embed=embed_templates.error_warning("Brukeren har ikke lagt inn MBTI-en sin")
             )
 
         user_mbti = user_mbti[0]
@@ -255,9 +253,7 @@ class UserFacts(commands.Cog):
         """
 
         if mbti.upper() not in self.mbti_codes:
-            return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Ugyldig MBTI")
-            )
+            return await interaction.response.send_message(embed=embed_templates.error_warning("Ugyldig MBTI"))
 
         self.cursor.execute(
             """
@@ -269,7 +265,7 @@ class UserFacts(commands.Cog):
             (interaction.user.id, mbti.upper(), mbti.upper()),
         )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="MBTI satt!"))
+        await interaction.response.send_message(embed=embed_templates.success("MBTI satt!"))
 
     @mbti_set.autocomplete("mbti")
     async def mbti_set_autocomplete_callback(self, interaction: discord.Interaction, current: str):
@@ -307,12 +303,10 @@ class UserFacts(commands.Cog):
 
         if self.cursor.rowcount == 0:
             return await interaction.response.send_message(
-                embed=embed_templates.success(
-                    interaction, text="Du hadde ikke lagt inn MBTIen din fra før av men ok :)"
-                )
+                embed=embed_templates.success("Du hadde ikke lagt inn MBTIen din fra før av men ok :)")
             )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="MBTI fjernet!"))
+        await interaction.response.send_message(embed=embed_templates.success("MBTI fjernet!"))
 
     @mbti_group.command(name="forklaring", description="Skjønner du ikke hva MBTI er? Her er en forklaring")
     async def mbti_explanation(self, interaction: discord.Interaction):

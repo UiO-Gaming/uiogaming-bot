@@ -118,7 +118,7 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.CheckFailure):
             self.bot.logger.info("CheckFailure")
 
-        embed = embed_templates.error_fatal(ctx, text="En ukjent feil oppstod!")
+        embed = embed_templates.error_fatal("En ukjent feil oppstod!")
         await ctx.reply(embed=embed)
 
         # Log full exception to file
@@ -141,29 +141,24 @@ class Errors(commands.Cog):
 
         if isinstance(error, app_commands.BotMissingPermissions):
             permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning(
-                interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
-            )
+            embed = embed_templates.error_warning("Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```")
 
         elif isinstance(error, app_commands.MissingPermissions):
             permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning(
-                interaction, text="Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
-            )
+            embed = embed_templates.error_warning("Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```")
 
         # TODO: figure this shit out. app_commands does not support this check
         # elif isinstance(error, app_commands.NotOwner):
-        #     embed = embed_templates.error_fatal(interaction, text='Bare boteieren kan gjøre dette')
+        #     embed = embed_templates.error_warning('Bare boteieren kan gjøre dette')
         #     return await interaction.response.send_message(embed=embed)
 
         elif isinstance(error, app_commands.CommandOnCooldown):
             embed = embed_templates.error_warning(
-                interaction,
-                text="Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
+                "Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
             )
 
         else:
-            embed = embed_templates.error_fatal(interaction, text="En ukjent feil oppstod!")
+            embed = embed_templates.error_fatal("En ukjent feil oppstod!")
 
         if interaction.response.is_done():
             await interaction.followup.send(embed=embed)

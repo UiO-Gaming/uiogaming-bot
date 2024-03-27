@@ -131,7 +131,7 @@ class Viteboka(commands.Cog):
         response = requests.get(url=API_URL, params=params)
         if response.status_code != 200:
             self.bot.logger.error(f"Failed to search for articles with query {søkestreng}: {response.status_code}")
-            embed = embed_templates.error_fatal(interaction, text="Klarte ikke å søke etter artikler")
+            embed = embed_templates.error_fatal("Klarte ikke å søke etter artikler")
             return await interaction.followup.send(embed=embed)
 
         data = response.json()
@@ -139,7 +139,7 @@ class Viteboka(commands.Cog):
 
         if not search_results:
             self.bot.logger.info(f"No articles found with query {søkestreng}")
-            embed = embed_templates.error_fatal(interaction, text="Fant ingen artikler som matcher søket")
+            embed = embed_templates.error_warning("Fant ingen artikler som matcher søket")
             return await interaction.followup.send(embed=embed)
 
         if len(search_results) == 1:
@@ -160,10 +160,7 @@ class Viteboka(commands.Cog):
             title, url, text, image = await fetch_article(søkestreng)
         except VitebokaException as e:
             self.bot.logger.error(f"Failed to fetch article {søkestreng}: {e}")
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
 
         embed = viteboka_embed(title, url, text, image)
@@ -194,7 +191,7 @@ class Viteboka(commands.Cog):
         response = requests.get(url=API_URL, params=params)
         if response.status_code != 200:
             self.bot.logger.error(f"Failed to fetch random article: {response.status_code}")
-            embed = embed_templates.error_fatal(interaction, text="Klarte ikke å søke etter en tilfeldig artikkel")
+            embed = embed_templates.error_fatal("Klarte ikke å søke etter en tilfeldig artikkel")
             return await interaction.followup.send(embed=embed)
 
         data = response.json()
@@ -204,10 +201,7 @@ class Viteboka(commands.Cog):
             title, url, text, image = await fetch_article(random_article_title)
         except VitebokaException as e:
             self.bot.logger.error(f"Failed to fetch article {random_article_title}: {e}")
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
 
         embed = viteboka_embed(title, url, text, image)
@@ -254,10 +248,7 @@ class ArticleButton(discord.ui.Button):
         try:
             title, url, text, image = await fetch_article(self.article_title)
         except VitebokaException as e:
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
         else:
             embed = viteboka_embed(title, url, text, image)

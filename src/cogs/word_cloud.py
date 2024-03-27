@@ -235,7 +235,7 @@ class WordCloud(commands.Cog):
 
         if interaction.user.id in self.consenting_users:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Du har allerede samtykket"), ephemeral=False
+                embed=embed_templates.error_warning("Du har allerede samtykket"), ephemeral=False
             )
 
         try:
@@ -250,7 +250,7 @@ class WordCloud(commands.Cog):
             self.bot.db_connection.rollback()
             self.bot.logger.error(f"Failed to insert wordcloud metadata into database - {err}")
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Klarte ikke å skrive til database"),
+                embed=embed_templates.error_fatal("Klarte ikke å skrive til database"),
                 ephemeral=False,
             )
 
@@ -274,7 +274,7 @@ class WordCloud(commands.Cog):
             self.consenting_users.remove(interaction.user.id)
         except ValueError:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
+                embed=embed_templates.error_warning(self.MSG_NO_DATA), ephemeral=False
             )
 
         self.word_freq_cache.pop(f"{interaction.user.id}", None)
@@ -291,11 +291,11 @@ class WordCloud(commands.Cog):
             self.bot.db_connection.rollback()
             self.bot.logger.error(f"Failed to delete wordcloud metadata from database - {err}")
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Klarte ikke å slette fra database"),
+                embed=embed_templates.error_fatal("Klarte ikke å slette fra database"),
                 ephemeral=False,
             )
 
-        embed = embed_templates.success(interaction, "Meldingsdata er slettet!")
+        embed = embed_templates.success("Meldingsdata er slettet!")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
@@ -323,7 +323,7 @@ class WordCloud(commands.Cog):
 
         if not result:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
+                embed=embed_templates.error_warning(self.MSG_NO_DATA), ephemeral=False
             )
 
         freq_list = {f"{word}": freq for word, freq in result}
@@ -367,7 +367,7 @@ class WordCloud(commands.Cog):
 
         if not results:
             return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
+                embed=embed_templates.error_warning(self.MSG_NO_DATA), ephemeral=False
             )
 
         # Fetch tracking start time metadata

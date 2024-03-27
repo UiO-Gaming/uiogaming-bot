@@ -53,19 +53,13 @@ class CS2Bingo(commands.Cog):
                 self.active_lobbies.pop(str(interaction.user.id))
             else:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du hoster allerede en lobby",
-                    )
+                    embed=embed_templates.error_warning("Du hoster allerede en lobby")
                 )
 
         for lobby in self.active_lobbies.values():
             if interaction.user.id in lobby.players:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du er allerede i en lobby",
-                    )
+                    embed=embed_templates.error_warning("Du er allerede i en lobby")
                 )
 
         self.active_lobbies[str(interaction.user.id)] = Lobby(
@@ -257,7 +251,7 @@ class BingoView(LobbyView):
     @override
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte bingoen")
+            embed = embed_templates.error_warning("Bare hosten kan starte bingoen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         await self.end_lobby()
@@ -268,8 +262,7 @@ class BingoView(LobbyView):
 
         mention_players = " ".join([f"{p.mention}" for p in self.lobby.players])
         embed = embed_templates.success(
-            interaction,
-            text="Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
+            "Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
             + "Sørg for at jeg kan slide inn i dem :smirk:",
         )
         await interaction.response.send_message(content=mention_players, embed=embed)

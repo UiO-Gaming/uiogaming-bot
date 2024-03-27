@@ -193,9 +193,7 @@ class Streak(commands.Cog):
         streak = self.cursor.fetchone()
 
         if not streak:
-            return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, "Brukeren har ikke noen streak")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Brukeren har ikke noen streak"))
 
         streak_msg_channel, streak_msg_id = streak[0].split("-")
         streak_msg_channel, streak_msg_id = int(streak_msg_channel), int(streak_msg_id)
@@ -248,9 +246,7 @@ class Streak(commands.Cog):
         streaks = self.cursor.fetchall()
 
         if not streaks:
-            return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, "Ingen har noen streak enda")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen har noen streak enda"))
 
         streaks_formatted = list(
             map(

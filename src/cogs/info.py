@@ -308,7 +308,7 @@ class Info(commands.Cog):
         """
 
         if len(interaction.guild.premium_subscribers) == 0:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke noen boosts :(")
+            embed = embed_templates.error_warning("Serveren har ikke noen boosts :(")
             return await interaction.response.send_message(embed=embed)
 
         boosters = self.__construct_booster_string(interaction, "\n".join)
@@ -352,7 +352,7 @@ class Info(commands.Cog):
         """
 
         if not interaction.guild.splash:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke en splash")
+            embed = embed_templates.error_warning("Serveren har ikke en splash")
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=f"[Lenke]({interaction.guild.splash})")
@@ -374,7 +374,7 @@ class Info(commands.Cog):
         """
 
         if not interaction.guild.banner:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke et banner :(")
+            embed = embed_templates.error_warning("Serveren har ikke et banner :(")
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=f"[Lenke]({interaction.guild.banner})")
@@ -397,7 +397,7 @@ class Info(commands.Cog):
         """
 
         if rolle.name == "@everyone":
-            embed = embed_templates.error_fatal(interaction, text="Skriv inn en annen rolle enn @everyone")
+            embed = embed_templates.error_warning("Skriv inn en annen rolle enn `@everyone`")
             return await interaction.response.send_message(embed=embed)
 
         # Timestamp and days since creation

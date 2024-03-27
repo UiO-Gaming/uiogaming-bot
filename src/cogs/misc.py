@@ -62,7 +62,7 @@ class Misc(commands.Cog):
         # https://kaomoji.moe/
 
         if len(tekst) >= 1000:
-            embed = embed_templates.error_warning(interaction, text="Teksten er for lang")
+            embed = embed_templates.error_warning("Teksten er for lang")
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.client.user.color, description=tekst)
@@ -117,15 +117,11 @@ class Misc(commands.Cog):
         params = {"action": "autocomplete", "service": "emner", "scope": "/studier/emner", "q": emnekode, "limit": 1}
         data = requests.get("https://www.uio.no/studier/", params=params, timeout=10)
         if data.status_code != 200:
-            return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Kunne ikke nå API")
-            )
+            return await interaction.response.send_message(embed=embed_templates.error_fatal("Kunne ikke nå API"))
 
         results = data.text.strip("\n").split("\n")[:-1]
         if not results:
-            return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Fant ikke emnekode")
-            )
+            return await interaction.response.send_message(embed=embed_templates.error_warning("Fant ikke emnekode"))
 
         for result in results:
             code, name, _ = result.split(";")
@@ -148,7 +144,7 @@ class Misc(commands.Cog):
         """
 
         if len(tekst) >= 1000:
-            embed = embed_templates.error_warning(interation, text="Teksten er for lang")
+            embed = embed_templates.error_warning("Teksten er for lang")
             return await interation.response.send_message(embed=embed)
 
         tekst = re.sub(" ", "👏", tekst)
@@ -261,9 +257,7 @@ class Misc(commands.Cog):
 
         data = requests.get(f"https://date.nager.at/api/v2/publicholidays/{aar}/{land}", timeout=10)
         if data.status_code != 200:
-            embed = embed_templates.error_fatal(
-                interaction, text="Ugyldig land\nHusk å bruke landskoder\n" + "For eksempel: `NO`"
-            )
+            embed = embed_templates.error_warning("Ugyldig land\nHusk å bruke landskoder\n" + "For eksempel: `NO`")
             return await interaction.response.send_message(embed=embed)
 
         data = data.json()
@@ -296,9 +290,7 @@ class Misc(commands.Cog):
         """
 
         if bruker == interaction.user:
-            embed = embed_templates.error_warning(
-                interaction, text="Jeg vet du er ensom, men du kan ikke matche med deg selv"
-            )
+            embed = embed_templates.error_warning("Jeg vet du er ensom, men du kan ikke matche med deg selv")
             return await interaction.response.send_message(embed=embed)
 
         invoker_id = int(str(interaction.user.id)[11:14])

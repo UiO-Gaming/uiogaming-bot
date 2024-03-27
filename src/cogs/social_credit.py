@@ -221,7 +221,7 @@ class SocialCredit(commands.Cog):
 
         if not (result := self.cursor.fetchall()):
             return await interaction.send(
-                embed=embed_templates.error_fatal(interaction, "Ingen brukere er registrert i databasen")
+                embed=embed_templates.error_warning("Ingen brukere er registrert i databasen")
             )
 
         leaderboard_formatted = list(

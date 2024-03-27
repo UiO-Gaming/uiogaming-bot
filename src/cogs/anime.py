@@ -179,7 +179,7 @@ class Anime(commands.Cog):
             data = response["data"][key]
             url = data["siteUrl"]
         except TypeError:
-            embed = embed_templates.error_fatal(interaction, text="Kunne ikke finne det du søkte etter!")
+            embed = embed_templates.error_fatal("Kunne ikke finne det du søkte etter!")
             await interaction.response.send_message(embed=embed)
             return None, None
 
@@ -704,8 +704,8 @@ class Anime(commands.Cog):
 
         nsfw = data["isAdult"]
         if nsfw:
-            embed = embed_templates.error_fatal(
-                interaction, text="Animen du søkte på er NSFW. " + "Gjør kommandoen i en NSFW-kanal i stedet"
+            embed = embed_templates.error_warning(
+                "Animen du søkte på er NSFW. Gjør kommandoen i en NSFW-kanal i stedet"
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -862,8 +862,8 @@ class Anime(commands.Cog):
 
         nsfw = data["isAdult"]
         if nsfw:
-            embed = embed_templates.error_fatal(
-                interaction, text="Mangaen du søkte på er NSFW. " + "Gjør kommandoen i en NSFW-kanal i stedet"
+            embed = embed_templates.error_warning(
+                "Mangaen du søkte på er NSFW. Gjør kommandoen i en NSFW-kanal i stedet"
             )
             return await interaction.response.send_message(embed=embed)
 

@@ -50,9 +50,7 @@ class MCWhitelist(commands.Cog):
         data = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{minecraftbrukernavn}", timeout=10)
         if data.status_code != 200:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text=f"Brukeren `{minecraftbrukernavn}` finnes ikke på minecraft"
-                ),
+                embed=embed_templates.error_warning(f"Brukeren `{minecraftbrukernavn}` finnes ikke på minecraft"),
                 ephemeral=True,
             )
 
@@ -69,8 +67,8 @@ class MCWhitelist(commands.Cog):
         )
         if self.cursor.fetchone():
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text="Du har allerede whitelisted en bruker eller så er brukeren du oppga whitelisted"
+                embed=embed_templates.error_warning(
+                    "Du har allerede whitelisted en bruker eller så er brukeren du oppga whitelisted"
                 )
             )
 
@@ -90,9 +88,7 @@ class MCWhitelist(commands.Cog):
         )
 
         await interaction.response.send_message(
-            embed=embed_templates.success(
-                interaction, text=f'`{data["name"]}` er nå tilknyttet din discordbruker og whitelisted!'
-            )
+            embed=embed_templates.success(f'`{data["name"]}` er nå tilknyttet din discordbruker og whitelisted!')
         )
 
 

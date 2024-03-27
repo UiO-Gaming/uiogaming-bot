@@ -201,28 +201,24 @@ class Birthday(commands.Cog):
             date = datetime(år, måned, dag)
         except ValueError:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="ikke en gyldig dato, gjøk!"), ephemeral=True
+                embed=embed_templates.error_warning("ikke en gyldig dato, gjøk!"), ephemeral=True
             )
 
         if date.year < 1970:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text="Ok boomer, men nei. Hvorfor? Unix timestamps. Google it"
-                ),
+                embed=embed_templates.error_warning("Ok boomer, men nei. Hvorfor? Unix timestamps. Google it"),
                 ephemeral=True,
             )
 
         if date > datetime.now():
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Du kan ikke sette en fremtidig dato!"),
+                embed=embed_templates.error_warning("Du kan ikke sette en fremtidig dato!"),
                 ephemeral=True,
             )
 
         self.__set_user_birthday(interaction.user.id, date)
 
-        embed = embed_templates.success(
-            interaction, text=f'Bursdag satt til {discord.utils.format_dt(date, style="D")}'
-        )
+        embed = embed_templates.success(f"Bursdag satt til {discord.utils.format_dt(date, style='D')}")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -239,7 +235,7 @@ class Birthday(commands.Cog):
 
         self.cursor.execute("DELETE FROM birthdays WHERE discord_id = (%s)", (interaction.user.id,))
 
-        embed = embed_templates.success(interaction, text="Bursdag fjernet")
+        embed = embed_templates.success("Bursdag fjernet")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -264,7 +260,7 @@ class Birthday(commands.Cog):
 
         if not user:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Brukeren har ikke registrert bursdagen sin")
+                embed=embed_templates.error_warning("Brukeren har ikke registrert bursdagen sin")
             )
 
         # Current age information
@@ -306,9 +302,7 @@ class Birthday(commands.Cog):
         next_birthdays = self.__fetch_next_birthdays()
 
         if not next_birthdays:
-            return await interaction.followup.send(
-                embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen bursdager"))
 
         birthday_strings = []
         for user in next_birthdays:
@@ -325,9 +319,7 @@ class Birthday(commands.Cog):
             birthday_strings.append(f"* {discord_user.name} - {timestamp} ({relative_timestamp})")
 
         if not birthday_strings:
-            return await interaction.followup.send(
-                embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen bursdager"))
 
         paginator = misc_utils.Paginator(birthday_strings)
         view = discord_utils.Scroller(paginator, interaction.user)
