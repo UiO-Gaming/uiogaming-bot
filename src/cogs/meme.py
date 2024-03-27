@@ -151,7 +151,7 @@ class Meme(commands.Cog):
 
         image.paste(box, offset)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="preferansemem", description="Generer en drake-aktig mem basert på tekst")
     async def prefer_meme(self, interaction: discord.Interaction, dårlig_tekst: str, bra_tekst: str):
