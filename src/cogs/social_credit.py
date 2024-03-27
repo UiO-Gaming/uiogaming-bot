@@ -110,7 +110,22 @@ class SocialCredit(commands.Cog):
 
         await self.bot.wait_until_ready()
 
-        weeb_role = self.bot.get_guild(747542543750660178).get_role(803629993539403826)
+        # We need to do these checks in case the bot user does not have access to the UiO Gaming Discord server
+        if not (guild := self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)):
+            self.bot.logger.warning(
+                "Could not fetch UiO Gaming guild."
+                + "If the bot does not have access to the UiO Gaming server, this function won't work. "
+                + "If it is, ignore this."
+            )
+            return
+        if not (weeb_role := guild.get_role(803629993539403826)):
+            self.bot.logger.warning(
+                "Could not fetch UiO Gaming's weeb role."
+                + "If the bot does not have access to the UiO Gaming server, this function won't work. "
+                + "If it is, ignore this."
+            )
+            return
+
         for weeb in weeb_role.members:
             await self.social_punishment(weeb.id, 1, "weeb")
 
