@@ -140,6 +140,7 @@ class WordCloud(commands.Cog):
         self.bot.logger.info("Dumping word cloud cache to database...")
         await self.batch_update_word_freqs()
 
+    @commands.Cog.listener("on_message")
     async def word_freq_listener(self, message: discord.Message):
         """
         Listens for all messages of consenting users
@@ -495,5 +496,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(WordCloud(bot).word_freq_listener, "on_message")
     await bot.add_cog(WordCloud(bot))

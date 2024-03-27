@@ -30,6 +30,7 @@ class FunReplies(commands.Cog):
             "borgerlønn": initial_datetime,
         }
 
+    @commands.Cog.listener("on_message")
     async def reply_to_triggers(self, message: discord.Message):
         """
         Replies to messages that trigger certain key words/phrases
@@ -79,5 +80,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(FunReplies(bot).reply_to_triggers, "on_message")
     await bot.add_cog(FunReplies(bot))

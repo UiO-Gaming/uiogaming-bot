@@ -74,6 +74,7 @@ class Gullkorn(commands.Cog):
 
         return formatted_string
 
+    @commands.Cog.listener("on_message")
     async def gullkorn_listener(self, message: discord.Message):
         """
         Listens for messages in the gullkorn channel and updates the database accordingly
@@ -198,5 +199,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(Gullkorn(bot).gullkorn_listener, "on_message")
     await bot.add_cog(Gullkorn(bot))

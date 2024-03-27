@@ -107,7 +107,7 @@ class Viteboka(commands.Cog):
 
     viteboka_group = app_commands.Group(name="viteboka", description="Søk i Viteboka etter informasjon")
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 10)
     @viteboka_group.command(name="søk", description="Søk etter en artikkel i Viteboka")
     async def search(self, interaction: discord.Interaction, søkestreng: str):
@@ -166,7 +166,7 @@ class Viteboka(commands.Cog):
         embed = viteboka_embed(title, url, text, image)
         await interaction.followup.send(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @viteboka_group.command(name="tilfeldig", description="Få en tilfeldig artikkel fra Viteboka")
     async def random(self, interaction: discord.Interaction):

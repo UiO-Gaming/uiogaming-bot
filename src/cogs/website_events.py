@@ -57,6 +57,7 @@ class WebsiteEvents(commands.Cog):
 
         self.bot.logger.info("Finished syncing events! Note errors may have occured")
 
+    @commands.Cog.listener("on_scheduled_event_create")
     async def create_event(self, event: discord.ScheduledEvent):
         """
         Creates an event in Sanity CMS when an event is added on Discord
@@ -94,6 +95,7 @@ class WebsiteEvents(commands.Cog):
         else:
             self.bot.logger.error(f"Failed to create event in Sanity with ID: {event.id}. Response: {response.text}")
 
+    @commands.Cog.listener("on_scheduled_event_delete")
     async def delete_event(self, event: discord.ScheduledEvent):
         """
         Deletes an event in Sanity CMS when an event is deleted on Discord
@@ -111,6 +113,7 @@ class WebsiteEvents(commands.Cog):
         else:
             self.bot.logger.error(f"Failed to delete event in Sanity with ID: {event.id}. Response: {response.text}")
 
+    @commands.Cog.listener("on_scheduled_event_update")
     async def update_event(self, before: discord.ScheduledEvent, after: discord.ScheduledEvent):
         """
         Updates an event in Sanity when edited on discord
@@ -141,7 +144,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(WebsiteEvents(bot).create_event, "on_scheduled_event_create")
-    bot.add_listener(WebsiteEvents(bot).update_event, "on_scheduled_event_update")
-    bot.add_listener(WebsiteEvents(bot).delete_event, "on_scheduled_event_delete")
     await bot.add_cog(WebsiteEvents(bot))
