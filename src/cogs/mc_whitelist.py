@@ -98,6 +98,8 @@ class MCWhitelist(commands.Cog):
             (interaction.user.id, data["id"]),
         )
 
+        self.bot.logger.info(f"Whitelisted {data['name']} for {interaction.user.name}")
+
         await interaction.response.send_message(
             embed=embed_templates.success(f'`{data["name"]}` er nå tilknyttet din discordbruker og whitelisted!')
         )
