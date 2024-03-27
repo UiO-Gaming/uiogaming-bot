@@ -245,12 +245,7 @@ class SocialCredit(commands.Cog):
                 embed=embed_templates.error_warning("Ingen brukere er registrert i databasen")
             )
 
-        leaderboard_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` poeng",
-                enumerate(result),
-            )
-        )
+        leaderboard_formatted = [f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` poeng" for s in enumerate(result)]
 
         paginator = misc_utils.Paginator(leaderboard_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
