@@ -68,8 +68,9 @@ class WebsiteEvents(commands.Cog):
         """
 
         # Convert timezone to Europe/Oslo
-        time = event.start_time.replace(tzinfo=pytz.utc)  # Make sure the datetime object contains the timezone info
-        time = event.start_time.astimezone(pytz.timezone("Europe/Oslo"))
+        # We need to set a timezone unit before being able to convert it to another timezone
+        # That's why this line is so fucking weird
+        time = event.start_time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/Oslo"))
 
         document = {
             "_type": "event",
