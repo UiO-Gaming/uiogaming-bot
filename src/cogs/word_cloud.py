@@ -471,7 +471,7 @@ class WordCloud(commands.Cog):
 
         if not all_messages:
             return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, text="Fant ingen data om deg"), ephemeral=False
+                embed=embed_templates.error_warning(self.MSG_NO_DATA), ephemeral=False
             )
 
         # Generate word cloud
