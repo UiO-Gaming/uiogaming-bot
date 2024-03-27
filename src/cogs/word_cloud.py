@@ -154,14 +154,25 @@ class WordCloud(commands.Cog):
         if message.author.id not in self.consenting_users:
             return
 
-        # Ignore bot commands
-        # This is a very naive approach but it works for our use case
-        if not message.clean_content[:2].isalpha():
-            return
+
+    def tokenize(self, text: str) -> list[str]:
+        """
+        Tokenize a text into words
+
+        Parameters
+        ----------
+        text (str): Text to tokenize
+
+        Returns
+        ----------
+        list[str]: List of words
+        """
+
+        tokens = []
 
         # Divide into words
-        # Also very naive but luckily we only speak norwegian and english :)
-        words = message.clean_content.split(" ")
+        # Very naive but luckily we only speak norwegian and english :)
+        words = text.split(" ")
 
         for word in words:
             # Filter urls
@@ -174,9 +185,9 @@ class WordCloud(commands.Cog):
             if not word:
                 continue
 
-            # Enter into cache
-            # This may take a performance hit but who tf cares. We're using python anyway
-            self.word_freq_cache[message.author.id][word] += 1
+            tokens.append(word)
+
+        return tokens
 
     @staticmethod
     def generate_wordcloud(text: str, max_words: int = 4000, allow_bigrams: bool = False) -> BytesIO:
@@ -452,23 +463,13 @@ class WordCloud(commands.Cog):
                 continue
 
             try:
-                async for message in channel.history(
-                    limit=int(antall / 2)
-                ):  # Limit search in each channel to half of requested
-                    if message.author != interaction.user:
+                # Limit search to half of requested messages to avoid rate limits
+                # We assume we can still fetch enough tokens to reach the requested amount
+                async for message in channel.history(limit=int(antall / 2)):
+                    if not self.can_count_message(message):
                         continue
 
-                    # Filter bot command messages
-                    if not message.clean_content[:2].isalpha():
-                        continue
-
-                    # Filter URLs
-                    filtered_msg = re.sub(
-                        r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)",  # noqa: E501
-                        "",
-                        message.clean_content,
-                    )
-
+                    filtered_msg = " ".join(self.tokenize(message.clean_content))
                     all_messages += f"{filtered_msg} "
             except discord.errors.Forbidden:
                 continue
