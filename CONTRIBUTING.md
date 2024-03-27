@@ -62,6 +62,18 @@ All annen kode holdes på engelsk. Dette inkluderer kommentarer.
 
 Et tips er å ha et engelsk funksjonsnavn, men spesifisere i decoratoren over med navnparameteren.
 
+### Bruk av embed templates
+
+`error_warning` skal brukes om det er feil brukerinput, mangel på data eller generelt sett en feil som er forventet/ikke av utenforstående årsåker
+
+`error_fatal` brukes når en uventet feil skjer. Ofte på grun av utenforstående årsaker som et API som er nede osv.
+
+`success` kan brukes til å gi brukeren en bekreftelse på at operasjonen som ble forespurt gikk fint. Det vil si at den ikke skal brukes til å vise spesifikk data, men heller brukes når det ikke er noe å vise.
+
+### Bruk av private variabler/metoder
+
+Generelt sett unngår vi bruk av leading underscores for variabelnavn og metoder. Ja, de har sin bruk, men Python var aldri ment til å være objektorientert på samme måte som f.eks Java. Uansett skal en ikke bruke metoder fra andre cogs. Dermed er regelen: greit overalt utenom i cogs.
+
 ### Avhengigheter
 
 Hvis en ny avhengighet trengs, sørg for å spesifisere major og minor versjon i requirementsfila.
