@@ -207,9 +207,9 @@ class Misc(commands.Cog):
         """
 
         land = land.upper()
-        aar = datetime.now().year if not år else int(år)
+        år = datetime.now().year if not år else int(år)
 
-        data = requests.get(f"https://date.nager.at/api/v2/publicholidays/{aar}/{land}", timeout=10)
+        data = requests.get(f"https://date.nager.at/api/v2/publicholidays/{år}/{land}", timeout=10)
         if data.status_code != 200:
             embed = embed_templates.error_warning("Ugyldig land\nHusk å bruke landskoder\n" + "For eksempel: `NO`")
             return await interaction.response.send_message(embed=embed)
@@ -225,7 +225,7 @@ class Misc(commands.Cog):
             holiday_str += f'* **{date}**: {day["localName"]}\n'
 
         embed = discord.Embed(
-            color=interaction.client.user.color, title=f":flag_{country}: Helligdager {aar} :flag_{country}:"
+            color=interaction.client.user.color, title=f":flag_{country}: Helligdager {år} :flag_{country}:"
         )
         embed.description = holiday_str
         await interaction.response.send_message(embed=embed)
