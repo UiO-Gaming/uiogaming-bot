@@ -320,8 +320,8 @@ class Misc(commands.Cog):
         user = user.resize((389, 389))
 
         # Prepare heart image
-        heart = Image.open("./src/assets/misc/heart.png")
-        mask = Image.open("./src/assets/misc/heart.png", "r")
+        heart = Image.open("./src/assets/heart.png")
+        mask = Image.open("./src/assets/heart.png", "r")
 
         # Putting it all together
         image = Image.new("RGBA", (1024, 576))
@@ -329,7 +329,7 @@ class Misc(commands.Cog):
         image.paste(user, (635, 94))
         image.paste(heart, (311, 94), mask=mask)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype("./src/assets/fonts/RobotoMono-Medium.ttf", 86)
+        font = ImageFont.truetype("./src/assets/fonts/comic.ttf", 86)
         font_size = font.getbbox(f"{match_percent}%")
         font_size = ((image.size[0] - font_size[2]) / 2, (image.size[1] - font_size[3]) / 2)
         draw.text(font_size, f"{match_percent}%", font=font, fill=(255, 255, 255, 255))

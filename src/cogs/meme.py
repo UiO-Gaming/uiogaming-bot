@@ -168,7 +168,7 @@ class Meme(commands.Cog):
         await interaction.response.defer()
 
         # Fetch meme template
-        template = Image.open("./src/assets/misc/sivert_goodbad.jpg")
+        template = Image.open("./src/assets/sivert_goodbad.jpg")
 
         # Draw text
         Meme.__draw_text(template, dårlig_tekst, offset=(540, 0))
@@ -223,7 +223,7 @@ class Meme(commands.Cog):
         """
 
         font_path = "DejaVu-Sans-Bold"
-        clip = VideoFileClip("./src/assets/misc/crab.mp4")
+        clip = VideoFileClip("./src/assets/crab.mp4")
 
         top_part = (
             TextClip(top_text, fontsize=60, color="white", stroke_width=2, stroke_color="black", font=font_path)

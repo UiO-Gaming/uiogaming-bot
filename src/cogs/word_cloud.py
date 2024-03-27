@@ -193,7 +193,7 @@ class WordCloud(commands.Cog):
         """
 
         filter_words = set(stopwords.words("norwegian") + stopwords.words("english"))
-        mask = np.array(Image.open("./src/assets/word_cloud/mask.png"))
+        mask = np.array(Image.open("./src/assets/word_cloud_mask.png"))
 
         wc = WCloud(
             max_words=max_words,
