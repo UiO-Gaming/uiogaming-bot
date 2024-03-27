@@ -194,60 +194,6 @@ class Misc(commands.Cog):
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
     @app_commands.checks.cooldown(1, 5)
-    @app_commands.command(name="imdb", description="Søk etter filmer på IMDB")
-    async def imdb(self, interaction: discord.Interaction, tittel: str):
-        """
-        Search for movies on IMDB and displays information about the first result
-
-        Parameters
-        ----------
-        interaction (discord.Interaction): Slash command context object
-        tittel (str): Movie title
-        """
-
-        # Search for movie/show
-        url = "http://www.omdbapi.com/?" + urllib.parse.urlencode({"s": tittel, "apikey": self.bot.api_keys["omdb"]})
-        search = requests.get(url, timeout=10).json()
-
-        try:
-            best_result_id = search["Search"][0]["imdbID"]
-        except KeyError:
-            embed = embed_templates.error_fatal(interaction, text="Fant ikke filmen!")
-            return await interaction.response.send_message(embed=embed)
-
-        # Get movie/show info
-        data = requests.get(
-            f'http://www.omdbapi.com/?i={best_result_id}&apikey={self.bot.api_keys["omdb"]}', timeout=10
-        ).json()
-        acceptable_media_types = ["movie", "series", "episode"]
-        if data["Type"] not in acceptable_media_types:
-            embed = embed_templates.error_fatal(interaction, text="Fant ikke filmen!")
-            return await interaction.response.send_message(embed=embed)
-
-        embed = discord.Embed(
-            title=f'{data["Title"]} ({data["Year"]})',
-            color=0xF5C518,
-            url=f'https://www.imdb.com/title/{data["imdbID"]}/',
-        )
-        embed.set_author(name=interaction.user.name, icon_url=interaction.user.display_avatar)
-        embed.add_field(name="Type", value=data["Type"].title())
-        embed.add_field(name="Sjanger", value=data["Genre"])
-        embed.add_field(name="Spilletid", value=data["Runtime"])
-        embed.add_field(name="Vurdering på IMDb", value=f'{data["imdbRating"]}/10')
-        release_date = datetime.strptime(data["Released"], "%d %b %Y")
-        embed.add_field(name="Utgitt", value=discord.utils.format_dt(release_date, style="D"))
-
-        if data["Poster"] != "N/A":
-            embed.set_thumbnail(url=data["Poster"])
-        if data["Director"] != "N/A":
-            embed.description = data["Director"]
-        if data["Plot"] != "N/A" and len(data["Plot"]) < 1024:
-            embed.add_field(name="Sammendrag", value=data["Plot"], inline=False)
-
-        await interaction.response.send_message(embed=embed)
-
-    @app_commands.checks.bot_has_permissions(embed_links=True)
-    @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="helligdager", description="Se helligdager i et land for et år")
     async def holidays(self, interaction: discord.Interaction, *, land: str = "NO", år: int = None):
         """
