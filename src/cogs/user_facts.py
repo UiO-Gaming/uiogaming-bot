@@ -240,7 +240,7 @@ class UserFacts(commands.Cog):
             else:
                 others.append((discord_id, mbti))
 
-        self._create_mbti_graph((bruker, user_mbti), others)
+        self.create_mbti_graph((bruker, user_mbti), others)
 
         with open(f"src/assets/temp/{bruker.id}_mbti.png", "rb") as f:
             image = discord.File(f, filename=f"{bruker.id}_mbti.png")

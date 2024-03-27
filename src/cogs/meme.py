@@ -74,8 +74,9 @@ class Meme(commands.Cog):
 
         await interaction.followup.send(file=discord.File(output, "deepfry.jpg"))
 
+    # TODO: Move this to utils
     @staticmethod
-    def __draw_text(image: Image.Image, text: str, offset: tuple = (0, 0)):
+    def draw_text(image: Image.Image, text: str, offset: tuple = (0, 0)):
         """
         Draws meme text on preferred meme template.
 
@@ -169,8 +170,8 @@ class Meme(commands.Cog):
         template = Image.open("./src/assets/sivert_goodbad.jpg")
 
         # Draw text
-        Meme.__draw_text(template, dårlig_tekst, offset=(540, 0))
-        Meme.__draw_text(template, bra_tekst, offset=(540, 540))
+        Meme.draw_text(template, dårlig_tekst, offset=(540, 0))
+        Meme.draw_text(template, bra_tekst, offset=(540, 540))
 
         # Save image to buffer
         output = BytesIO()
