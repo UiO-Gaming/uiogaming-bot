@@ -173,6 +173,7 @@ class Misc(commands.Cog):
         tekst (str): Text to clapify
         """
 
+        # TODO: make this not horrible. I can't be botherd to right now
         words = tekst.split(" ")
         for i, word in enumerate(words):
             karakter = 0
