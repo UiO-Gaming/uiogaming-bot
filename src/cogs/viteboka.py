@@ -53,7 +53,7 @@ async def fetch_article(title: str):
     # This is wildly inefficent but I don't. fucking. care. Just make it work
     text = regex.sub(
         r"(?=\{)(\{([^{}]|(?1))*\})|\[\[(Kategori|Fil):.+?\]\]|\{.+?\}", "", text, flags=regex.MULTILINE | regex.DOTALL
-    )  # Remove templates and categories
+    )  # Remove templates, categories and images
     text = pypandoc.convert_text(text, "markdown", format="mediawiki")
     print(text)
     text = regex.sub(
