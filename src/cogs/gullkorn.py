@@ -125,8 +125,9 @@ class Gullkorn(commands.Cog):
         bruker (discord.Member, optional): Discord user to fetch stats for. Defaults to None.
         """
 
+        # This looks kinda ugly, ngl
         if bruker:
-            result = self.cursor.execute(
+            self.cursor.execute(
                 """
                 SELECT *
                 FROM gullkorn
@@ -134,7 +135,6 @@ class Gullkorn(commands.Cog):
                 """,
                 (bruker.id,),
             )
-
             result = self.cursor.fetchone()
 
             if not result:
@@ -152,7 +152,7 @@ class Gullkorn(commands.Cog):
             embed.add_field(name="Antall gullkorn postet", value=result[2])
             return await interaction.response.send_message(embed=embed, ephemeral=False)
 
-        summary = self.cursor.execute(
+        self.cursor.execute(
             """
             SELECT SUM(citations_posted)
             FROM gullkorn;
@@ -160,7 +160,7 @@ class Gullkorn(commands.Cog):
         )
         summary = self.cursor.fetchone()
 
-        most_cited = self.cursor.execute(
+        self.cursor.execute(
             """
             SELECT *
             FROM most_cited
@@ -169,7 +169,7 @@ class Gullkorn(commands.Cog):
         )
         most_cited = self.cursor.fetchall()
 
-        citations_posted = self.cursor.execute(
+        self.cursor.execute(
             """
             SELECT *
             FROM most_frequent_posters
