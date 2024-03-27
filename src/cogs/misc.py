@@ -1,6 +1,5 @@
 import random
 import re
-import urllib
 from datetime import datetime
 from hashlib import md5
 from io import BytesIO

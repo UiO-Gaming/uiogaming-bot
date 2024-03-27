@@ -14,7 +14,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from cogs.utils import discord_utils
 from cogs.utils import embed_templates
 from cogs.utils.discord_utils import Lobby
 from cogs.utils.discord_utils import LobbyView
