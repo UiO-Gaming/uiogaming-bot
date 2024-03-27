@@ -138,7 +138,7 @@ class Gullkorn(commands.Cog):
 
             if not result:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_fatal(interaction, text="Ingen data om denne brukeren funnet"),
+                    embed=embed_templates.error_warning("Ingen data om denne brukeren funnet"),
                     ephemeral=False,
                 )
 
