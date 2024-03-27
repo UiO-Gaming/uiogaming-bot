@@ -56,16 +56,24 @@ class Misc(commands.Cog):
         tekst (str): Text to translate
         """
 
-        owo_rules = {"r": "w", "l": "w", "R": "W", "L": "W", "n": "ny", "N": "Ny", "ove": "uv"}
-        for key, value in owo_rules.items():
-            tekst = re.sub(key, value, tekst)
-        # https://kaomoji.moe/
+        # Decades of computer sciencetist optimizng every little detail to make
+        # our computers as fast as possible. Only for me to ruin it by doing this shit.
+        # I am sorry to our forefathers whose shoulders we stand upon.
+        # I have sinned
+        tekst = re.sub(r"[rl]", "w", tekst)
+        tekst = re.sub(r"[RL]", "W", tekst)
+        tekst = re.sub(r"n([aeiou])", r"ny\1", tekst, flags=re.IGNORECASE)
+        tekst = re.sub(r"N([aeiou])", r"Ny\1", tekst)
+        tekst = re.sub(r"th", "d", tekst, flags=re.IGNORECASE)
+        tekst = re.sub(r"ove", "uv", tekst)
+
+        # TODO: add kaomoji? https://kaomoji.moe/
 
         if len(tekst) >= 1000:
             embed = embed_templates.error_warning("Teksten er for lang")
             return await interaction.response.send_message(embed=embed)
 
-        embed = discord.Embed(color=interaction.client.user.color, description=tekst)
+        embed = discord.Embed(description=tekst)
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
