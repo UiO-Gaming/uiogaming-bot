@@ -278,7 +278,7 @@ class Birthday(commands.Cog):
         next_birthday = self.fetch_user_next_birthday(bruker.id)
         next_birthday_days = (next_birthday - datetime.now()).days
 
-        embed = discord.Embed(description=bruker.mention, color=discord_utils.get_color(bruker))
+        embed = discord.Embed(description=bruker.mention, color=bruker.color)
         embed.set_thumbnail(url=bruker.display_avatar)
         embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.add_field(name="Bursdag", value=discord.utils.format_dt(birthday, style="D"))

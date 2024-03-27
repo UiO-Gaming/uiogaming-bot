@@ -78,7 +78,7 @@ class TenMan(commands.Cog):
         embed = discord.Embed(
             title="10 Man Lobby",
             description=f"Lobbyen stenger {time_left}. Bli med innen da!",
-            color=discord_utils.get_color(interaction.user),
+            color=interaction.user.color,
         )
         embed.set_author(name=interaction.user.global_name, icon_url=interaction.user.avatar)
         embed.add_field(name="Spillere", value=f"* {interaction.user.mention}", inline=False)

@@ -411,9 +411,7 @@ class Info(commands.Cog):
         # List of permissions
         permissions = ", ".join([permission for permission, value in iter(rolle.permissions) if value is True])
 
-        embed = discord.Embed(
-            title=rolle.name, description=f"{rolle.mention}\n**ID:** {rolle.id}", color=discord_utils.get_color(rolle)
-        )
+        embed = discord.Embed(title=rolle.name, description=f"{rolle.mention}\n**ID:** {rolle.id}", color=rolle.color)
         embed.set_author(name=rolle.guild.name, icon_url=rolle.guild.icon)
         embed.add_field(name="Fargekode", value=str(rolle.color))
         embed.add_field(
@@ -682,9 +680,7 @@ class Info(commands.Cog):
         }
         status = statuses[str(bruker.status)]
 
-        embed = discord.Embed(
-            color=discord_utils.get_color(bruker), description=f"{bruker.mention}\nID: {bruker.id}\n{status}\n{app}"
-        )
+        embed = discord.Embed(color=bruker.color, description=f"{bruker.mention}\nID: {bruker.id}\n{status}\n{app}")
         if bruker.display_name == bruker.name:
             embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         else:
@@ -744,7 +740,7 @@ class Info(commands.Cog):
                 interaction, f"./assets/temp/{interaction.guild.id}_{interaction.user.id}_roles.txt", roles
             )
         else:
-            embed = discord.Embed(color=discord_utils.get_color(bruker), description=roles)
+            embed = discord.Embed(color=bruker.color, description=roles)
             embed.set_author(name=f"Roller ({len(bruker.roles)})", icon_url=bruker.display_avatar)
             embed.set_footer(text=bruker.name, icon_url=bruker.display_avatar)
             await interaction.response.send_message(embed=embed)
@@ -765,7 +761,7 @@ class Info(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        embed = discord.Embed(color=discord_utils.get_color(bruker), description=f"[Lenke]({bruker.display_avatar})")
+        embed = discord.Embed(color=bruker.color, description=f"[Lenke]({bruker.display_avatar})")
         embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.set_image(url=bruker.display_avatar)
         await interaction.response.send_message(embed=embed)
