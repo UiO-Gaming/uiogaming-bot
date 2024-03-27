@@ -225,6 +225,7 @@ class WordCloud(commands.Cog):
     )
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @wordcloud_group.command(name="samtykke", description="Gi samtykke til å samle meldingsdataen din for ordskyer")
     async def consent(self, interaction: discord.Interaction):
         """
@@ -262,6 +263,7 @@ class WordCloud(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=False)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @wordcloud_group.command(name="slett", description="Fjern samtykke og slett alle dine ordskydata")
     async def consent_remove(self, interaction: discord.Interaction):
         """

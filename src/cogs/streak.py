@@ -172,6 +172,8 @@ class Streak(commands.Cog):
 
     streak_group = app_commands.Group(name="streak", description="Snapchat streaks, men for Discord")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @streak_group.command(name="se", description="Se din eller en annen brukers streak")
     async def streak_user(self, interaction: discord.Interaction, bruker: discord.Member | discord.User | None = None):
         """

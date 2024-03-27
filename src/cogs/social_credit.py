@@ -183,6 +183,8 @@ class SocialCredit(commands.Cog):
 
     social_credit_group = app_commands.Group(name="socialcredit", description="Trenger dette å forklares?")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @social_credit_group.command(name="credits", description="Sjekk hvor dårlig menneske du er")
     async def credits(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
         """
