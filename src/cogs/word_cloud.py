@@ -46,7 +46,8 @@ class WordCloud(commands.Cog):
 
         nltk.download("stopwords")
 
-        self.batch_update_word_freqs_loop.start()
+        self.insert_cache_loop.start()
+
 
     def init_db(self):
         """
@@ -78,8 +79,8 @@ class WordCloud(commands.Cog):
         Insert cache to db, stop tasks and close the database connection on cog unload
         """
 
-        await self.batch_update_word_freqs()
-        self.batch_update_word_freqs_loop.cancel()
+        await self.insert_cache()
+        self.insert_cache_loop.cancel()
         self.cursor.close()
 
     def populate_consenting_users(self):
@@ -95,7 +96,7 @@ class WordCloud(commands.Cog):
         )
         self.consenting_users = [row[0] for row in self.cursor.fetchall()]
 
-    async def batch_update_word_freqs(self):
+    async def insert_cache(self):
         """
         Inserts cached word frequencies into the database.
         We do this in order to prevent excess database writes
@@ -132,13 +133,13 @@ class WordCloud(commands.Cog):
         self.word_freq_cache.clear()
 
     @tasks.loop(minutes=20)
-    async def batch_update_word_freqs_loop(self):
+    async def insert_cache_loop(self):
         """
         Clears and inserts word frequency cache into the database every 20 minutes
         """
 
         self.bot.logger.info("Dumping word cloud cache to database...")
-        await self.batch_update_word_freqs()
+        await self.insert_cache()
 
     @commands.Cog.listener("on_message")
     async def word_freq_listener(self, message: discord.Message):
@@ -353,7 +354,7 @@ class WordCloud(commands.Cog):
         await interaction.response.defer()
 
         # Clear cache first to ensure correct count
-        await self.batch_update_word_freqs()
+        await self.insert_cache()
 
         # Fetch word count from database
         self.cursor.execute(
@@ -429,7 +430,8 @@ class WordCloud(commands.Cog):
         await interaction.response.defer()
 
         # Get member role for future channel permission checking
-        member_role = interaction.guild.get_role(779849617651138601)
+        # This shouldn't be hard coded but eh
+        board_member_role = interaction.guild.get_role(779849617651138601)
 
         # Fetch last 1000 messages
         all_messages = ""
@@ -439,7 +441,8 @@ class WordCloud(commands.Cog):
 
             # Avoid reading secret board member chats
             if (
-                not channel.permissions_for(member_role).send_messages
+                board_member_role  # None if invoked outside of UiO Gaming's server. Avoiding crash due to AND check
+                and not channel.permissions_for(board_member_role).send_messages
                 and not channel.permissions_for(interaction.guild.default_role).send_messages
             ):
                 continue

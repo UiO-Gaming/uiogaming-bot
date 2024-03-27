@@ -30,7 +30,7 @@ class Streak(commands.Cog):
         self.populate_cache()
 
         self.streak_check.start()
-        self.streak_update_loop.start()
+        self.insert_cache_loop.start()
 
     def init_db(self):
         """
@@ -53,9 +53,9 @@ class Streak(commands.Cog):
         Stop the loops and close the database connection
         """
 
-        await self.streak_update()
+        await self.insert_cache()
+        self.insert_cache_loop.cancel()
         self.streak_check.cancel()
-        self.streak_update_loop.cancel()
         self.cursor.close()
 
     def populate_cache(self):
@@ -102,14 +102,14 @@ class Streak(commands.Cog):
             }
 
     @tasks.loop(minutes=10)
-    async def streak_update_loop(self):
+    async def insert_cache_loop(self):
         """
         Inserts cache into the database every 10 minutes
         """
 
-        await self.streak_update()
+        await self.insert_cache()
 
-    async def streak_update(self):
+    async def insert_cache(self):
         """
         Inserts cache into the database
         """
@@ -139,7 +139,7 @@ class Streak(commands.Cog):
         """
 
         # Clear cache to make sure all streaks are up to date
-        await self.streak_update()
+        await self.insert_cache()
 
         self.cursor.execute(
             """
