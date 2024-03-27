@@ -113,10 +113,10 @@ class Errors(commands.Cog):
                 self.bot.logger.info("DM Blocked!")
 
         elif isinstance(error, commands.DisabledCommand):
-            pass
+            self.bot.logger.info("Command disabled. Ignoring")
 
         elif isinstance(error, commands.CheckFailure):
-            return
+            self.bot.logger.info("CheckFailure")
 
         embed = embed_templates.error_fatal(ctx, text="En ukjent feil oppstod!")
         await ctx.reply(embed=embed)
