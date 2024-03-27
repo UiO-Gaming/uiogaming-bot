@@ -93,7 +93,10 @@ class Meme(commands.Cog):
         box = Image.new("RGB", box_size, (255, 255, 255))
         draw = ImageDraw.Draw(box)
 
-        font_path = "./src/assets/fonts/RobotoMono-Medium.ttf"
+        # Using a non-mono font may cause issues but eh
+        # I don't want to ship a whole ass new font just to cover edge cases for this command
+        # It's rather a skill issue on my end that I can't get things to stay within bounds
+        font_path = "./src/assets/fonts/comic.ttf"
 
         # Calculate initial font size
         # This is done by increasing the font size until the text is too wide
