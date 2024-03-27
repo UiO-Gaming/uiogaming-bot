@@ -182,7 +182,13 @@ class SocialCredit(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        self.cursor.execute("SELECT * FROM social_credit WHERE user_id = %s", (bruker.id,))
+        self.cursor.execute(
+            """
+            SELECT * FROM social_credit
+            WHERE user_id = %s"
+            """,
+            (bruker.id,),
+        )
         result = self.cursor.fetchone()
 
         if not result:
