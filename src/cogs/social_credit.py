@@ -76,7 +76,7 @@ class SocialCredit(commands.Cog):
             self = args[0]
             self.cursor.execute("SELECT user_id FROM social_credit WHERE user_id = %s", (args[1],))
             if not self.cursor.fetchone():
-                self._add_citizen(args[1])
+                self.add_citizen(args[1])
             await func(*args, **kwargs)
 
         return wrapper
@@ -93,7 +93,7 @@ class SocialCredit(commands.Cog):
 
         return decorator
 
-    def _add_citizen(self, user_id: int):
+    def add_citizen(self, user_id: int):
         """
         Adds a user to the database
 

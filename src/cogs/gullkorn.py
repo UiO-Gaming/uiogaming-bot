@@ -49,7 +49,7 @@ class Gullkorn(commands.Cog):
             """
         )
 
-    def __construct_data_string(self, data: list[tuple[int, int, int]]) -> str:
+    def construct_data_string(self, data: list[tuple[int, int, int]]) -> str:
         """
         Constructs a formatted string displaying lists of gullkorn data
 
@@ -175,8 +175,8 @@ class Gullkorn(commands.Cog):
         )
         citations_posted = self.cursor.fetchall()
 
-        most_cited_string = self.__construct_data_string(most_cited)
-        citations_posted_string = self.__construct_data_string(citations_posted)
+        most_cited_string = self.construct_data_string(most_cited)
+        citations_posted_string = self.construct_data_string(citations_posted)
 
         gullkorn_first_msg = "https://canary.discord.com/channels/747542543750660178/865970753748074576/1034587913285025912"  # noqa: E501
 

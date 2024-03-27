@@ -84,7 +84,7 @@ class Birthday(commands.Cog):
     def cog_unload(self):
         self.birthday_check.cancel()
 
-    def __fetch_user_birthday(self, user_id: int) -> datetime | None:
+    def fetch_user_birthday(self, user_id: int) -> datetime | None:
         """
         Fetch the birthday of a user in the database
 
@@ -103,7 +103,7 @@ class Birthday(commands.Cog):
             birthday = result[0]
             return datetime(birthday.year, birthday.month, birthday.day)
 
-    def __fetch_user_next_birthday(self, user_id: int) -> datetime:
+    def fetch_user_next_birthday(self, user_id: int) -> datetime:
         """
         Get date of next birthday for a user
 
@@ -132,7 +132,7 @@ class Birthday(commands.Cog):
             # This will never happen unless a database error occurs. Keeping the type checker happy
             return datetime.now()
 
-    def __fetch_next_birthdays(self) -> list[tuple[int, datetime, datetime]]:
+    def fetch_next_birthdays(self) -> list[tuple[int, datetime, datetime]]:
         """
         Fetch the 5 first future birthdays of all users in the database
 
@@ -160,7 +160,7 @@ class Birthday(commands.Cog):
 
         return birthdays
 
-    def __set_user_birthday(self, user_id: int, birthday: datetime):
+    def set_user_birthday(self, user_id: int, birthday: datetime):
         """
         Set the birthday of a user in the database. If it already exists, update it.
 
@@ -216,7 +216,7 @@ class Birthday(commands.Cog):
                 ephemeral=True,
             )
 
-        self.__set_user_birthday(interaction.user.id, date)
+        self.set_user_birthday(interaction.user.id, date)
 
         embed = embed_templates.success(f"Bursdag satt til {discord.utils.format_dt(date, style='D')}")
         await interaction.response.send_message(embed=embed)
@@ -256,7 +256,7 @@ class Birthday(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        user = self.__fetch_user_birthday(bruker.id)
+        user = self.fetch_user_birthday(bruker.id)
 
         if not user:
             return await interaction.response.send_message(
@@ -269,7 +269,7 @@ class Birthday(commands.Cog):
         years_old = relativedelta(datetime.now(), birthday).years
 
         #  Next birthday information
-        next_birthday = self.__fetch_user_next_birthday(bruker.id)
+        next_birthday = self.fetch_user_next_birthday(bruker.id)
         next_birthday_days = (next_birthday - datetime.now()).days
 
         embed = discord.Embed(description=bruker.mention, color=discord_utils.get_color(bruker))
@@ -299,7 +299,7 @@ class Birthday(commands.Cog):
 
         await interaction.response.defer()
 
-        next_birthdays = self.__fetch_next_birthdays()
+        next_birthdays = self.fetch_next_birthdays()
 
         if not next_birthdays:
             return await interaction.followup.send(embed=embed_templates.error_warning("Ingen bursdager"))

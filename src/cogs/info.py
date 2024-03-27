@@ -24,7 +24,7 @@ class Info(commands.Cog):
     guild_group = app_commands.Group(name="guild", description="Se ting om serveren")
     user_group = app_commands.Group(name="bruker", description="Se ting om brukeren")
 
-    def __construct_role_string(self, roles: list[discord.Role]) -> str:
+    def construct_role_string(self, roles: list[discord.Role]) -> str:
         """
         Puts all roles except @everyone into a list and joins them to a string
 
@@ -45,7 +45,7 @@ class Info(commands.Cog):
 
         return ", ".join(roles)
 
-    def __construct_booster_string(self, interaction: discord.Interaction, join_method: callable = ", ".join) -> str:
+    def construct_booster_string(self, interaction: discord.Interaction, join_method: callable = ", ".join) -> str:
         """
         Joins all boosters into a string
 
@@ -73,9 +73,9 @@ class Info(commands.Cog):
 
         return join_method(boosters)
 
-    def __construct_member_string(self, members: list[discord.Member]) -> str:
+    def construct_member_string(self, members: list[discord.Member]) -> str:
         """
-        Joins all name#discrim into a string
+        Joins all names into a string
 
         Parameters
         ----------
@@ -156,7 +156,7 @@ class Info(commands.Cog):
                 offline_members += 1
 
         # Roles
-        roles = self.__construct_role_string(interaction.guild.roles)
+        roles = self.construct_role_string(interaction.guild.roles)
         roles = (
             roles
             if len(roles) < 1024
@@ -164,7 +164,7 @@ class Info(commands.Cog):
         )
 
         # Boosts
-        boosters = self.__construct_booster_string(interaction, join_method="\n".join)
+        boosters = self.construct_booster_string(interaction, join_method="\n".join)
         boosters = (
             boosters
             if len(boosters) < 1024
@@ -283,7 +283,7 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        roles = self.__construct_role_string(interaction.guild.roles)
+        roles = self.construct_role_string(interaction.guild.roles)
 
         # IF roles list is longer than 2048, create text file and send it
         if len(roles) > 2048:
@@ -311,7 +311,7 @@ class Info(commands.Cog):
             embed = embed_templates.error_warning("Serveren har ikke noen boosts :(")
             return await interaction.response.send_message(embed=embed)
 
-        boosters = self.__construct_booster_string(interaction, "\n".join)
+        boosters = self.construct_booster_string(interaction, "\n".join)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=boosters)
         embed.set_author(
@@ -405,7 +405,7 @@ class Info(commands.Cog):
         since_created_days = (interaction.created_at - rolle.created_at).days
 
         # List of members with the role
-        members = self.__construct_member_string(rolle.members)
+        members = self.construct_member_string(rolle.members)
         members = members if len(members) < 1024 else "For mange medlemmer for å vise her"
 
         # List of permissions
@@ -443,7 +443,7 @@ class Info(commands.Cog):
         kanal (discord.TextChannel): Text channel to fetch information about
         """
 
-        members = self.__construct_member_string(kanal.members)
+        members = self.construct_member_string(kanal.members)
         if len(members) > 1024:
             members = "For mange for å vise her"
 
@@ -666,7 +666,7 @@ class Info(commands.Cog):
             premium_since_days = (interaction.created_at - bruker.premium_since).days
 
         # Get user roles
-        roles = self.__construct_role_string(bruker.roles)
+        roles = self.construct_role_string(bruker.roles)
 
         roles = (
             roles
@@ -736,7 +736,7 @@ class Info(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        roles = self.__construct_role_string(bruker.roles)
+        roles = self.construct_role_string(bruker.roles)
 
         # If the list of roles is too long, send it as a file
         if len(roles) > 2048:

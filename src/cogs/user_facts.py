@@ -34,7 +34,7 @@ class UserFacts(commands.Cog):
             "ESFP",
         }
         self.mbti_list = list(self.mbti_codes)
-        self.similarity_matrix = self._create_similarity_matrix()
+        self.similarity_matrix = self.create_similarity_matrix()
 
     def init_db(self):
         """Create the necessary tables for the birthday cog to work"""
@@ -328,7 +328,7 @@ class UserFacts(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    def _create_similarity_matrix(self):
+    def create_similarity_matrix(self):
         def similarity(mbti_1, mbti_2):
             similarity = 0
             for i in range(4):
@@ -346,7 +346,8 @@ class UserFacts(commands.Cog):
 
         return similarity_matrix
 
-    def _create_mbti_graph(self, user_mbti: tuple[discord.Member, str], others: list[tuple[discord.Member, str]]):
+    # TODO: fix this. The distances are wrong
+    def create_mbti_graph(self, user_mbti: tuple[discord.Member, str], others: list[tuple[discord.Member, str]]):
         user, mbti = user_mbti
 
         # Create a Graphviz graph
