@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from io import BytesIO
@@ -10,23 +11,30 @@ from . import embed_templates
 from .misc_utils import Paginator
 
 
-def get_color(discord_object: discord.User | discord.Member | discord.Role) -> discord.Color:
+async def send_as_txt_file(interaction: discord.Interaction, content: str, file_path: str):
     """
-    Returns the user's top role color
+    Sends a string as a txt file and deletes the file afterwards
 
     Parameters
-    -----------
-    discord_object (discord.User|discord.Member|discord.Role): A discord object that has a color attribute
-
-    Returns
-    -----------
-    (discord.Color): The user's displayed color
+    ----------
+    interaction (discord.Interaction): Slash command context object
+    content (str): String that's too long to send
+    file_path (str): Path to file
     """
 
-    if hasattr(discord_object, "color") and str(discord_object.color) != "#000000":
-        return discord_object.color
+    # Create file
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(content)
 
-    return discord.Colour(0x99AAB5)
+    # Send file
+    txt_file = discord.File(file_path)
+    await interaction.response.send_message(file=txt_file)
+
+    # Delete file
+    try:
+        os.remove(file_path)
+    except (FileNotFoundError, OSError, PermissionError):
+        pass
 
 
 async def sleep_until_midnight(bot):

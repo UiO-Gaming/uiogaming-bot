@@ -88,31 +88,6 @@ class Info(commands.Cog):
 
         return ", ".join(members)
 
-    async def __send_as_txt_file(self, interaction: discord.Interaction, content: str, file_path: str):
-        """
-        Sends a string as a txt file and deletes the file afterwards
-
-        Parameters
-        ----------
-        interaction (discord.Interaction): Slash command context object
-        content (str): String that's too long to send
-        file_path (str): Path to file
-        """
-
-        # Create file
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(content)
-
-        # Send file
-        txt_file = discord.File(file_path)
-        await interaction.response.send_message(file=txt_file)
-
-        # Delete file
-        try:
-            remove(file_path)
-        except (FileNotFoundError, OSError, PermissionError):
-            pass
-
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
     @app_commands.checks.cooldown(1, 2)
@@ -282,7 +257,7 @@ class Info(commands.Cog):
 
         # IF roles list is longer than 2048, create text file and send it
         if len(roles) > 2048:
-            self.__send_as_txt_file(interaction, f"./assets/temp/{interaction.guild.id}_roles.txt", roles)
+            await discord_utils.send_as_txt_file(interaction, roles, f"./assets/temp/{interaction.guild.id}_roles.txt")
         else:
             embed = discord.Embed(color=interaction.guild.me.color, description=roles)
             embed.set_author(name=f"Roller ({len(interaction.guild.roles)})", icon_url=interaction.guild.icon)
@@ -726,8 +701,8 @@ class Info(commands.Cog):
 
         # If the list of roles is too long, send it as a file
         if len(roles) > 2048:
-            self.__send_as_txt_file(
-                interaction, f"./assets/temp/{interaction.guild.id}_{interaction.user.id}_roles.txt", roles
+            await discord_utils.send_as_txt_file(
+                interaction, roles, f"./assets/temp/{interaction.guild.id}_{interaction.user.id}_roles.txt"
             )
         else:
             embed = discord.Embed(color=bruker.color, description=roles)
