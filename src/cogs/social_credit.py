@@ -210,7 +210,7 @@ class SocialCredit(commands.Cog):
 
         if not result:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, f"{bruker.mention} er ikke registrert i databasen")
+                embed=embed_templates.error_warning(f"{bruker.mention} er ikke registrert i databasen")
             )
 
         db_user = CreditUser(*result)
