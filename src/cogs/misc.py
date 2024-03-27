@@ -155,7 +155,7 @@ class Misc(commands.Cog):
             embed = embed_templates.error_warning("Teksten er for lang")
             return await interation.response.send_message(embed=embed)
 
-        tekst = re.sub(" ", "👏", tekst)
+        tekst = tekst.replace(" ", "👏")
 
         embed = discord.Embed(color=interation.client.user.color, description=f"**{tekst.upper()}**")
         await interation.response.send_message(embed=embed)
