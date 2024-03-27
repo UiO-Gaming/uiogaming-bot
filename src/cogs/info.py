@@ -206,7 +206,8 @@ class Info(commands.Cog):
             description=f"* **Verifiseringskrav:** {verification}\n"
             + f"* **Innholdsfilter:** {content}\n"
             + f"* **Boost Tier:** {interaction.guild.premium_tier}\n"
-            + f"* **Emoji:** {len(interaction.guild.emojis)}",
+            + f"* **Emoji:** {len(interaction.guild.emojis)}\n"
+            + f"* **Stickers:** {len(interaction.guild.stickers)}\n",
         )
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_thumbnail(url=interaction.guild.icon)
