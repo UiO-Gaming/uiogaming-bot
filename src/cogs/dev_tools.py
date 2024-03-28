@@ -42,7 +42,7 @@ class DevTools(commands.Cog):
         name="custommsg",
         description="Send en melding til hvilken som helst kanal på hvilken som helst server botten er i",
     )
-    async def custommsg(self, ctx: commands.Context, channel: int, *text: tuple[str]):
+    async def custommsg(self, ctx: commands.Context, channel: int, text: str):
         """
         Send a message to any channel on any server the bot is in
 
@@ -50,17 +50,16 @@ class DevTools(commands.Cog):
         ----------
         ctx (commands.Context): Context object
         channel (int): The channel ID to send the message to
-        text (tuple[str]): The text to send
+        text (str): The text to send
         """
 
         # Send message to the requested channel
         channel = self.bot.get_channel(channel)
-        custommessage = " ".join(text)
-        await channel.send(custommessage)
+        await channel.send(text)
 
         # Send confirmation message to the invoker
         embed = discord.Embed(color=ctx.me.color)
-        embed.add_field(name="Sent", value=custommessage)
+        embed.add_field(name="Sent", value=text)
         await ctx.reply(embed=embed)
 
     @commands.is_owner()
