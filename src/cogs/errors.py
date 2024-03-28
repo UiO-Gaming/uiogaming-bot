@@ -76,50 +76,38 @@ class Errors(commands.Cog):
         if hasattr(ctx.command, "on_error"):
             return
 
-        # Ignored errors
-        ignored = commands.CommandNotFound
         error = getattr(error, "original", error)
-        if isinstance(error, ignored):
+
+        # Ignored errors
+        ignored_errors = (commands.CommandNotFound, commands.DisabledCommand, commands.CheckFailure)
+        if isinstance(error, ignored_errors):
+            self.bot.logger.info("Ignored error", error)
             return
 
+        # Errors that should prompt a help message
         send_help = (commands.MissingRequiredArgument, commands.TooManyArguments, commands.BadArgument)
         if isinstance(error, send_help):
-            self.bot.get_command(f"{ctx.command}").reset_cooldown(ctx)
             return await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            text = "Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
-            return await ctx.reply(text)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Jeg")
         elif isinstance(error, commands.MissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            text = "Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
-            return await ctx.reply(text)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Du")
         elif isinstance(error, commands.NotOwner):
-            text = "Bare boteieren kan gjøre dette"
-            return await ctx.reply(text)
-
+            embed = embed_templates.error_warning("Bare boteieren kan gjøre dette")
         elif isinstance(error, commands.CommandOnCooldown):
-            text = "Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder."
-            return await ctx.reply(text)
-
+            embed = embed_templates.error_warning(
+                f"Kommandoen har nettopp blitt brukt\nPrøv igjen om `{error.retry_after:.1f}` sekunder.",
+            )
         elif isinstance(error, commands.NoPrivateMessage):
-            try:
-                text = "Denne kommandoen kan bare utføres i servere"
-                return await ctx.reply(text)
-            except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
-                self.bot.logger.info("DM Blocked!")
+            embed = embed_templates.error_warning("Denne kommandoen kan bare utføres it servere")
+        else:
+            embed = embed_templates.error_fatal("En ukjent feil oppstod!")
 
-        elif isinstance(error, commands.DisabledCommand):
-            self.bot.logger.info("Command disabled. Ignoring")
-
-        elif isinstance(error, commands.CheckFailure):
-            self.bot.logger.info("CheckFailure")
-
-        embed = embed_templates.error_fatal("En ukjent feil oppstod!")
-        await ctx.reply(embed=embed)
+        try:
+            await ctx.reply(embed=embed)
+        except discord.errors.Forbidden:
+            self.bot.logger.warning("Could not send error message to user")
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
@@ -134,39 +122,47 @@ class Errors(commands.Cog):
         error (app_commands.AppCommandError): Eror context object
         """
 
-        # TODO: add support for defered interactions
+        await interaction.response.defer()
 
         # Log command usage, just in case
         await self.on_app_command_completion(interaction, interaction.command)
 
         if isinstance(error, app_commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning("Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```")
-
+            embed = self.error_missing_perms(error.missing_permissions, "Jeg")
         elif isinstance(error, app_commands.MissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning("Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```")
-
-        # TODO: figure this shit out. app_commands does not support this check
-        # elif isinstance(error, app_commands.NotOwner):
-        #     embed = embed_templates.error_warning('Bare boteieren kan gjøre dette')
-        #     return await interaction.response.send_message(embed=embed)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Du")
         elif isinstance(error, app_commands.CommandOnCooldown):
             embed = embed_templates.error_warning(
-                "Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
+                f"Kommandoen har nettopp blitt brukt\nPrøv igjen om `{error.retry_after:.1f}` sekunder."
             )
-
         else:
             embed = embed_templates.error_fatal("En ukjent feil oppstod!")
 
-        if interaction.response.is_done():
+        try:
             await interaction.followup.send(embed=embed)
-        else:
-            await interaction.response.send_message(embed=embed)
+        except discord.errors.Forbidden:
+            self.bot.logger.warning("Could not send error message to user")
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
+
+    def error_missing_perms(self, permissions: list[str], client: str) -> discord.Embed:
+        """
+        Missing permissions embed template.
+        Since it only applies to this cog it has been put here instead of the util file
+
+        Parameters
+        ----------
+        permissions (list[str]): The missing permissions
+        client (str): Who is missing the permissions? Typically "Du" (user) or "Jeg" (bot client)
+
+        Returns
+        ----------
+        (discord.Embed): The final embed
+        """
+
+        permissions = ", ".join(permissions)
+        return embed_templates.error_warning(f"{client} mangler følgende tillatelser\n\n```{permissions}\n```")
 
 
 async def setup(bot: commands.Bot):
