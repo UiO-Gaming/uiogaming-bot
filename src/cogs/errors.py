@@ -103,9 +103,17 @@ class Errors(commands.Cog):
             embed = embed_templates.error_warning("Denne kommandoen kan bare utføres it servere")
         else:
             embed = embed_templates.error_fatal("En ukjent feil oppstod!")
+            f = discord.File("./src/assets/edb.png")
+            embed.set_image(url="attachment://edb.png")
+
+        # Yeah, this fucking sucks but I want my beautiful edb picture :_;
+        try:
+            f
+        except NameError:
+            f = None
 
         try:
-            await ctx.reply(embed=embed)
+            await ctx.reply(embed=embed, file=f)
         except discord.errors.Forbidden:
             self.bot.logger.warning("Could not send error message to user")
 
@@ -137,9 +145,17 @@ class Errors(commands.Cog):
             )
         else:
             embed = embed_templates.error_fatal("En ukjent feil oppstod!")
+            f = discord.File("./src/assets/edb.png")
+            embed.set_image(url="attachment://edb.png")
+
+        # Yeah, this fucking sucks but I want my beautiful edb picture :_;
+        try:
+            f
+        except NameError:
+            f = None
 
         try:
-            await interaction.followup.send(embed=embed)
+            await interaction.followup.send(embed=embed, file=f)
         except discord.errors.Forbidden:
             self.bot.logger.warning("Could not send error message to user")
 
