@@ -42,7 +42,6 @@ class Aurora(commands.Cog):
         for interval in data["shortIntervals"]:
             # Convert to datetime objects, convert timezone to utc and strip timezone info
             start = datetime.fromisoformat(interval["start"]).astimezone(pytz.utc).replace(tzinfo=None)
-            # end = datetime.fromisoformat(interval["end"]).astimezone(pytz.utc).replace(tzinfo=None)
 
             # If sighting is not in within the next 12 hours ignore
             if (start - datetime.now()) > timedelta(hours=12):
