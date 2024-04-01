@@ -9,6 +9,12 @@ class Paginator:
     """Interface for managing content. Divides your content into pages of 10 items each"""
 
     def __init__(self, content: list):
+        """
+        Parameters
+        ----------
+        content (list): The content you want to paginate
+        """
+
         self.content = content
         self.total_page_count = ceil(len(content) / 10)
         self.current_page = 1
@@ -25,6 +31,7 @@ class Paginator:
         ----------
         (list|None): The page you requested
         """
+
         if page < 1 or page > self.total_page_count:
             return None
 
@@ -41,6 +48,7 @@ class Paginator:
         ----------
         (list): The current page of the paginator
         """
+
         return self.get_page(self.current_page)
 
     def next_page(self) -> list | None:
@@ -51,6 +59,7 @@ class Paginator:
         ----------
         (list): The next page of the paginator
         """
+
         self.current_page += 1
         return self.get_page(self.current_page)
 
@@ -62,6 +71,7 @@ class Paginator:
         ----------
         (list): The previous page of the paginator
         """
+
         self.current_page -= 1
         return self.get_page(self.current_page)
 
@@ -73,6 +83,7 @@ class Paginator:
         ----------
         (list): The first page of the paginator
         """
+
         self.current_page = 1
         return self.get_page(self.current_page)
 
@@ -84,5 +95,6 @@ class Paginator:
         ----------
         (list): The last page of the paginator
         """
+
         self.current_page = self.total_page_count
         return self.get_page(self.current_page)
