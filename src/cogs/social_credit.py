@@ -132,10 +132,15 @@ class SocialCredit(commands.Cog):
     @fuck_uwu.before_loop
     async def before_fuck_uwu(self):
         """
-        Syncs loop with the time of day
+        Wait until bot cache is ready
         """
 
-        await discord_utils.sleep_until_midnight(self.bot)
+        await self.bot.wait_until_ready()
+
+    async def cog_unload(self):
+        self.bot.logger.info("Unloading cog")
+        self.fuck_uwu.cancel()
+        self.cursor.close()
 
     @add_new_citizen
     async def social_punishment(self, user_id: int, points: int, reason: str):

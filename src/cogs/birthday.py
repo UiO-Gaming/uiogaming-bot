@@ -81,17 +81,10 @@ class Birthday(commands.Cog):
             else:
                 self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
 
-    @birthday_check.before_loop
-    async def before_birthday_check(self):
-        """
-        Syncs loop with the time of day
-        """
-
-        self.bot.logger.info("Postponing birthday check until midnight")
-        await discord_utils.sleep_until_midnight(self.bot)
-
-    def cog_unload(self):
+    async def cog_unload(self):
+        self.bot.logger.info("Unloading cog")
         self.birthday_check.cancel()
+        self.cursor.close()
 
     def fetch_user_birthday(self, user_id: int) -> datetime | None:
         """

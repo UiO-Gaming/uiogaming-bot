@@ -50,11 +50,7 @@ class Streak(commands.Cog):
         )
 
     async def cog_unload(self):
-        """
-        Stop the loops and close the database connection
-        """
-
-        await self.insert_cache()
+        self.bot.logger.info("Unloading cog")
         self.insert_cache_loop.cancel()
         self.streak_check.cancel()
         self.cursor.close()
@@ -110,10 +106,18 @@ class Streak(commands.Cog):
 
         await self.insert_cache()
 
+    @insert_cache_loop.after_loop
+    async def on_insert_cache_loop_cancel(self):
+        self.bot.logger.info("Insert cache loop cancelled")
+        if self.insert_cache_loop.is_being_cancelled() and self.streak_cache:
+            await self.insert_cache()
+
     async def insert_cache(self):
         """
         Inserts cache into the database
         """
+
+        self.bot.logger.info("Inserting cache into database")
 
         # Insert into database
         for user_id, user_data in self.streak_cache.items():
@@ -133,14 +137,15 @@ class Streak(commands.Cog):
                 ),
             )
 
-    @tasks.loop(hours=24)
+    @tasks.loop(time=misc_utils.MIDNIGHT)
     async def streak_check(self):
         """
         Check if anyone has lost their streak
         """
 
         # Clear cache to make sure all streaks are up to date
-        await self.insert_cache()
+        if self.streak_cache:
+            await self.insert_cache()
 
         self.cursor.execute(
             """
@@ -161,14 +166,11 @@ class Streak(commands.Cog):
                     (streak[1],),
                 )
 
-    @streak_check.before_loop
-    async def before_streak_check(self):
-        """
-        Syncs loop to the time of day
-        """
-
-        self.bot.logger.info("Postponing streak check until midnight")
-        await discord_utils.sleep_until_midnight(self.bot)
+    @streak_check.after_loop
+    async def on_streak_check_cancel(self):
+        self.bot.logger.info("Streak check loop cancelled")
+        if self.streak_check.is_being_cancelled():
+            await self.streak_check()
 
     streak_group = app_commands.Group(name="streak", description="Snapchat streaks, men for Discord")
 
