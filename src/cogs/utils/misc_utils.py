@@ -1,4 +1,8 @@
+import datetime
 from math import ceil
+from zoneinfo import ZoneInfo
+
+MIDNIGHT = datetime.time(hour=19, minute=48, tzinfo=ZoneInfo("Europe/Oslo"))
 
 
 class Paginator:

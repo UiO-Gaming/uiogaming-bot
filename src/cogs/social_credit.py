@@ -102,7 +102,7 @@ class SocialCredit(commands.Cog):
             (user_id, self.START_POINTS),
         )
 
-    @tasks.loop(hours=24.0, reconnect=True)
+    @tasks.loop(time=misc_utils.MIDNIGHT, reconnect=True)
     async def fuck_uwu(self):
         """
         Deducts points from people with the weeb role every 24 hours

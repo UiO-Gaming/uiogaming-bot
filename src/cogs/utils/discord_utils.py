@@ -37,25 +37,6 @@ async def send_as_txt_file(interaction: discord.Interaction, content: str, file_
         pass
 
 
-async def sleep_until_midnight(bot):
-    """
-    Syncs loop with the time of day
-    """
-
-    await bot.wait_until_ready()
-
-    now = datetime.datetime.now()
-    if now.hour > 0:
-        sleep_until = now + datetime.timedelta(days=1)
-        sleep_until = sleep_until.replace(hour=0, minute=0, second=0, microsecond=0)
-    else:
-        sleep_until = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    bot.logger.info(f"Loop sleeping until {sleep_until}")
-
-    await discord.utils.sleep_until(sleep_until)
-
-
 async def get_file_bytesio(file: discord.Attachment | discord.Asset) -> BytesIO:
     """
     Returns a BytesIO object of the file

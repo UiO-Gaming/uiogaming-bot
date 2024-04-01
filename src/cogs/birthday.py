@@ -47,7 +47,7 @@ class Birthday(commands.Cog):
         name="bursdag", description="Se, endre eller fjern bursdager for brukere på serveren"
     )
 
-    @tasks.loop(hours=24)
+    @tasks.loop(time=misc_utils.MIDNIGHT)
     async def birthday_check(self):
         """
         Check if it's someone's birthday every day at midgnight and send a greeting if it is
