@@ -116,6 +116,10 @@ class Errors(commands.Cog):
             await ctx.reply(embed=embed, file=f)
         except discord.errors.Forbidden:
             self.bot.logger.warning("Could not send error message to user")
+        except app_commands.BotMissingPermissions:
+            await ctx.reply(
+                "Jeg mangler `embed_links` og/eller `attach_files` tillatelsen(e). Ingenting funker uten de"
+            )
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
@@ -158,6 +162,10 @@ class Errors(commands.Cog):
             await interaction.followup.send(embed=embed, file=f)
         except discord.errors.Forbidden:
             self.bot.logger.warning("Could not send error message to user")
+        except app_commands.BotMissingPermissions:
+            await interaction.followup.send(
+                "Jeg mangler `embed_links` og/eller `attach_files` tillatelsen(e). Ingenting funker uten de"
+            )
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
