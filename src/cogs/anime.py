@@ -12,6 +12,15 @@ from cogs.utils import embed_templates
 class Anime(commands.Cog):
     """View information about different media on Anilist"""
 
+    def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
+        self.anilist_logo = "https://anilist.co/img/logo_al.png"
+
     anilist = app_commands.Group(name="anilist", description="Hent informasjon fra Anilist")
     anilist_profile = app_commands.Group(
         parent=anilist, name="profil", description="Hent informasjon om en bruker på Anilist"
@@ -389,7 +398,7 @@ class Anime(commands.Cog):
         favourite_studio = self.construct_favorite_entity_string(data["favourites"]["studios"]["nodes"], studio=True)
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Antall dager sett", value=days_watched)
         embed.add_field(name="Antall anime sett", value=anime_completed)
@@ -500,7 +509,7 @@ class Anime(commands.Cog):
         most_watched_studios = self.construct_favorite_entity_string(data["statistics"]["anime"]["studios"])
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Gj.snittsvurdering gitt", value=anime_mean_score)
         embed.add_field(name="Antall dager sett", value=days_watched)
@@ -610,7 +619,7 @@ class Anime(commands.Cog):
         most_read_staff = self.construct_favorite_entity_string(data["statistics"]["manga"]["staff"])
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Gj.snittsvurdering gitt", value=manga_mean_score)
         embed.add_field(name="Antall kapitler lest", value=chapters_read)
