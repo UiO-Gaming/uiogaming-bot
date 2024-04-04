@@ -186,12 +186,14 @@ class DevTools(commands.Cog):
         """
 
         for file in listdir("./src/cogs"):
-            if file.endswith(".py"):
-                name = file[:-3]
-                if name == cog:
-                    await self.bot.unload_extension(f"cogs.{name}")
-                    embed = discord.Embed(color=ctx.me.color, description=f"{cog} has been disabled")
-                    return await ctx.reply(embed=embed)
+            if not file.endswith(".py"):
+                continue
+
+            name = file[:-3]
+            if name == cog:
+                await self.bot.unload_extension(f"cogs.{name}")
+                embed = discord.Embed(color=ctx.me.color, description=f"{cog} has been disabled")
+                return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_warning(f"{cog} does not exist")
         await ctx.reply(embed=embed)
@@ -208,12 +210,14 @@ class DevTools(commands.Cog):
         """
 
         for file in listdir("./src/cogs"):
-            if file.endswith(".py"):
-                name = file[:-3]
-                if name == cog:
-                    await self.bot.load_extension(f"cogs.{name}")
-                    embed = discord.Embed(color=ctx.me.color, description=f"{cog} loaded")
-                    return await ctx.reply(embed=embed)
+            if not file.endswith(".py"):
+                continue
+
+            name = file[:-3]
+            if name == cog:
+                await self.bot.load_extension(f"cogs.{name}")
+                embed = discord.Embed(color=ctx.me.color, description=f"{cog} loaded")
+                return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_warning(f"{cog} does not exist")
         await ctx.reply(embed=embed)
@@ -228,13 +232,16 @@ class DevTools(commands.Cog):
         ctx (commands.Context): Context object
         cog (str): The name of the cog to reload
         """
+
         for file in listdir("./src/cogs"):
-            if file.endswith(".py"):
-                name = file[:-3]
-                if name == cog:
-                    await self.bot.reload_extension(f"cogs.{name}")
-                    embed = discord.Embed(color=ctx.me.color, description=f"{cog} has been reloaded")
-                    return await ctx.reply(embed=embed)
+            if not file.endswith(".py"):
+                continue
+
+            name = file[:-3]
+            if name == cog:
+                await self.bot.reload_extension(f"cogs.{name}")
+                embed = discord.Embed(color=ctx.me.color, description=f"{cog} has been reloaded")
+                return await ctx.reply(embed=embed)
 
         embed = embed_templates.error_warning(f"{cog} does not exist")
         await ctx.reply(embed=embed)
