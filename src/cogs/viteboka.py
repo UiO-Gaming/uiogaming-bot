@@ -55,7 +55,6 @@ async def fetch_article(title: str):
         r"(?=\{)(\{([^{}]|(?1))*\})|\[\[(Kategori|Fil):.+?\]\]|\{.+?\}", "", text, flags=regex.MULTILINE | regex.DOTALL
     )  # Remove templates, categories and images
     text = pypandoc.convert_text(text, "markdown", format="mediawiki")
-    print(text)
     text = regex.sub(
         r"\[(.+?)\]\(.+? \"wikilink\"\)", r"\1", text, flags=regex.MULTILINE | regex.DOTALL
     )  # Pandoc adds alt text to links. discord doesn't support that
