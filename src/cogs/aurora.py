@@ -21,7 +21,7 @@ class Aurora(commands.Cog):
         self.bot = bot
 
         self.notified = datetime(2000, 9, 11)  # Used to prevent spamming aurora alerts
-        # self.aurora_alarm.start()
+        self.aurora_alarm.start()
         self.AURORA_CHANNEL = 747542544291987599
 
     async def get_forecast(self) -> dict | None:
@@ -58,7 +58,7 @@ class Aurora(commands.Cog):
         most_likely_sighting = max(valid_sightings, key=lambda x: x["auroraValue"])
         return most_likely_sighting
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(minutes=60)
     async def aurora_alarm(self):
         """
         Checks if the aurora forecast is above 50% and sends a message to the aurora channel if it is
