@@ -63,7 +63,7 @@ class Misc(commands.Cog):
         tekst = re.sub(r"n([aeiou])", r"ny\1", tekst, flags=re.IGNORECASE)
         tekst = re.sub(r"N([aeiou])", r"Ny\1", tekst)
         tekst = re.sub(r"th", "d", tekst, flags=re.IGNORECASE)
-        tekst = re.sub(r"ove", "uv", tekst)
+        tekst = tekst.replace("ove", "uv")
 
         # TODO: add kaomoji? https://kaomoji.moe/
 
