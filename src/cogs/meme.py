@@ -1,22 +1,22 @@
 import functools
 import os
-import textwrap
 from io import BytesIO
 
+import cv2
 import discord
+import numpy as np
 from discord import app_commands
 from discord.ext import commands
 from moviepy.editor import CompositeVideoClip
 from moviepy.editor import TextClip
 from moviepy.editor import VideoFileClip
 from PIL import Image
-from PIL import ImageDraw
 from PIL import ImageEnhance
-from PIL import ImageFont
 from PIL import UnidentifiedImageError
 
 from cogs.utils import discord_utils
 from cogs.utils import embed_templates
+from cogs.utils import misc_utils
 
 
 class Meme(commands.Cog):
@@ -74,82 +74,6 @@ class Meme(commands.Cog):
 
         await interaction.followup.send(file=discord.File(output, "deepfry.jpg"))
 
-    # TODO: Move this to utils
-    @staticmethod
-    def draw_text(image: Image.Image, text: str, offset: tuple = (0, 0)):
-        """
-        Draws meme text on preferred meme template.
-
-        Parameters
-        ----------
-        image (Image.Image): The meme template.
-        text (str): The text to be drawn.
-        font (ImageFont.FreeTypeFont): The font, with its size set, to be used.
-        offset (tuple): The offset of the text from the top left corner of the image. Defaults to (0, 0).
-        """
-
-        box_size = (540, 540)
-        box = Image.new("RGB", box_size, (255, 255, 255))
-        draw = ImageDraw.Draw(box)
-
-        # Using a non-mono font may cause issues but eh
-        # I don't want to ship a whole ass new font just to cover edge cases for this command
-        # It's rather a skill issue on my end that I can't get things to stay within bounds
-        font_path = "./src/assets/fonts/comic.ttf"
-
-        # Calculate initial font size
-        # This is done by increasing the font size until the text is too wide
-        max_width, max_height = box_size[0] * 0.9, box_size[1] * 0.9  # 90% of the box size
-
-        font_size = 20  # Initiale size. I consider this the smallest readable size
-        font_width = 0  # Initiale width. This is just to make sure the while loop runs at least once
-        while font_width < max_width:
-            font = ImageFont.truetype(font_path, font_size)
-
-            font_box = font.getbbox(text)
-            font_width = font_box[2] - font_box[0]
-
-            font_size += 2
-
-        # Wrap the text based on our current font size
-        text = textwrap.fill(text, width=font_size)
-
-        # We then have to calculate the font size again
-        #
-        # The problem is, font.getbbox() doesn't work with multiline text so it returns the size without the linebreaks
-        # We can get around this by calculating the size of the longest line in the text
-        # and then increasing the font size until that line is too wide
-        #
-        # We also have to make sure it doesn't get too tall
-        longest_line = max(text.split("\n"), key=len)
-        longest_line_font_box = font.getbbox(longest_line)
-        font_width = longest_line_font_box[2] - longest_line_font_box[0]
-
-        # Estimate font height
-        # This is done by multiplying the height of the original non-wrapped text with the number of lines
-        # and then adding 20 to account for the line spacing.
-        # This of course is dependant on font size itself, but it's good enough for now
-        font_height = (font_box[3] - font_box[1] + 20) * text.count("\n")
-        max_height = box_size[1] * 0.9
-
-        while font_width < max_width and font_height < max_height:
-            font = ImageFont.truetype(font_path, font_size)
-
-            longest_line_font_box = font.getbbox(longest_line)
-            font_width = longest_line_font_box[2] - longest_line_font_box[0]
-
-            font_box = font.getbbox(text)
-            font_height = (font_box[3] - font_box[1] + 20) * text.count("\n")
-
-            font_size += 2
-
-        # Draw textbox and text
-        draw.multiline_textbbox(box_size, text=text, font=font, align="center", anchor="mm")  # TODO: remove?
-        text_box = box.size[0] // 2, box.size[1] // 2
-        draw.multiline_text(text_box, text, font=font, fill=(0, 0, 0, 255), align="center", anchor="mm")
-
-        image.paste(box, offset)
-
     @app_commands.checks.bot_has_permissions(attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @app_commands.command(name="preferansemem", description="Generer en drake-aktig mem basert på tekst")
@@ -167,15 +91,17 @@ class Meme(commands.Cog):
         await interaction.response.defer()
 
         # Fetch meme template
-        template = Image.open("./src/assets/sivert_goodbad.jpg")
+        template = cv2.imread("./src/assets/sivert_goodbad.jpg")
 
         # Draw text
-        Meme.draw_text(template, dårlig_tekst, offset=(540, 0))
-        Meme.draw_text(template, bra_tekst, offset=(540, 540))
+        font = "./src/assets/fonts/comic.ttf"
+        await misc_utils.put_text_in_box(template, dårlig_tekst, (540, 0), (1080, 540), font)
+        await misc_utils.put_text_in_box(template, bra_tekst, (540, 540), (1080, 1080), font)
 
         # Save image to buffer
-        output = BytesIO()
-        template.save(output, format="jpeg")
+        _, buffer = cv2.imencode(".jpg", template)
+        output = BytesIO(buffer)
+        cv2.imdecode(np.frombuffer(output.getbuffer(), np.uint8), -1)
         output.seek(0)
 
         # Send image
