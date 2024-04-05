@@ -33,7 +33,7 @@ async def send_as_txt_file(interaction: discord.Interaction, content: str, file_
     # Delete file
     try:
         os.remove(file_path)
-    except (FileNotFoundError, OSError, PermissionError):
+    except OSError:
         pass
 
 
