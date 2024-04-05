@@ -22,7 +22,9 @@ class MCWhitelist(commands.Cog):
         self.init_db()
 
     def init_db(self):
-        """Create the necessary tables for the mc_whitelist cog to work."""
+        """
+        Create the necessary tables for the mc_whitelist cog to work
+        """
 
         self.cursor.execute(
             """
@@ -50,9 +52,7 @@ class MCWhitelist(commands.Cog):
         data = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{minecraftbrukernavn}", timeout=10)
         if data.status_code != 200:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text=f"Brukeren `{minecraftbrukernavn}` finnes ikke på minecraft"
-                ),
+                embed=embed_templates.error_warning(f"Brukeren `{minecraftbrukernavn}` finnes ikke på minecraft"),
                 ephemeral=True,
             )
 
@@ -69,16 +69,25 @@ class MCWhitelist(commands.Cog):
         )
         if self.cursor.fetchone():
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text="Du har allerede whitelisted en bruker eller så er brukeren du oppga whitelisted"
+                embed=embed_templates.error_warning(
+                    "Du har allerede whitelisted en bruker eller så er brukeren du oppga whitelisted"
                 )
             )
 
         # Whitelist user on minecraft server
         # Unfortunately, this requires an active connection to the server, with correct credentials
-        with MCRcon(host="127.0.0.1", password=self.bot.mc_rcon_password, port=25575) as mcr:
-            mcr.command(f'whitelist add {data["name"]}')
-            mcr.command("whitelist reload")
+        # Also unfortunate, we seemingly need to wrap the context manager like this to catch any exceptions
+        try:
+            with MCRcon(host="127.0.0.1", password=self.bot.mc_rcon_password, port=25575) as mcr:
+                mcr.command(f'whitelist add {data["name"]}')
+                mcr.command("whitelist reload")
+        except Exception as e:
+            self.bot.logger.error(f"Failed to use RCON: {e}")
+            return await interaction.response.send_message(
+                embed=embed_templates.error_fatal(
+                    "Klarte ikke å koble til minecraftserveren. Ta kontakt med din lokale teknisk ansvarlige",
+                )
+            )
 
         # Add user to db
         self.cursor.execute(
@@ -89,10 +98,10 @@ class MCWhitelist(commands.Cog):
             (interaction.user.id, data["id"]),
         )
 
+        self.bot.logger.info(f"Whitelisted {data['name']} for {interaction.user.name}")
+
         await interaction.response.send_message(
-            embed=embed_templates.success(
-                interaction, text=f'`{data["name"]}` er nå tilknyttet din discordbruker og whitelisted!'
-            )
+            embed=embed_templates.success(f'`{data["name"]}` er nå tilknyttet din discordbruker og whitelisted!')
         )
 
 

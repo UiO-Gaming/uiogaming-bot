@@ -1,7 +1,6 @@
 import asyncio
 import json
 import random
-import textwrap
 from datetime import datetime
 from datetime import timedelta
 from typing import override
@@ -11,12 +10,9 @@ import discord
 import numpy as np
 from discord import app_commands
 from discord.ext import commands
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
 
-from cogs.utils import discord_utils
 from cogs.utils import embed_templates
+from cogs.utils import misc_utils
 from cogs.utils.discord_utils import Lobby
 from cogs.utils.discord_utils import LobbyView
 
@@ -53,19 +49,13 @@ class CS2Bingo(commands.Cog):
                 self.active_lobbies.pop(str(interaction.user.id))
             else:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du hoster allerede en lobby",
-                    )
+                    embed=embed_templates.error_warning("Du hoster allerede en lobby")
                 )
 
         for lobby in self.active_lobbies.values():
             if interaction.user.id in lobby.players:
                 return await interaction.response.send_message(
-                    embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du er allerede i en lobby",
-                    )
+                    embed=embed_templates.error_warning("Du er allerede i en lobby")
                 )
 
         self.active_lobbies[str(interaction.user.id)] = Lobby(
@@ -80,7 +70,7 @@ class CS2Bingo(commands.Cog):
         embed = discord.Embed(
             title="Bingolobby",
             description=f"Lobbyen stenger {time_left}. Bli med innen da!",
-            color=discord_utils.get_color(interaction.user),
+            color=interaction.user.color,
         )
         embed.set_author(name=interaction.user.global_name, icon_url=interaction.user.avatar)
         embed.add_field(name="Spillere", value=f"* {interaction.user.mention}", inline=False)
@@ -102,77 +92,6 @@ class BingoGenerator:
 
     with open(f"{BINGO_PATH}/names.json") as f:
         NAMES = json.load(f)
-
-    @classmethod
-    async def put_text_in_box(
-        cls,
-        image: np.ndarray,
-        text: str,
-        top_left: tuple,
-        bottom_right: tuple,
-        font_path: str,
-        font_size: int = 10,
-        color: tuple = (0, 0, 0),
-    ):
-        """
-        Puts text inside a bounding box on the cv2 image with automatic text wrapping, using PIL for text rendering.
-
-        :param image: Source cv2 image (numpy array).
-        :param text: Text string to be put.
-        :param top_left: Tuple (x, y) defining the top-left corner of the bounding box.
-        :param bottom_right: Tuple (x, y) defining the bottom-right corner of the bounding box.
-        :param font_path: Path to a .ttf font file.
-        :param font_size: Initial font size.
-        :param color: Text color in RGB.
-        :return: Image with text (numpy array).
-        """
-
-        # TODO: Dry. This algorithm is also seen in the memes cog
-
-        # Convert the cv2 image to a PIL image
-        image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        draw = ImageDraw.Draw(image_pil)
-
-        # Get coordinates of the bounding box
-        x1, y1 = top_left
-        x2, y2 = bottom_right
-
-        # Get the width and height of the bounding box
-        # We multiply by 0.9 to give some padding
-        w, h = (x2 - x1) * 0.9, (y2 - y1) * 0.9
-
-        # Initialize font width/height to 0 in order to run the while loops below at least once
-        font_width = 0
-        font_height = 0
-
-        # Add newlines to the text. Here we have gone with 15 characters per line
-        # This is arbitrary, but seems to work well
-        text = textwrap.fill(text, width=15)
-
-        # Increase the font size until the longest line of text does not fit in the bounding box anymore
-        # We also have to check the height, since the text might be too tall for the box
-        while font_width < w and font_height < h:
-            font = ImageFont.truetype(font_path, font_size)
-
-            longest_line = max(text.split("\n"), key=lambda x: font.getlength(x))
-            font_width = font.getlength(longest_line)
-
-            # bbox doesn't work with multiline text, so we have to calculate the height manually
-            # take the height of the bounding box, multiply by 1.5 (our assumed line dividor height)
-            # after that, we multiply by the number of lines
-            font_box = font.getbbox(text)
-            font_height = ((font_box[3] - font_box[1]) * 1.5) * text.count("\n")
-
-            font_size += 1
-
-        # Actually draw the text
-        draw.multiline_textbbox((w, h), text=text, font=font, align="center", anchor="mm")
-        center_of_box = ((x1 + x2) // 2, (y1 + y2) // 2)
-        draw.multiline_text(center_of_box, text, font=font, fill=color, align="center", anchor="mm")
-
-        # Convert back to cv2 image format and update the original image
-        cv2_image = cv2.cvtColor(np.array(image_pil), cv2.COLOR_RGB2BGR)
-        np.copyto(image, cv2_image)
 
     @classmethod
     async def sample_cells(cls, players: list[str], bot: commands.Bot) -> dict[str, list[str]]:
@@ -238,11 +157,11 @@ class BingoGenerator:
         for i in range(0, 5):
             for j in range(0, 5):
                 width = 123
-                await cls.put_text_in_box(
+                await misc_utils.put_text_in_box(
                     sliced,
                     sample_space.pop(),
-                    (i * width + 1, j * width + 1),
-                    ((i + 1) * width, (j + 1) * width),
+                    top_left=(i * width + 1, j * width + 1),
+                    bottom_right=((i + 1) * width, (j + 1) * width),
                     font_path=cls.FONT_PATH,
                 )
 
@@ -257,7 +176,7 @@ class BingoView(LobbyView):
     @override
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte bingoen")
+            embed = embed_templates.error_warning("Bare hosten kan starte bingoen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         await self.end_lobby()
@@ -268,8 +187,7 @@ class BingoView(LobbyView):
 
         mention_players = " ".join([f"{p.mention}" for p in self.lobby.players])
         embed = embed_templates.success(
-            interaction,
-            text="Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
+            "Bingoen har startet\n\nDere vil nå få tilsendt bingobrettene deres på DM. "
             + "Sørg for at jeg kan slide inn i dem :smirk:",
         )
         await interaction.response.send_message(content=mention_players, embed=embed)

@@ -41,76 +41,66 @@ class Bot(commands.Bot):
 
         self.logger = BotLogger().logger  # Initialize logger
 
-        self.guild_id = config.get("dev_guild", UIO_GAMING_GUILD_ID)
+        self.cog_files = set(listdir("./src/cogs"))
 
-        # Connect to database
-        # We assume the config file is valid and contains the needed keys, even if they are empty
-        db = config.get("database")
-
-        for db_credential in db.values():
-            if not db_credential:
-                self.db_connection = None
-                self.logger.warning(
-                    f"No database credentials specified. Disabling db reliant cogs:\n{DATABASE_RELIANT_COGS}"
-                )
-                break
-        else:
+        # Check for missing credentials
+        if self.check_credentials(config["database"], DATABASE_RELIANT_COGS):
             self.db_connection = psycopg2.connect(
-                host=db["host"],
-                dbname=db["dbname"],
-                user=db["username"],
-                password=db["password"],
+                host=config["database"]["host"],
+                dbname=config["database"]["dbname"],
+                user=config["database"]["username"],
+                password=config["database"]["password"],
             )
-            self.db_connection.autocommit = True
+            self.db_connection.autocommit = True  # Scary
 
-        for sanity_credential in config.get("sanity").values():
-            if not sanity_credential:
-                self.has_sanity_credentials = False
-                self.logger.warning(
-                    f"No Sanity credentials specified. Disabling sanity reliant cogs\n{SANITY_RELIANT_COGS}"
-                )
-                break
-            else:
-                self.has_sanity_credentials = True
+        if self.check_credentials(config["sanity"], SANITY_RELIANT_COGS):
+            self.sanity = config["sanity"]
 
-        if not config.get("minecraft").get("rcon_password"):
-            self.has_minecraft_credentials = False
-            self.logger.warning(
-                f"No Minecraft credentials specified. Disabling minecraft reliatn cogs\n{MINECRAFT_RELIANT_COGS}"
-            )
-        else:
-            self.has_minecraft_credentials = True
+        if self.check_credentials(config["minecraft"], MINECRAFT_RELIANT_COGS):
+            self.mc_rcon_password = config["minecraft"]["rcon_password"]
 
         # Fetch misc config values
-        self.mc_rcon_password = config["minecraft"]["rcon_password"]
-        self.sanity = config["sanity"]
+        self.UIO_GAMING_GUILD_ID = UIO_GAMING_GUILD_ID
+        self.guild_id = config.get("dev_guild", self.UIO_GAMING_GUILD_ID)
+        self.config_mode = config.get("config_mode")
         self.presence = config["bot"].get("presence", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
-        self.config_mode = config.get("config_mode")
 
     async def setup_hook(self):
-        cog_files = listdir("./src/cogs")
-
-        if self.db_connection is None:
-            cog_files = set(cog_files) - DATABASE_RELIANT_COGS
-        if not self.has_sanity_credentials:
-            cog_files = set(cog_files) - SANITY_RELIANT_COGS
-        if not self.has_minecraft_credentials:
-            cog_files = set(cog_files) - MINECRAFT_RELIANT_COGS
-
         # Load cogs
-        for file in cog_files:
+        for file in self.cog_files:
             if file.endswith(".py"):
                 name = file[:-3]
                 await bot.load_extension(f"cogs.{name}")
 
-        # Sync slash commands to Discord
+        # Sync slash commands
         if self.config_mode == "prod":
             await self.tree.sync()
         else:
             self.tree.copy_global_to(guild=discord.Object(id=self.guild_id))
             await self.tree.sync(guild=discord.Object(id=self.guild_id))
+
+    def check_credentials(self, credentials: dict, dependant_cogs: set[str]) -> bool:
+        """
+        Check if the credentials are valid. Removes cogs from the class' `cog_files` attribute if not
+
+        Parameters
+        -----------
+        credentials (dict): The credentials to check
+        dependant_cogs (set): The cogs that depend on the credentials
+
+        Returns
+        ----------
+        bool: Whether the credentials are valid. If not, the dependant cogs are disabled.
+        """
+
+        for credential in credentials.values():
+            if not credential:
+                self.logger.warning(f"Missing credentials. Disabling reliant cogs:\n{dependant_cogs}")
+                self.cog_files -= dependant_cogs
+                return False
+        return True
 
 
 # Create bot instance

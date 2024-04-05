@@ -34,10 +34,12 @@ class UserFacts(commands.Cog):
             "ESFP",
         }
         self.mbti_list = list(self.mbti_codes)
-        self.similarity_matrix = self._create_similarity_matrix()
+        self.similarity_matrix = self.create_similarity_matrix()
 
     def init_db(self):
-        """Create the necessary tables for the birthday cog to work"""
+        """
+        Create the necessary tables for the birthday cog to work
+        """
 
         self.cursor.execute(
             """
@@ -51,6 +53,8 @@ class UserFacts(commands.Cog):
 
     height_group = app_commands.Group(name="høyde", description="Se, endre eller fjern høyde for brukere på serveren")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="se", description="Se høyden til en bruker")
     async def height_see(self, interaction: discord.Interaction, bruker: discord.Member = None):
         """
@@ -76,7 +80,7 @@ class UserFacts(commands.Cog):
 
         if not height:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn høyden sin")
+                embed=embed_templates.error_warning("Brukeren har ikke lagt inn høyden sin")
             )
 
         height = height[0]
@@ -92,6 +96,8 @@ class UserFacts(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="sett", description="Sett høyden din")
     @app_commands.rename(height_cm="høyde_cm")
     async def height_set(self, interaction: discord.Interaction, height_cm: app_commands.Range[int, 50, 250]):
@@ -114,8 +120,10 @@ class UserFacts(commands.Cog):
             (interaction.user.id, height_cm, height_cm),
         )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="Høyde satt!"))
+        await interaction.response.send_message(embed=embed_templates.success("Høyde satt!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="fjern", description="Fjern høyden din")
     async def height_remove(self, interaction: discord.Interaction):
         """
@@ -137,13 +145,13 @@ class UserFacts(commands.Cog):
 
         if self.cursor.rowcount == 0:
             return await interaction.response.send_message(
-                embed=embed_templates.success(
-                    interaction, text="Du hadde ikke lagt inn høyden din fra før av men ok :)"
-                )
+                embed=embed_templates.success("Du hadde ikke lagt inn høyden din fra før av men ok :)")
             )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="Høyde fjernet!"))
+        await interaction.response.send_message(embed=embed_templates.success("Høyde fjernet!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @height_group.command(name="leaderboard", description="Se en leaderboard over høyder")
     async def height_leaderboard(self, interaction: discord.Interaction):
         """
@@ -164,17 +172,12 @@ class UserFacts(commands.Cog):
 
         if not (result := self.cursor.fetchall()):
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Ingen har lagt inn høyden sin enda")
+                embed=embed_templates.error_warning("Ingen har lagt inn høyden sin enda")
             )
 
-        result_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` cm",
-                enumerate(result),
-            )
-        )
+        results_formatted = [f"**#{i+1}** <@{row[0]}> - `{row[1]}` cm" for i, row in enumerate(result)]
 
-        paginator = misc_utils.Paginator(result_formatted)
+        paginator = misc_utils.Paginator(results_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
 
         embed = view.construct_embed(discord.Embed(title="Våre høyeste og laveste (👑)"))
@@ -182,6 +185,8 @@ class UserFacts(commands.Cog):
 
     mbti_group = app_commands.Group(name="mbti", description="Se, endre eller fjern MBTI for brukere på serveren")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="se", description="Se MBTI-en til en bruker")
     async def mbti_see(self, interaction: discord.Interaction, bruker: discord.Member = None):
         """
@@ -207,7 +212,7 @@ class UserFacts(commands.Cog):
 
         if not user_mbti:
             return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Brukeren har ikke lagt inn MBTI-en sin")
+                embed=embed_templates.error_warning("Brukeren har ikke lagt inn MBTI-en sin")
             )
 
         user_mbti = user_mbti[0]
@@ -235,7 +240,7 @@ class UserFacts(commands.Cog):
             else:
                 others.append((discord_id, mbti))
 
-        self._create_mbti_graph((bruker, user_mbti), others)
+        self.create_mbti_graph((bruker, user_mbti), others)
 
         with open(f"src/assets/temp/{bruker.id}_mbti.png", "rb") as f:
             image = discord.File(f, filename=f"{bruker.id}_mbti.png")
@@ -243,6 +248,8 @@ class UserFacts(commands.Cog):
         embed.set_image(url=f"attachment://{bruker.id}_mbti.png")
         await interaction.response.send_message(embed=embed, file=image)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="sett", description="Sett MBTI-en din")
     async def mbti_set(self, interaction: discord.Interaction, mbti: str):
         """
@@ -255,9 +262,7 @@ class UserFacts(commands.Cog):
         """
 
         if mbti.upper() not in self.mbti_codes:
-            return await interaction.response.send_message(
-                embed=embed_templates.error_warning(interaction, text="Ugyldig MBTI")
-            )
+            return await interaction.response.send_message(embed=embed_templates.error_warning("Ugyldig MBTI"))
 
         self.cursor.execute(
             """
@@ -269,7 +274,7 @@ class UserFacts(commands.Cog):
             (interaction.user.id, mbti.upper(), mbti.upper()),
         )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="MBTI satt!"))
+        await interaction.response.send_message(embed=embed_templates.success("MBTI satt!"))
 
     @mbti_set.autocomplete("mbti")
     async def mbti_set_autocomplete_callback(self, interaction: discord.Interaction, current: str):
@@ -286,6 +291,8 @@ class UserFacts(commands.Cog):
             app_commands.Choice(name=mbti, value=mbti) for mbti in self.mbti_codes if mbti.startswith(current.upper())
         ]
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="fjern", description="Fjern MBTI-en din")
     async def mbti_remove(self, interaction: discord.Interaction):
         """
@@ -307,13 +314,13 @@ class UserFacts(commands.Cog):
 
         if self.cursor.rowcount == 0:
             return await interaction.response.send_message(
-                embed=embed_templates.success(
-                    interaction, text="Du hadde ikke lagt inn MBTIen din fra før av men ok :)"
-                )
+                embed=embed_templates.success("Du hadde ikke lagt inn MBTIen din fra før av men ok :)")
             )
 
-        await interaction.response.send_message(embed=embed_templates.success(interaction, text="MBTI fjernet!"))
+        await interaction.response.send_message(embed=embed_templates.success("MBTI fjernet!"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @mbti_group.command(name="forklaring", description="Skjønner du ikke hva MBTI er? Her er en forklaring")
     async def mbti_explanation(self, interaction: discord.Interaction):
         """
@@ -334,7 +341,7 @@ class UserFacts(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-    def _create_similarity_matrix(self):
+    def create_similarity_matrix(self):
         def similarity(mbti_1, mbti_2):
             similarity = 0
             for i in range(4):
@@ -352,7 +359,8 @@ class UserFacts(commands.Cog):
 
         return similarity_matrix
 
-    def _create_mbti_graph(self, user_mbti: tuple[discord.Member, str], others: list[tuple[discord.Member, str]]):
+    # TODO: fix this. The distances are wrong
+    def create_mbti_graph(self, user_mbti: tuple[discord.Member, str], others: list[tuple[discord.Member, str]]):
         user, mbti = user_mbti
 
         # Create a Graphviz graph

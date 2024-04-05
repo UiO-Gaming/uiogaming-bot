@@ -1,5 +1,3 @@
-from os import remove
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -24,7 +22,7 @@ class Info(commands.Cog):
     guild_group = app_commands.Group(name="guild", description="Se ting om serveren")
     user_group = app_commands.Group(name="bruker", description="Se ting om brukeren")
 
-    def __construct_role_string(self, roles: list[discord.Role]) -> str:
+    def construct_role_string(self, roles: list[discord.Role]) -> str:
         """
         Puts all roles except @everyone into a list and joins them to a string
 
@@ -45,7 +43,7 @@ class Info(commands.Cog):
 
         return ", ".join(roles)
 
-    def __construct_booster_string(self, interaction: discord.Interaction, join_method: callable = ", ".join) -> str:
+    def construct_booster_string(self, interaction: discord.Interaction, join_method: callable = ", ".join) -> str:
         """
         Joins all boosters into a string
 
@@ -62,20 +60,17 @@ class Info(commands.Cog):
         if not interaction.guild.premium_subscribers:
             return "**Ingen boostere**"
 
-        # Sort boosters by boost date and put name#discrim as well as date of boost into a list of stirngs
-        # Use map instead of list comprehension because I can divide the code into 2 lines
-        boosters = list(
-            map(
-                lambda b: f"* {b.name} - {discord.utils.format_dt(b.premium_since)}",
-                sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since),
-            )
-        )
+        # Sort boosters by boost date and put name as well as date of boost into a list of stirngs
+        boosters = [
+            f"* {b.name} - {discord.utils.format_dt(b.premium_since)}"
+            for b in sorted(interaction.guild.premium_subscribers, key=lambda m: m.premium_since)
+        ]
 
         return join_method(boosters)
 
-    def __construct_member_string(self, members: list[discord.Member]) -> str:
+    def construct_member_string(self, members: list[discord.Member]) -> str:
         """
-        Joins all name#discrim into a string
+        Joins all names into a string
 
         Parameters
         ----------
@@ -92,31 +87,6 @@ class Info(commands.Cog):
         members = [member.name for member in members]
 
         return ", ".join(members)
-
-    async def __send_as_txt_file(self, interaction: discord.Interaction, content: str, file_path: str):
-        """
-        Sends a string as a txt file and deletes the file afterwards
-
-        Parameters
-        ----------
-        interaction (discord.Interaction): Slash command context object
-        content (str): String that's too long to send
-        file_path (str): Path to file
-        """
-
-        # Create file
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(content)
-
-        # Send file
-        txt_file = discord.File(file_path)
-        await interaction.response.send_message(file=txt_file)
-
-        # Delete file
-        try:
-            remove(file_path)
-        except (FileNotFoundError, OSError, PermissionError):
-            pass
 
     @app_commands.guild_only()
     @app_commands.checks.bot_has_permissions(embed_links=True, external_emojis=True)
@@ -156,7 +126,7 @@ class Info(commands.Cog):
                 offline_members += 1
 
         # Roles
-        roles = self.__construct_role_string(interaction.guild.roles)
+        roles = self.construct_role_string(interaction.guild.roles)
         roles = (
             roles
             if len(roles) < 1024
@@ -164,7 +134,7 @@ class Info(commands.Cog):
         )
 
         # Boosts
-        boosters = self.__construct_booster_string(interaction, join_method="\n".join)
+        boosters = self.construct_booster_string(interaction, join_method="\n".join)
         boosters = (
             boosters
             if len(boosters) < 1024
@@ -179,31 +149,35 @@ class Info(commands.Cog):
 
         # Features
         features_string = ""
-        if interaction.guild.features is not []:
+        if interaction.guild.features != []:
             features = {
                 "ANIMATED_BANNER": "Animer serverbanner",
                 "ANIMATED_ICON": "Animert serverikon",
+                "APPLICATION_COMMAND_PERMISSIONS_V2": "Gamle slash command tillatelser",
+                "AUTO_MODERATION": "Automoderering",
                 "BANNER": "Serverbanner",
-                "COMMERCE": "E-handel",
                 "COMMUNITY": "Samfunnsserver",
+                "CREATOR_MONETIZABLE_PROVISIONAL": "Betalingsmuligheter",
+                "CREATOR_STORE_PAGE": "Abonnomentsside",
+                "DEVELOPER_SUPPORT_SERVER": "Støtteserver for utviklere",
                 "DISCOVERABLE": "På utforsksiden",
-                "FEATURABLE": "",
+                "FEATURABLE": "Fremhevbar",
+                "INVITES_DISABLED": "Invitasjoner deaktivert",
                 "INVITE_SPLASH": "Invitasjonsbilde",
                 "MEMBER_VERIFICATION_GATE_ENABLED": "Medlemsverifisering",
-                "MONETIZATION_ENABLED": "Betalingskanal",
-                "MORE_EMOJI": "Flere emoji",
                 "MORE_STICKERS": "Flere stickers",
                 "NEWS": "Nyhetskanaler",
                 "PARTNERED": "Partner",
                 "PREVIEW_ENABLED": "Forhåndsvisning",
-                "PRIVATE_THREADS": "Private tråder",
+                "RAID_ALERTS_DISABLED": "Raidvarsler deaktivert",
                 "ROLE_ICONS": "Rolleikon",
+                "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE": "Abonomentsroller tilgjengelig",
+                "ROLE_SUBSCRIPTIONS_ENABLED": "Abonomentsroller aktivert",
                 "TICKETED_EVENTS_ENABLED": "Arrangmenter med billettsalg",
                 "VANITY_URL": "Egendefinert URL",
                 "VERIFIED": "Verifisert",
                 "VIP_REGIONS": "Høyere bitrate i stemmekanaler",
                 "WELCOME_SCREEN_ENABLED": "Velkomstskjerm",
-                "INVITES_DISABLED": "Invitasjoner deaktivert",
             }
             for feature in interaction.guild.features:
                 if translation := features.get(feature):
@@ -232,7 +206,8 @@ class Info(commands.Cog):
             description=f"* **Verifiseringskrav:** {verification}\n"
             + f"* **Innholdsfilter:** {content}\n"
             + f"* **Boost Tier:** {interaction.guild.premium_tier}\n"
-            + f"* **Emoji:** {len(interaction.guild.emojis)}",
+            + f"* **Emoji:** {len(interaction.guild.emojis)}\n"
+            + f"* **Stickers:** {len(interaction.guild.stickers)}\n",
         )
         embed.set_author(name=interaction.guild.name, icon_url=interaction.guild.icon)
         embed.set_thumbnail(url=interaction.guild.icon)
@@ -271,7 +246,7 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.guild_only()
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 2)
     @guild_group.command(name="roller", description="Se rollene på serveren")
     async def guild_roles(self, interaction: discord.Interaction):
@@ -283,11 +258,11 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        roles = self.__construct_role_string(interaction.guild.roles)
+        roles = self.construct_role_string(interaction.guild.roles)
 
         # IF roles list is longer than 2048, create text file and send it
         if len(roles) > 2048:
-            self.__send_as_txt_file(interaction, f"./assets/temp/{interaction.guild.id}_roles.txt", roles)
+            await discord_utils.send_as_txt_file(interaction, roles, f"./assets/temp/{interaction.guild.id}_roles.txt")
         else:
             embed = discord.Embed(color=interaction.guild.me.color, description=roles)
             embed.set_author(name=f"Roller ({len(interaction.guild.roles)})", icon_url=interaction.guild.icon)
@@ -308,10 +283,10 @@ class Info(commands.Cog):
         """
 
         if len(interaction.guild.premium_subscribers) == 0:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke noen boosts :(")
+            embed = embed_templates.error_warning("Serveren har ikke noen boosts :(")
             return await interaction.response.send_message(embed=embed)
 
-        boosters = self.__construct_booster_string(interaction, "\n".join)
+        boosters = self.construct_booster_string(interaction, "\n".join)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=boosters)
         embed.set_author(
@@ -352,7 +327,7 @@ class Info(commands.Cog):
         """
 
         if not interaction.guild.splash:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke en splash")
+            embed = embed_templates.error_warning("Serveren har ikke en splash")
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=f"[Lenke]({interaction.guild.splash})")
@@ -374,7 +349,7 @@ class Info(commands.Cog):
         """
 
         if not interaction.guild.banner:
-            embed = embed_templates.error_warning(interaction, text="Serveren har ikke et banner :(")
+            embed = embed_templates.error_warning("Serveren har ikke et banner :(")
             return await interaction.response.send_message(embed=embed)
 
         embed = discord.Embed(color=interaction.guild.me.color, description=f"[Lenke]({interaction.guild.banner})")
@@ -397,7 +372,7 @@ class Info(commands.Cog):
         """
 
         if rolle.name == "@everyone":
-            embed = embed_templates.error_fatal(interaction, text="Skriv inn en annen rolle enn @everyone")
+            embed = embed_templates.error_warning("Skriv inn en annen rolle enn `@everyone`")
             return await interaction.response.send_message(embed=embed)
 
         # Timestamp and days since creation
@@ -405,15 +380,13 @@ class Info(commands.Cog):
         since_created_days = (interaction.created_at - rolle.created_at).days
 
         # List of members with the role
-        members = self.__construct_member_string(rolle.members)
+        members = self.construct_member_string(rolle.members)
         members = members if len(members) < 1024 else "For mange medlemmer for å vise her"
 
         # List of permissions
         permissions = ", ".join([permission for permission, value in iter(rolle.permissions) if value is True])
 
-        embed = discord.Embed(
-            title=rolle.name, description=f"{rolle.mention}\n**ID:** {rolle.id}", color=discord_utils.get_color(rolle)
-        )
+        embed = discord.Embed(title=rolle.name, description=f"{rolle.mention}\n**ID:** {rolle.id}", color=rolle.color)
         embed.set_author(name=rolle.guild.name, icon_url=rolle.guild.icon)
         embed.add_field(name="Fargekode", value=str(rolle.color))
         embed.add_field(
@@ -443,7 +416,7 @@ class Info(commands.Cog):
         kanal (discord.TextChannel): Text channel to fetch information about
         """
 
-        members = self.__construct_member_string(kanal.members)
+        members = self.construct_member_string(kanal.members)
         if len(members) > 1024:
             members = "For mange for å vise her"
 
@@ -501,9 +474,10 @@ class Info(commands.Cog):
         interaction (discord.Interaction): Slash command context object
         """
 
-        roles = list(filter(lambda r: r.name != "@everyone", interaction.guild.roles))
-        roles = sorted(roles, key=lambda x: len(x.members), reverse=True)
-        roles_formatted = list(map(lambda r: f"**#{r[0] + 1}** {r[1].mention} - {len(r[1].members)}", enumerate(roles)))
+        roles = sorted(
+            [r for r in interaction.guild.roles if r.name != "@everyone"], key=lambda x: len(x.members), reverse=True
+        )
+        roles_formatted = [f"**#{i + 1}** {r.mention} - {len(r.members)}" for i, r in enumerate(roles)]
 
         paginator = misc_utils.Paginator(roles_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
@@ -566,18 +540,14 @@ class Info(commands.Cog):
         # Sort members by creation date
         members = sorted(interaction.guild.members, key=lambda m: m.created_at)
 
-        # Create list of members with index, name#discriminator and creation date
-        members_formatted = list(
-            map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].created_at, style="F")}',  # noqa: E501
-                enumerate(members),
-            )
-        )
+        # Create list of members with index, name and creation date
+        members_formatted = [
+            f"**#{i+1}** {m.name} - {discord.utils.format_dt(m.created_at, style='F')}" for i, m in enumerate(members)
+        ]
 
         paginator = misc_utils.Paginator(members_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
 
-        # Send first page
         embed = view.construct_embed(
             discord.Embed(
                 color=interaction.guild.me.color, title="Eldste brukere på serveren basert på når de ble lagd"
@@ -604,12 +574,9 @@ class Info(commands.Cog):
         members = sorted(interaction.guild.members, key=lambda m: m.joined_at)
 
         # Create list of members with index, name#discriminator and creation date
-        members_formatted = list(
-            map(
-                lambda m: f'**#{(m[0] + 1)}** {m[1].name} - {discord.utils.format_dt(m[1].joined_at, style="F")}',  # noqa: E501
-                enumerate(members),
-            )
-        )
+        members_formatted = [
+            f"**#{i+1}** {m.name} - {discord.utils.format_dt(m.joined_at, style='F')}" for i, m in enumerate(members)
+        ]
 
         paginator = misc_utils.Paginator(members_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
@@ -666,7 +633,7 @@ class Info(commands.Cog):
             premium_since_days = (interaction.created_at - bruker.premium_since).days
 
         # Get user roles
-        roles = self.__construct_role_string(bruker.roles)
+        roles = self.construct_role_string(bruker.roles)
 
         roles = (
             roles
@@ -682,9 +649,7 @@ class Info(commands.Cog):
         }
         status = statuses[str(bruker.status)]
 
-        embed = discord.Embed(
-            color=discord_utils.get_color(bruker), description=f"{bruker.mention}\nID: {bruker.id}\n{status}\n{app}"
-        )
+        embed = discord.Embed(color=bruker.color, description=f"{bruker.mention}\nID: {bruker.id}\n{status}\n{app}")
         if bruker.display_name == bruker.name:
             embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         else:
@@ -736,15 +701,15 @@ class Info(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        roles = self.__construct_role_string(bruker.roles)
+        roles = self.construct_role_string(bruker.roles)
 
         # If the list of roles is too long, send it as a file
         if len(roles) > 2048:
-            self.__send_as_txt_file(
-                interaction, f"./assets/temp/{interaction.guild.id}_{interaction.user.id}_roles.txt", roles
+            await discord_utils.send_as_txt_file(
+                interaction, roles, f"./assets/temp/{interaction.guild.id}_{interaction.user.id}_roles.txt"
             )
         else:
-            embed = discord.Embed(color=discord_utils.get_color(bruker), description=roles)
+            embed = discord.Embed(color=bruker.color, description=roles)
             embed.set_author(name=f"Roller ({len(bruker.roles)})", icon_url=bruker.display_avatar)
             embed.set_footer(text=bruker.name, icon_url=bruker.display_avatar)
             await interaction.response.send_message(embed=embed)
@@ -765,7 +730,7 @@ class Info(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        embed = discord.Embed(color=discord_utils.get_color(bruker), description=f"[Lenke]({bruker.display_avatar})")
+        embed = discord.Embed(color=bruker.color, description=f"[Lenke]({bruker.display_avatar})")
         embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.set_image(url=bruker.display_avatar)
         await interaction.response.send_message(embed=embed)

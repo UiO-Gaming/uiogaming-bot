@@ -19,23 +19,10 @@ from cogs.utils import misc_utils
 - score for å bli pinged i uio gullkorn
 + score for å få melding på stjernetavla/bli stjerna. multiplier per stjerne
 - score hver dag med weebrolle (lite)
-"""
 
-"""
 ------ TO-DO ------
-+ score for guten tag
-
 - score sitte i afk
 + score for å sitte i voice per time
-
----------------
-- score for winiie the pooh
-- score for memes i general
-- score for å snakke negativt om borgerlønn
-- score for å snakke negativt om styret
-* hvis lav score, spiller av kinesisk nasjonalsang på voicechannel når joiner
-
-daglig uthengig av laveste score
 """
 
 
@@ -55,7 +42,9 @@ class SocialCredit(commands.Cog):
         self.init_db()
 
     def init_db(self):
-        """Create the necessary tables for the social credit cog to work"""
+        """
+        Create the necessary tables for the social credit cog to work
+        """
 
         self.cursor.execute(
             """
@@ -76,13 +65,15 @@ class SocialCredit(commands.Cog):
             self = args[0]
             self.cursor.execute("SELECT user_id FROM social_credit WHERE user_id = %s", (args[1],))
             if not self.cursor.fetchone():
-                self._add_citizen(args[1])
+                self.add_citizen(args[1])
             await func(*args, **kwargs)
 
         return wrapper
 
     def roll(percent: int = 50):
-        """Decorator that executes the function with a given percent chance"""
+        """
+        Decorator that executes the function with a given percent chance
+        """
 
         def decorator(func):
             async def wrapper(*args, **kwargs):
@@ -93,7 +84,7 @@ class SocialCredit(commands.Cog):
 
         return decorator
 
-    def _add_citizen(self, user_id: int):
+    def add_citizen(self, user_id: int):
         """
         Adds a user to the database
 
@@ -111,21 +102,45 @@ class SocialCredit(commands.Cog):
             (user_id, self.START_POINTS),
         )
 
-    @tasks.loop(hours=24.0, reconnect=True)
+    @tasks.loop(time=misc_utils.MIDNIGHT, reconnect=True)
     async def fuck_uwu(self):
-        """Deducts points from people with the weeb role every 24 hours"""
+        """
+        Deducts points from people with the weeb role every 24 hours
+        """
 
         await self.bot.wait_until_ready()
 
-        weeb_role = self.bot.get_guild(747542543750660178).get_role(803629993539403826)
+        # We need to do these checks in case the bot user does not have access to the UiO Gaming Discord server
+        if not (guild := self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)):
+            self.bot.logger.warning(
+                "Could not fetch UiO Gaming guild."
+                + "If the bot does not have access to the UiO Gaming server, this function won't work. "
+                + "If it is, ignore this."
+            )
+            return
+        if not (weeb_role := guild.get_role(803629993539403826)):
+            self.bot.logger.warning(
+                "Could not fetch UiO Gaming's weeb role."
+                + "If the bot does not have access to the UiO Gaming server, this function won't work. "
+                + "If it is, ignore this."
+            )
+            return
+
         for weeb in weeb_role.members:
             await self.social_punishment(weeb.id, 1, "weeb")
 
     @fuck_uwu.before_loop
     async def before_fuck_uwu(self):
-        """Syncs loop with the time of day"""
+        """
+        Wait until bot cache is ready
+        """
 
-        await discord_utils.sleep_until_midnight(self.bot)
+        await self.bot.wait_until_ready()
+
+    async def cog_unload(self):
+        self.bot.logger.info("Unloading cog")
+        self.fuck_uwu.cancel()
+        self.cursor.close()
 
     @add_new_citizen
     async def social_punishment(self, user_id: int, points: int, reason: str):
@@ -173,6 +188,8 @@ class SocialCredit(commands.Cog):
 
     social_credit_group = app_commands.Group(name="socialcredit", description="Trenger dette å forklares?")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @social_credit_group.command(name="credits", description="Sjekk hvor dårlig menneske du er")
     async def credits(self, interaction: discord.Interaction, *, bruker: discord.Member | None = None):
         """
@@ -187,12 +204,18 @@ class SocialCredit(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        self.cursor.execute("SELECT * FROM social_credit WHERE user_id = %s", (bruker.id,))
+        self.cursor.execute(
+            """
+            SELECT * FROM social_credit
+            WHERE user_id = %s"
+            """,
+            (bruker.id,),
+        )
         result = self.cursor.fetchone()
 
         if not result:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, f"{bruker.mention} er ikke registrert i databasen")
+                embed=embed_templates.error_warning(f"{bruker.mention} er ikke registrert i databasen")
             )
 
         db_user = CreditUser(*result)
@@ -200,6 +223,8 @@ class SocialCredit(commands.Cog):
         embed = discord.Embed(description=(f"{bruker.mention} har `{db_user.credit_score}` social credits"))
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @social_credit_group.command(name="leaderboard", description="Sjekk hvem som er de beste og verste borgerne")
     async def leaderboard(self, interaction: discord.Interaction):
         """
@@ -218,18 +243,14 @@ class SocialCredit(commands.Cog):
             ORDER BY credit_score DESC
             """
         )
+        result = self.cursor.fetchall()
 
-        if not (result := self.cursor.fetchall()):
+        if not result:
             return await interaction.send(
-                embed=embed_templates.error_fatal(interaction, "Ingen brukere er registrert i databasen")
+                embed=embed_templates.error_warning("Ingen brukere er registrert i databasen")
             )
 
-        leaderboard_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` poeng",
-                enumerate(result),
-            )
-        )
+        leaderboard_formatted = [f"**#{s[0]+1}** <@{s[1][0]}> - `{s[1][1]}` poeng" for s in enumerate(result)]
 
         paginator = misc_utils.Paginator(leaderboard_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)
@@ -321,10 +342,10 @@ class SocialCredit(commands.Cog):
         message (discord.Message): The message object
         """
 
-        if message.channel.id == 865970753748074576:
-            if message.mentions:
-                for mention in message.mentions:
-                    await self.social_punishment(mention.id, 10, "gullkorn")
+        # This only works in the UiO Gaming server as well
+        if message.channel.id == 865970753748074576 and message.mentions:
+            for mention in message.mentions:
+                await self.social_punishment(mention.id, 10, "gullkorn")
 
     @commands.Cog.listener("on_reaction_add")
     async def on_star_add(self, reaction: discord.Reaction, user: discord.User | discord.Member):
@@ -343,12 +364,11 @@ class SocialCredit(commands.Cog):
         if reaction.emoji == "⭐":
             if reaction.message.author == user:
                 await self.social_punishment(user.id, 100, "self-star")
-            else:
-                if len(reaction.message.reactions) >= 3:
-                    await self.social_punishment(
-                        user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars"
-                    )
-                    await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
+            elif reaction.count == 3:
+                await self.social_punishment(
+                    user.id, (len(reaction.message.reactions) - 1) * 25, "remove already accumulated stars"
+                )
+                await self.social_reward(user.id, 25 * len(reaction.message.reactions), "add new stars")
 
     @commands.Cog.listener("on_reaction_remove")
     async def on_star_remove(self, reaction: discord.Reaction, user: discord.User | discord.Member):
@@ -359,9 +379,8 @@ class SocialCredit(commands.Cog):
         if user.bot:
             return
 
-        if reaction.emoji == "⭐":
-            if len(reaction.message.reactions) >= 3:
-                await self.social_punishment(user.id, 25, "remove star")
+        if reaction.emoji == "⭐" and reaction.count >= 3:
+            await self.social_punishment(user.id, 25, "remove star")
 
 
 async def setup(bot: commands.Bot):

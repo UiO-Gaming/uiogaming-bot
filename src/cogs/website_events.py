@@ -8,7 +8,7 @@ from discord.ext import commands
 
 
 class WebsiteEvents(commands.Cog):
-    """Miscellaneous commands that don"t fit anywhere else"""
+    """Uploads Discord events to Sanity CMS"""
 
     def __init__(self, bot: commands.Bot):
         """
@@ -57,6 +57,7 @@ class WebsiteEvents(commands.Cog):
 
         self.bot.logger.info("Finished syncing events! Note errors may have occured")
 
+    @commands.Cog.listener("on_scheduled_event_create")
     async def create_event(self, event: discord.ScheduledEvent):
         """
         Creates an event in Sanity CMS when an event is added on Discord
@@ -67,8 +68,9 @@ class WebsiteEvents(commands.Cog):
         """
 
         # Convert timezone to Europe/Oslo
-        time = event.start_time.replace(tzinfo=pytz.utc)  # Make sure the datetime object contains the timezone info
-        time = event.start_time.astimezone(pytz.timezone("Europe/Oslo"))
+        # We need to set a timezone unit before being able to convert it to another timezone
+        # That's why this line is so fucking weird
+        time = event.start_time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/Oslo"))
 
         document = {
             "_type": "event",
@@ -94,6 +96,7 @@ class WebsiteEvents(commands.Cog):
         else:
             self.bot.logger.error(f"Failed to create event in Sanity with ID: {event.id}. Response: {response.text}")
 
+    @commands.Cog.listener("on_scheduled_event_delete")
     async def delete_event(self, event: discord.ScheduledEvent):
         """
         Deletes an event in Sanity CMS when an event is deleted on Discord
@@ -111,6 +114,7 @@ class WebsiteEvents(commands.Cog):
         else:
             self.bot.logger.error(f"Failed to delete event in Sanity with ID: {event.id}. Response: {response.text}")
 
+    @commands.Cog.listener("on_scheduled_event_update")
     async def update_event(self, before: discord.ScheduledEvent, after: discord.ScheduledEvent):
         """
         Updates an event in Sanity when edited on discord
@@ -141,7 +145,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(WebsiteEvents(bot).create_event, "on_scheduled_event_create")
-    bot.add_listener(WebsiteEvents(bot).update_event, "on_scheduled_event_update")
-    bot.add_listener(WebsiteEvents(bot).delete_event, "on_scheduled_event_delete")
     await bot.add_cog(WebsiteEvents(bot))

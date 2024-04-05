@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from io import BytesIO
@@ -10,40 +11,30 @@ from . import embed_templates
 from .misc_utils import Paginator
 
 
-def get_color(discord_object: discord.User | discord.Member | discord.Role) -> discord.Color:
+async def send_as_txt_file(interaction: discord.Interaction, content: str, file_path: str):
     """
-    Returns the user's top role color
+    Sends a string as a txt file and deletes the file afterwards
 
     Parameters
-    -----------
-    discord_object (discord.User|discord.Member|discord.Role): A discord object that has a color attribute
-
-    Returns
-    -----------
-    (discord.Color): The user's displayed color
+    ----------
+    interaction (discord.Interaction): Slash command context object
+    content (str): String that's too long to send
+    file_path (str): Path to file
     """
 
-    if hasattr(discord_object, "color") and str(discord_object.color) != "#000000":
-        return discord_object.color
+    # Create file
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(content)
 
-    return discord.Colour(0x99AAB5)
+    # Send file
+    txt_file = discord.File(file_path)
+    await interaction.response.send_message(file=txt_file)
 
-
-async def sleep_until_midnight(bot):
-    """Syncs loop with the time of day"""
-
-    await bot.wait_until_ready()
-
-    now = datetime.datetime.now()
-    if now.hour > 0:
-        sleep_until = now + datetime.timedelta(days=1)
-        sleep_until = sleep_until.replace(hour=0, minute=0, second=0, microsecond=0)
-    else:
-        sleep_until = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    bot.logger.info(f"Loop sleeping until {sleep_until}")
-
-    await discord.utils.sleep_until(sleep_until)
+    # Delete file
+    try:
+        os.remove(file_path)
+    except OSError:
+        pass
 
 
 async def get_file_bytesio(file: discord.Attachment | discord.Asset) -> BytesIO:
@@ -240,37 +231,37 @@ class LobbyView(discord.ui.View):
     @discord.ui.button(label="Bli med", style=discord.ButtonStyle.blurple)
     async def join_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if datetime.now() > self.lobby.ends:
-            embed = embed_templates.error_warning(interaction, text="Lobbyen har allerede startet")
+            embed = embed_templates.error_warning("Lobbyen har allerede startet")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if (
             interaction.user.id in self.lobby.kicked_players
         ):  # We have to use the ID here to avoid fetching the member object in the selection menu
-            embed = embed_templates.error_warning(interaction, text="Du er blitt kastet ut av lobbyen")
+            embed = embed_templates.error_warning("Du er blitt kastet ut av lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user in self.lobby.players:
-            embed = embed_templates.error_warning(interaction, text="Du er allerede i lobbyen")
+            embed = embed_templates.error_warning("Du er allerede i lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if len(self.lobby.players) >= 10:
-            embed = embed_templates.error_warning(interaction, text="Lobbyen er full")
+            embed = embed_templates.error_warning("Lobbyen er full")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby.players.append(interaction.user)
         await self.rerender_players(interaction)
 
-        embed = embed_templates.success(interaction, text="Du har blitt med i lobbyen")
+        embed = embed_templates.success("Du har blitt med i lobbyen")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
     @discord.ui.button(label="Start", style=discord.ButtonStyle.green)
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte")
+            embed = embed_templates.error_warning("Bare hosten kan starte")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if len(self.lobby.players) < 3:
-            embed = embed_templates.error_warning(interaction, text="Det må være mer enn 2 i lobbyen")
+            embed = embed_templates.error_warning("Det må være mer enn 2 i lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         await self.end_lobby()
@@ -283,30 +274,30 @@ class LobbyView(discord.ui.View):
     async def leave_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user == self.lobby.host:
             embed = embed_templates.error_warning(
-                interaction, text="Du kan ikke forlate lobbyen som host. Slett lobbyen i stedet om ønskelig!"
+                "Du kan ikke forlate lobbyen som host. Slett lobbyen i stedet om ønskelig!"
             )
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user not in self.lobby.players:
-            embed = embed_templates.error_warning(interaction, text="Du er ikke i lobbyen")
+            embed = embed_templates.error_warning("Du er ikke i lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby.players.remove(interaction.user)
         await self.rerender_players(interaction)
 
-        embed = embed_templates.success(interaction, text="Du har forlatt lobbyen")
+        embed = embed_templates.success("Du har forlatt lobbyen")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
     @discord.ui.button(label="Slett", style=discord.ButtonStyle.red)
     async def delete_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan slette lobbyen")
+            embed = embed_templates.error_warning("Bare hosten kan slette lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.lobby.ends = datetime.now()
         await interaction.message.delete()
 
-        embed = embed_templates.success(interaction, text="Lobbyen har blitt slettet")
+        embed = embed_templates.success("Lobbyen har blitt slettet")
         await interaction.response.send_message(embed=embed, delete_after=5)
 
 
@@ -332,11 +323,11 @@ class _KickSelectMenu(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.parent_view.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan kicke spillere")
+            embed = embed_templates.error_warning("Bare hosten kan kicke spillere")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if str(interaction.user.id) in interaction.data["values"][0]:
-            embed = embed_templates.error_warning(interaction, text="Du kan ikke kicke deg selv")
+            embed = embed_templates.error_warning("Du kan ikke kicke deg selv")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         self.parent_view.lobby.kicked_players.append(int(interaction.data["values"][0]))
@@ -352,7 +343,7 @@ class _KickSelectMenu(discord.ui.Select):
 
         await self.rerender_players(interaction)
 
-        embed = embed_templates.success(interaction, text="Brukeren har blitt sparket fra lobbyen")
+        embed = embed_templates.success("Brukeren har blitt sparket fra lobbyen")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
 
@@ -438,7 +429,7 @@ class TempVoiceHelper:
         except discord.Forbidden:
             self.bot.logger.error(f"Failed to create temporary voice channel in {interaction.guild}")
             await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Jeg har ikke tilgang til å opprette en talekanal")
+                embed=embed_templates.error_fatal("Jeg har ikke tilgang til å opprette en talekanal")
             )
             return
 

@@ -12,10 +12,8 @@ class FunReplies(commands.Cog):
         """
         Parameters
         ----------
-        bot (commands.Bot): The bot instance
+        bot (commands.Bot): The bot instance. In this case not used
         """
-
-        self.bot = bot
 
         # Cooldowns for trigger words
         #
@@ -32,6 +30,7 @@ class FunReplies(commands.Cog):
             "borgerlønn": initial_datetime,
         }
 
+    @commands.Cog.listener("on_message")
     async def reply_to_triggers(self, message: discord.Message):
         """
         Replies to messages that trigger certain key words/phrases
@@ -44,32 +43,51 @@ class FunReplies(commands.Cog):
         if message.author.bot:
             return
 
-        message_content = message.content.lower()
+        # TODO: add ability to disable single triggers?
+        # Auto assign cooldown_key?
+        triggers = [
+            (r"(^|\W)borgerlønn(\W|$)", "@ sivert DE SNAKKER OM BORGERLØNN", "borgerlønn"),
+            (r"(^|\W)olof palme(\W|$)", "Jeg vet hvem som drepte Olof Palme 👀", "olof palme"),
+            (r"(^|\W)+ye+et($|\W)+", "<:Nei:826593267642662912>", "yeet"),
+            (r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+", ":billed_cap:", "drikke"),
+            (r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", "Nei, jeg er Sivert Arntzen", "sivert"),
+        ]
 
-        if re.search(r"(^|\W)borgerlønn(\W|$)", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["borgerlønn"]).seconds > self.cooldown_seconds:
-                await message.reply("@ sivert DE SNAKKER OM BORGERLØNN")
-                self.previous_invokations["borgerlønn"] = datetime.now()
+        for trigger in triggers:
+            regex, reply, cooldown_key = trigger
+            if await self.trigger(
+                message=message, regex_match=regex, reply=reply, cooldown_key=cooldown_key, regex_flags=re.IGNORECASE
+            ):
+                return
 
-        elif re.search(r"(^|\W)olof palme(\W|$)", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["olof palme"]).seconds > self.cooldown_seconds:
-                await message.reply("Jeg vet hvem som drepte Olof Palme 👀")
-                self.previous_invokations["olof palme"] = datetime.now()
+    async def trigger(
+        self, message: discord.Message, regex_match: str, reply: str, cooldown_key: str, regex_flags=None
+    ) -> bool:
+        """
+        Add a trigger to the bot
 
-        elif re.search(r"(^|\W)+ye+et($|\W)+", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["yeet"]).seconds > self.cooldown_seconds:
-                await message.reply("<:Nei:826593267642662912>")
-                self.previous_invokations["yeet"] = datetime.now()
+        Parameters
+        ----------
+        message (discord.Message): The message object to check for triggers
+        regex_match (str): The regex pattern to match
+        reply (str): The reply to send
+        cooldown_key (str): The key to use for cooldown tracking
+        regex_flags (int): The regex flags to use
 
-        elif re.search(r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["drikke"]).seconds > self.cooldown_seconds:
-                await message.reply(":billed_cap:")
-                self.previous_invokations["drikke"] = datetime.now()
+        Returns
+        ----------
+        bool: Whether or not the reply was triggered
+        """
 
-        elif re.search(r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", message_content, flags=re.IGNORECASE):
-            if (datetime.now() - self.previous_invokations["sivert"]).seconds > self.cooldown_seconds:
-                await message.reply("Nei, jeg er Sivert Arntzen!")
-                self.previous_invokations["sivert"] = datetime.now()
+        if (datetime.now() - self.previous_invokations[cooldown_key]).seconds < self.cooldown_seconds:
+            return False
+
+        if re.search(regex_match, message.content, flags=regex_flags):
+            await message.reply(reply)
+            self.previous_invokations[cooldown_key] = datetime.now()
+            return True
+
+        return False
 
 
 async def setup(bot: commands.Bot):
@@ -81,5 +99,4 @@ async def setup(bot: commands.Bot):
     bot (commands.Bot): Bot instance
     """
 
-    bot.add_listener(FunReplies(bot).reply_to_triggers, "on_message")
     await bot.add_cog(FunReplies(bot))

@@ -76,50 +76,50 @@ class Errors(commands.Cog):
         if hasattr(ctx.command, "on_error"):
             return
 
-        # Ignored errors
-        ignored = commands.CommandNotFound
         error = getattr(error, "original", error)
-        if isinstance(error, ignored):
+
+        # Ignored errors
+        ignored_errors = (commands.CommandNotFound, commands.DisabledCommand, commands.CheckFailure)
+        if isinstance(error, ignored_errors):
+            self.bot.logger.info("Ignored error", error)
             return
 
+        # Errors that should prompt a help message
         send_help = (commands.MissingRequiredArgument, commands.TooManyArguments, commands.BadArgument)
         if isinstance(error, send_help):
-            self.bot.get_command(f"{ctx.command}").reset_cooldown(ctx)
             return await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            text = "Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
-            return await ctx.reply(text)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Jeg")
         elif isinstance(error, commands.MissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            text = "Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
-            return await ctx.reply(text)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Du")
         elif isinstance(error, commands.NotOwner):
-            text = "Bare boteieren kan gjøre dette"
-            return await ctx.reply(text)
-
+            embed = embed_templates.error_warning("Bare boteieren kan gjøre dette")
         elif isinstance(error, commands.CommandOnCooldown):
-            text = "Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder."
-            return await ctx.reply(text)
-
+            embed = embed_templates.error_warning(
+                f"Kommandoen har nettopp blitt brukt\nPrøv igjen om `{error.retry_after:.1f}` sekunder.",
+            )
         elif isinstance(error, commands.NoPrivateMessage):
-            try:
-                text = "Denne kommandoen kan bare utføres i servere"
-                return await ctx.reply(text)
-            except discord.errors.Forbidden:  # Thrown if bot is blocked by the user or if the user has closed their DMs
-                self.bot.logger.info("DM Blocked!")
+            embed = embed_templates.error_warning("Denne kommandoen kan bare utføres it servere")
+        else:
+            embed = embed_templates.error_fatal("En ukjent feil oppstod!")
+            f = discord.File("./src/assets/edb.png")
+            embed.set_image(url="attachment://edb.png")
 
-        elif isinstance(error, commands.DisabledCommand):
-            pass
+        # Yeah, this fucking sucks but I want my beautiful edb picture :_;
+        try:
+            f
+        except NameError:
+            f = None
 
-        elif isinstance(error, commands.CheckFailure):
-            return
-
-        embed = embed_templates.error_fatal(ctx, text="En ukjent feil oppstod!")
-        await ctx.reply(embed=embed)
+        try:
+            await ctx.reply(embed=embed, file=f)
+        except discord.errors.Forbidden:
+            self.bot.logger.warning("Could not send error message to user")
+        except app_commands.BotMissingPermissions:
+            await ctx.reply(
+                "Jeg mangler `embed_links` og/eller `attach_files` tillatelsen(e). Ingenting funker uten de"
+            )
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
@@ -134,44 +134,59 @@ class Errors(commands.Cog):
         error (app_commands.AppCommandError): Eror context object
         """
 
-        # TODO: add support for defered interactions
+        await interaction.response.defer()
 
         # Log command usage, just in case
         await self.on_app_command_completion(interaction, interaction.command)
 
         if isinstance(error, app_commands.BotMissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning(
-                interaction, text="Jeg mangler følgende tillatelser:\n\n" + f"```\n{permissions}\n```"
-            )
-
+            embed = self.error_missing_perms(error.missing_permissions, "Jeg")
         elif isinstance(error, app_commands.MissingPermissions):
-            permissions = ", ".join(error.missing_permissions)
-            embed = embed_templates.error_warning(
-                interaction, text="Du mangler følgende tillatelser\n\n" + f"```\n{permissions}\n```"
-            )
-
-        # TODO: figure this shit out. app_commands does not support this check
-        # elif isinstance(error, app_commands.NotOwner):
-        #     embed = embed_templates.error_fatal(interaction, text='Bare boteieren kan gjøre dette')
-        #     return await interaction.response.send_message(embed=embed)
-
+            embed = self.error_missing_perms(error.missing_permissions, "Du")
         elif isinstance(error, app_commands.CommandOnCooldown):
             embed = embed_templates.error_warning(
-                interaction,
-                text="Kommandoen har nettopp blitt brukt\n" + f"Prøv igjen om `{error.retry_after:.1f}` sekunder.",
+                f"Kommandoen har nettopp blitt brukt\nPrøv igjen om `{error.retry_after:.1f}` sekunder."
             )
-
         else:
-            embed = embed_templates.error_fatal(interaction, text="En ukjent feil oppstod!")
+            embed = embed_templates.error_fatal("En ukjent feil oppstod!")
+            f = discord.File("./src/assets/edb.png")
+            embed.set_image(url="attachment://edb.png")
 
-        if interaction.response.is_done():
-            await interaction.followup.send(embed=embed)
-        else:
-            await interaction.response.send_message(embed=embed)
+        # Yeah, this fucking sucks but I want my beautiful edb picture :_;
+        try:
+            f
+        except NameError:
+            f = None
+
+        try:
+            await interaction.followup.send(embed=embed, file=f)
+        except discord.errors.Forbidden:
+            self.bot.logger.warning("Could not send error message to user")
+        except app_commands.BotMissingPermissions:
+            await interaction.followup.send(
+                "Jeg mangler `embed_links` og/eller `attach_files` tillatelsen(e). Ingenting funker uten de"
+            )
 
         # Log full exception to file
         self.bot.logger.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
+
+    def error_missing_perms(self, permissions: list[str], client: str) -> discord.Embed:
+        """
+        Missing permissions embed template.
+        Since it only applies to this cog it has been put here instead of the util file
+
+        Parameters
+        ----------
+        permissions (list[str]): The missing permissions
+        client (str): Who is missing the permissions? Typically "Du" (user) or "Jeg" (bot client)
+
+        Returns
+        ----------
+        (discord.Embed): The final embed
+        """
+
+        permissions = ", ".join(permissions)
+        return embed_templates.error_warning(f"{client} mangler følgende tillatelser\n\n```{permissions}\n```")
 
 
 async def setup(bot: commands.Bot):

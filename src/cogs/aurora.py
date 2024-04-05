@@ -21,7 +21,8 @@ class Aurora(commands.Cog):
         self.bot = bot
 
         self.notified = datetime(2000, 9, 11)  # Used to prevent spamming aurora alerts
-        # self.aurora_alarm.start()
+        self.aurora_alarm.start()
+        self.AURORA_CHANNEL = 747542544291987599
 
     async def get_forecast(self) -> dict | None:
         """
@@ -41,7 +42,6 @@ class Aurora(commands.Cog):
         for interval in data["shortIntervals"]:
             # Convert to datetime objects, convert timezone to utc and strip timezone info
             start = datetime.fromisoformat(interval["start"]).astimezone(pytz.utc).replace(tzinfo=None)
-            # end = datetime.fromisoformat(interval["end"]).astimezone(pytz.utc).replace(tzinfo=None)
 
             # If sighting is not in within the next 12 hours ignore
             if (start - datetime.now()) > timedelta(hours=12):
@@ -58,7 +58,7 @@ class Aurora(commands.Cog):
         most_likely_sighting = max(valid_sightings, key=lambda x: x["auroraValue"])
         return most_likely_sighting
 
-    @tasks.loop(minutes=10)
+    @tasks.loop(minutes=60)
     async def aurora_alarm(self):
         """
         Checks if the aurora forecast is above 50% and sends a message to the aurora channel if it is
@@ -76,7 +76,7 @@ class Aurora(commands.Cog):
             self.bot.logger.info("aurora_alarm: Fetch forecast")
             return
 
-        channel = self.bot.get_channel(747542544291987599)
+        channel = self.bot.get_channel(self.AURORA_CHANNEL)
         if not channel:
             self.bot.logger.warning("aurora_alarm: Failed to get aurora channel")
             return

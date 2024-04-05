@@ -71,8 +71,8 @@ class BotInfo(commands.Cog):
         embed.set_author(name=dev.name, icon_url=dev.display_avatar)
         embed.set_thumbnail(url=self.bot.user.display_avatar)
         embed.add_field(name="Dev", value=f"{dev.mention}\n{dev.display_name}")
-        embed.add_field(name="Oppetid", value=self.__get_uptime())
-        embed.add_field(name="Ping", value=f"Websocket ping: {self.__get_ping()} ms")
+        embed.add_field(name="Oppetid", value=self.get_uptime())
+        embed.add_field(name="Ping", value=f"Websocket ping: {self.get_ping()} ms")
         embed.add_field(name="Servere", value=len(self.bot.guilds))
         embed.add_field(name="Discord.py", value=discord.__version__)
         embed.add_field(name="Python", value=platform.python_version())
@@ -106,7 +106,7 @@ class BotInfo(commands.Cog):
         """
 
         embed = discord.Embed(color=interaction.client.user.color)
-        embed.add_field(name="🔌 Oppetid", value=self.__get_uptime())
+        embed.add_field(name="🔌 Oppetid", value=self.get_uptime())
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -122,10 +122,10 @@ class BotInfo(commands.Cog):
         """
 
         embed = discord.Embed(color=interaction.client.user.color)
-        embed.add_field(name="📶 Ping", value=f"* **Websocket ping:** {self.__get_ping()} ms\n* **I hodet:** ∞")
+        embed.add_field(name="📶 Ping", value=f"* **Websocket ping:** {self.get_ping()} ms\n* **I hodet:** ∞")
         await interaction.response.send_message(embed=embed, content=None)
 
-    def __get_ping(self) -> int:
+    def get_ping(self) -> int:
         """
         Get the bot's ping in milliseconds
 
@@ -136,7 +136,7 @@ class BotInfo(commands.Cog):
 
         return int(self.bot.latency * 1000)
 
-    def __get_uptime(self) -> str:
+    def get_uptime(self) -> str:
         """
         Returns the current uptime of the bot in string format
 

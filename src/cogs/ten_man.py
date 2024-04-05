@@ -14,7 +14,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from cogs.utils import discord_utils
 from cogs.utils import embed_templates
 from cogs.utils.discord_utils import Lobby
 from cogs.utils.discord_utils import LobbyView
@@ -54,8 +53,7 @@ class TenMan(commands.Cog):
             else:
                 return await interaction.response.send_message(
                     embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du hoster allerede en lobby",
+                        "Du hoster allerede en lobby",
                     )
                 )
 
@@ -63,8 +61,7 @@ class TenMan(commands.Cog):
             if interaction.user.id in lobby.players:
                 return await interaction.response.send_message(
                     embed=embed_templates.error_warning(
-                        interaction,
-                        text="Du er allerede i en lobby",
+                        "Du er allerede i en lobby",
                     )
                 )
 
@@ -80,7 +77,7 @@ class TenMan(commands.Cog):
         embed = discord.Embed(
             title="10 Man Lobby",
             description=f"Lobbyen stenger {time_left}. Bli med innen da!",
-            color=discord_utils.get_color(interaction.user),
+            color=interaction.user.color,
         )
         embed.set_author(name=interaction.user.global_name, icon_url=interaction.user.avatar)
         embed.add_field(name="Spillere", value=f"* {interaction.user.mention}", inline=False)
@@ -97,11 +94,11 @@ class TenManView(LobbyView):
     @override
     async def start_lobby(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user != self.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan starte")
+            embed = embed_templates.error_warning("Bare hosten kan starte")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if len(self.lobby.players) < 3:
-            embed = embed_templates.error_warning(interaction, text="Det må være mer enn 2 i lobbyen")
+            embed = embed_templates.error_warning("Det må være mer enn 2 i lobbyen")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         await self.end_lobby()
@@ -136,7 +133,7 @@ class TeamLeaderView(discord.ui.View):
 
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item):
         self.bot.logger.error("TeamLeaderView error", exc_info=error)
-        embed = embed_templates.error_warning(interaction, text="Oopsie woopsie, we made a fucky wucky!")
+        embed = embed_templates.error_fatal("Oopsie woopsie, we made a fucky wucky!")
         await interaction.response.send_message(embed=embed, delete_after=10)
 
 
@@ -151,7 +148,7 @@ class TeamLeaderSelectMenu(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.parent_view.lobby.host:
-            embed = embed_templates.error_warning(interaction, text="Bare hosten kan velge lagledere")
+            embed = embed_templates.error_warning("Bare hosten kan velge lagledere")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         team_leaders = []
@@ -203,7 +200,7 @@ class TeamSelectView(discord.ui.View):
 
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item):
         self.bot.logger.error("TeamSelectView error", exc_info=error)
-        embed = embed_templates.error_warning(interaction, text="Oopsie woopsie, we made a fucky wucky")
+        embed = embed_templates.error_warning("Oopsie woopsie, we made a fucky wucky")
         await interaction.response.send_message(embed=embed, delete_after=10)
 
     def teams_ready(self, interaction):
@@ -246,11 +243,11 @@ class TeamSelectMenu(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.parent_view.teams[0][0] and interaction.user != self.parent_view.teams[1][0]:
-            embed = embed_templates.error_warning(interaction, text="Bare lagledere kan velge spillere")
+            embed = embed_templates.error_warning("Bare lagledere kan velge spillere")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user != self.parent_view.teams[self.parent_view.turn][0]:
-            embed = embed_templates.error_warning(interaction, text="Det er ikke din tur enda")
+            embed = embed_templates.error_warning("Det er ikke din tur enda")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         turn_in_question = self.parent_view.turn
@@ -264,7 +261,7 @@ class TeamSelectMenu(discord.ui.Select):
 
         await self.rerender_players(interaction, turn_in_question)
 
-        embed = embed_templates.success(interaction, text="Bruker valgt!")
+        embed = embed_templates.success("Bruker valgt!")
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=5)
 
 
@@ -279,7 +276,7 @@ class MoveTeamVoiceButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user != self.parent_view.teams[0][0] and interaction.user != self.parent_view.teams[1][0]:
-            embed = embed_templates.error_warning(interaction, text="Bare lagleder kan flytte laget!")
+            embed = embed_templates.error_warning("Bare lagleder kan flytte laget!")
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if interaction.user == self.parent_view.teams[0][0]:
@@ -295,21 +292,20 @@ class MoveTeamVoiceButton(discord.ui.Button):
             failed_users = await temp_voice.move_players(interaction, self.clicked[team["number"]], team["players"])
         else:
             embed = embed_templates.error_warning(
-                interaction, text=f"Kanal for lag {team['number']} allerede opprettet og spillere flyttet!"
+                f"Kanal for lag {team['number']} allerede opprettet og spillere flyttet!"
             )
             return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=10)
 
         if failed_users:
             failed_users = "\n".join([f"* {user.mention}" for user in failed_users])
             embed = embed_templates.error_warning(
-                interaction,
-                text=f"Klarte ikke å flytte følgende brukere til kanalen:\n{failed_users}\n\n"
+                f"Klarte ikke å flytte følgende brukere til kanalen:\n{failed_users}\n\n"
                 + "Dette kan være fordi brukere(ne) ikke er koblet til en kanal fra før"
                 + "eller at jeg ikke har tillatelse til å flytte",
             )
             return await interaction.response.send_message(embed=embed, delete_after=10)
 
-        embed = embed_templates.success(interaction, text=f"Flyttet lag {team['number']} til voice!")
+        embed = embed_templates.success(f"Flyttet lag {team['number']} til voice!")
         await interaction.response.send_message(embed=embed, delete_after=10)
 
 

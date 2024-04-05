@@ -16,7 +16,6 @@ class TempVoice(commands.Cog):
         bot (commands.Bot): The bot instance
         """
 
-        self.bot = bot
         self.temp_voice_helper = TempVoiceHelper(bot)
 
     @commands.Cog.listener()
@@ -29,6 +28,7 @@ class TempVoice(commands.Cog):
 
         await self.temp_voice_helper.on_voice_state_update(member, before, after)
 
+    @app_commands.checks.bot_has_permissions(manage_channels=True, embed_links=True)
     @app_commands.checks.cooldown(1, 300)
     @app_commands.command(name="tempvoice")
     async def tempvoice(self, interaction: discord.Interaction, name: str, limit: int = 0):
@@ -46,8 +46,7 @@ class TempVoice(commands.Cog):
 
         await interaction.response.send_message(
             embed=embed_templates.success(
-                interaction,
-                text=f"{channel.mention} ble opprettet. Den vil bli slettet etter cirka 1 minutt uten aktivitet.",
+                f"{channel.mention} ble opprettet. Den vil bli slettet etter cirka 1 minutt uten aktivitet.",
             )
         )
 

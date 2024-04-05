@@ -26,14 +26,17 @@ class Streak(commands.Cog):
         self.cursor = self.bot.db_connection.cursor()
         self.init_db()
 
+        # Cache to avoid having to insert to the db for every message
         self.streak_cache = {}
         self.populate_cache()
 
         self.streak_check.start()
-        self.streak_update_loop.start()
+        self.insert_cache_loop.start()
 
     def init_db(self):
-        """Create the necessary tables for the streak cog to work."""
+        """
+        Create the necessary tables for the streak cog to work
+        """
 
         self.cursor.execute(
             """
@@ -47,11 +50,9 @@ class Streak(commands.Cog):
         )
 
     async def cog_unload(self):
-        """Stop the loops and close the database connection"""
-
-        await self.streak_update()
+        self.bot.logger.info("Unloading cog")
+        self.insert_cache_loop.cancel()
         self.streak_check.cancel()
-        self.streak_update_loop.cancel()
         self.cursor.close()
 
     def populate_cache(self):
@@ -98,17 +99,25 @@ class Streak(commands.Cog):
             }
 
     @tasks.loop(minutes=10)
-    async def streak_update_loop(self):
+    async def insert_cache_loop(self):
+        """
+        Inserts cache into the database every 10 minutes
+        """
+
+        await self.insert_cache()
+
+    @insert_cache_loop.after_loop
+    async def on_insert_cache_loop_cancel(self):
+        self.bot.logger.info("Insert cache loop cancelled")
+        if self.insert_cache_loop.is_being_cancelled() and self.streak_cache:
+            await self.insert_cache()
+
+    async def insert_cache(self):
         """
         Inserts cache into the database
         """
 
-        await self.streak_update()
-
-    async def streak_update(self):
-        """
-        Inserts cache into the database
-        """
+        self.bot.logger.info("Inserting cache into database")
 
         # Insert into database
         for user_id, user_data in self.streak_cache.items():
@@ -128,14 +137,15 @@ class Streak(commands.Cog):
                 ),
             )
 
-    @tasks.loop(hours=24)
+    @tasks.loop(time=misc_utils.MIDNIGHT)
     async def streak_check(self):
         """
         Check if anyone has lost their streak
         """
 
         # Clear cache to make sure all streaks are up to date
-        await self.streak_update()
+        if self.streak_cache:
+            await self.insert_cache()
 
         self.cursor.execute(
             """
@@ -156,15 +166,16 @@ class Streak(commands.Cog):
                     (streak[1],),
                 )
 
-    @streak_check.before_loop
-    async def before_streak_check(self):
-        """Syncs loop to the time of day"""
-
-        self.bot.logger.info("Postponing streak check until midnight")
-        await discord_utils.sleep_until_midnight(self.bot)
+    @streak_check.after_loop
+    async def on_streak_check_cancel(self):
+        self.bot.logger.info("Streak check loop cancelled")
+        if self.streak_check.is_being_cancelled():
+            await self.streak_check()
 
     streak_group = app_commands.Group(name="streak", description="Snapchat streaks, men for Discord")
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @streak_group.command(name="se", description="Se din eller en annen brukers streak")
     async def streak_user(self, interaction: discord.Interaction, bruker: discord.Member | discord.User | None = None):
         """
@@ -189,13 +200,10 @@ class Streak(commands.Cog):
             """,
             (bruker.id,),
         )
-
         streak = self.cursor.fetchone()
 
         if not streak:
-            return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, "Brukeren har ikke noen streak")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Brukeren har ikke noen streak"))
 
         streak_msg_channel, streak_msg_id = streak[0].split("-")
         streak_msg_channel, streak_msg_id = int(streak_msg_channel), int(streak_msg_id)
@@ -225,6 +233,8 @@ class Streak(commands.Cog):
         )
         await interaction.followup.send(embed=embed)
 
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
     @streak_group.command(name="topp", description="Se hvem som har høyest streak på serveren")
     async def streak_top(self, interaction: discord.Interaction):
         """
@@ -244,20 +254,14 @@ class Streak(commands.Cog):
             ORDER BY streak_start_time;
             """
         )
-
         streaks = self.cursor.fetchall()
 
         if not streaks:
-            return await interaction.followup.send(
-                embed=embed_templates.error_warning(interaction, "Ingen har noen streak enda")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen har noen streak enda"))
 
-        streaks_formatted = list(
-            map(
-                lambda s: f"**#{s[0]+1}** <@{s[1][0]}> - {(datetime.now() - s[1][1]).days} dager",
-                enumerate(streaks),
-            )
-        )
+        streaks_formatted = [
+            f"**#{s[0]+1}** <@{s[1][0]}> - {(datetime.now() - s[1][1]).days} dager" for s in enumerate(streaks)
+        ]
 
         paginator = misc_utils.Paginator(streaks_formatted)
         view = discord_utils.Scroller(paginator, interaction.user)

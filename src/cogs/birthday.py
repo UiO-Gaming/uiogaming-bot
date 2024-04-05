@@ -30,7 +30,9 @@ class Birthday(commands.Cog):
         self.birthday_check.start()
 
     def init_db(self):
-        """Create the necessary tables for the birthday cog to work"""
+        """
+        Create the necessary tables for the birthday cog to work
+        """
 
         self.cursor.execute(
             """
@@ -45,9 +47,11 @@ class Birthday(commands.Cog):
         name="bursdag", description="Se, endre eller fjern bursdager for brukere på serveren"
     )
 
-    @tasks.loop(hours=24)
+    @tasks.loop(time=misc_utils.MIDNIGHT)
     async def birthday_check(self):
-        """Check if it's someone's birthday every day at midgnight and send a greeting if it is."""
+        """
+        Check if it's someone's birthday every day at midgnight and send a greeting if it is
+        """
 
         await asyncio.sleep(1)  # Prevent sending message before date has really changed
 
@@ -64,27 +68,25 @@ class Birthday(commands.Cog):
 
         birthdays = self.cursor.fetchall()
         self.bot.logger.info(f"Found the following birthdays: {birthdays}")  # TODO: Temporary. Remove
-        if birthdays:
-            guild = self.bot.get_guild(747542543750660178)
-            channel = guild.get_channel(747542544291987597)
-            for birthday in birthdays:
-                user = await guild.fetch_member(birthday[0])
-                if user:
-                    await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
-                else:
-                    self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
 
-    @birthday_check.before_loop
-    async def before_birthday_check(self):
-        """Syncs loop with the time of day"""
+        if not birthdays:
+            return
 
-        self.bot.logger.info("Postponing birthday check until midnight")
-        await discord_utils.sleep_until_midnight(self.bot)
+        guild = self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)
+        channel = guild.get_channel(747542544291987597)
+        for birthday in birthdays:
+            user = await guild.fetch_member(birthday[0])
+            if user:
+                await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
+            else:
+                self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
 
-    def cog_unload(self):
+    async def cog_unload(self):
+        self.bot.logger.info("Unloading cog")
         self.birthday_check.cancel()
+        self.cursor.close()
 
-    def __fetch_user_birthday(self, user_id: int) -> datetime | None:
+    def fetch_user_birthday(self, user_id: int) -> datetime | None:
         """
         Fetch the birthday of a user in the database
 
@@ -103,7 +105,7 @@ class Birthday(commands.Cog):
             birthday = result[0]
             return datetime(birthday.year, birthday.month, birthday.day)
 
-    def __fetch_user_next_birthday(self, user_id: int) -> datetime:
+    def fetch_user_next_birthday(self, user_id: int) -> datetime:
         """
         Get date of next birthday for a user
 
@@ -132,7 +134,7 @@ class Birthday(commands.Cog):
             # This will never happen unless a database error occurs. Keeping the type checker happy
             return datetime.now()
 
-    def __fetch_next_birthdays(self) -> list[tuple[int, datetime, datetime]]:
+    def fetch_next_birthdays(self) -> list[tuple[int, datetime, datetime]]:
         """
         Fetch the 5 first future birthdays of all users in the database
 
@@ -160,7 +162,7 @@ class Birthday(commands.Cog):
 
         return birthdays
 
-    def __set_user_birthday(self, user_id: int, birthday: datetime):
+    def set_user_birthday(self, user_id: int, birthday: datetime):
         """
         Set the birthday of a user in the database. If it already exists, update it.
 
@@ -201,28 +203,24 @@ class Birthday(commands.Cog):
             date = datetime(år, måned, dag)
         except ValueError:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="ikke en gyldig dato, gjøk!"), ephemeral=True
+                embed=embed_templates.error_warning("ikke en gyldig dato, gjøk!"), ephemeral=True
             )
 
         if date.year < 1970:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(
-                    interaction, text="Ok boomer, men nei. Hvorfor? Unix timestamps. Google it"
-                ),
+                embed=embed_templates.error_warning("Ok boomer, men nei. Hvorfor? Unix timestamps. Google it"),
                 ephemeral=True,
             )
 
         if date > datetime.now():
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Du kan ikke sette en fremtidig dato!"),
+                embed=embed_templates.error_warning("Du kan ikke sette en fremtidig dato!"),
                 ephemeral=True,
             )
 
-        self.__set_user_birthday(interaction.user.id, date)
+        self.set_user_birthday(interaction.user.id, date)
 
-        embed = embed_templates.success(
-            interaction, text=f'Bursdag satt til {discord.utils.format_dt(date, style="D")}'
-        )
+        embed = embed_templates.success(f"Bursdag satt til {discord.utils.format_dt(date, style='D')}")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -239,7 +237,7 @@ class Birthday(commands.Cog):
 
         self.cursor.execute("DELETE FROM birthdays WHERE discord_id = (%s)", (interaction.user.id,))
 
-        embed = embed_templates.success(interaction, text="Bursdag fjernet")
+        embed = embed_templates.success("Bursdag fjernet")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.checks.bot_has_permissions(embed_links=True)
@@ -260,11 +258,11 @@ class Birthday(commands.Cog):
         if not bruker:
             bruker = interaction.user
 
-        user = self.__fetch_user_birthday(bruker.id)
+        user = self.fetch_user_birthday(bruker.id)
 
         if not user:
             return await interaction.response.send_message(
-                embed=embed_templates.error_fatal(interaction, text="Brukeren har ikke registrert bursdagen sin")
+                embed=embed_templates.error_warning("Brukeren har ikke registrert bursdagen sin")
             )
 
         # Current age information
@@ -273,10 +271,10 @@ class Birthday(commands.Cog):
         years_old = relativedelta(datetime.now(), birthday).years
 
         #  Next birthday information
-        next_birthday = self.__fetch_user_next_birthday(bruker.id)
+        next_birthday = self.fetch_user_next_birthday(bruker.id)
         next_birthday_days = (next_birthday - datetime.now()).days
 
-        embed = discord.Embed(description=bruker.mention, color=discord_utils.get_color(bruker))
+        embed = discord.Embed(description=bruker.mention, color=bruker.color)
         embed.set_thumbnail(url=bruker.display_avatar)
         embed.set_author(name=bruker.name, icon_url=bruker.display_avatar)
         embed.add_field(name="Bursdag", value=discord.utils.format_dt(birthday, style="D"))
@@ -303,12 +301,10 @@ class Birthday(commands.Cog):
 
         await interaction.response.defer()
 
-        next_birthdays = self.__fetch_next_birthdays()
+        next_birthdays = self.fetch_next_birthdays()
 
         if not next_birthdays:
-            return await interaction.followup.send(
-                embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen bursdager"))
 
         birthday_strings = []
         for user in next_birthdays:
@@ -325,9 +321,7 @@ class Birthday(commands.Cog):
             birthday_strings.append(f"* {discord_user.name} - {timestamp} ({relative_timestamp})")
 
         if not birthday_strings:
-            return await interaction.followup.send(
-                embed=embed_templates.error_fatal(interaction, text="Ingen bursdager")
-            )
+            return await interaction.followup.send(embed=embed_templates.error_warning("Ingen bursdager"))
 
         paginator = misc_utils.Paginator(birthday_strings)
         view = discord_utils.Scroller(paginator, interaction.user)

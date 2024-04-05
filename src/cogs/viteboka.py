@@ -53,9 +53,8 @@ async def fetch_article(title: str):
     # This is wildly inefficent but I don't. fucking. care. Just make it work
     text = regex.sub(
         r"(?=\{)(\{([^{}]|(?1))*\})|\[\[(Kategori|Fil):.+?\]\]|\{.+?\}", "", text, flags=regex.MULTILINE | regex.DOTALL
-    )  # Remove templates and categories
+    )  # Remove templates, categories and images
     text = pypandoc.convert_text(text, "markdown", format="mediawiki")
-    print(text)
     text = regex.sub(
         r"\[(.+?)\]\(.+? \"wikilink\"\)", r"\1", text, flags=regex.MULTILINE | regex.DOTALL
     )  # Pandoc adds alt text to links. discord doesn't support that
@@ -107,7 +106,7 @@ class Viteboka(commands.Cog):
 
     viteboka_group = app_commands.Group(name="viteboka", description="Søk i Viteboka etter informasjon")
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 10)
     @viteboka_group.command(name="søk", description="Søk etter en artikkel i Viteboka")
     async def search(self, interaction: discord.Interaction, søkestreng: str):
@@ -131,7 +130,7 @@ class Viteboka(commands.Cog):
         response = requests.get(url=API_URL, params=params)
         if response.status_code != 200:
             self.bot.logger.error(f"Failed to search for articles with query {søkestreng}: {response.status_code}")
-            embed = embed_templates.error_fatal(interaction, text="Klarte ikke å søke etter artikler")
+            embed = embed_templates.error_fatal("Klarte ikke å søke etter artikler")
             return await interaction.followup.send(embed=embed)
 
         data = response.json()
@@ -139,7 +138,7 @@ class Viteboka(commands.Cog):
 
         if not search_results:
             self.bot.logger.info(f"No articles found with query {søkestreng}")
-            embed = embed_templates.error_fatal(interaction, text="Fant ingen artikler som matcher søket")
+            embed = embed_templates.error_warning("Fant ingen artikler som matcher søket")
             return await interaction.followup.send(embed=embed)
 
         if len(search_results) == 1:
@@ -160,16 +159,13 @@ class Viteboka(commands.Cog):
             title, url, text, image = await fetch_article(søkestreng)
         except VitebokaException as e:
             self.bot.logger.error(f"Failed to fetch article {søkestreng}: {e}")
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
 
         embed = viteboka_embed(title, url, text, image)
         await interaction.followup.send(embed=embed)
 
-    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
     @app_commands.checks.cooldown(1, 5)
     @viteboka_group.command(name="tilfeldig", description="Få en tilfeldig artikkel fra Viteboka")
     async def random(self, interaction: discord.Interaction):
@@ -194,7 +190,7 @@ class Viteboka(commands.Cog):
         response = requests.get(url=API_URL, params=params)
         if response.status_code != 200:
             self.bot.logger.error(f"Failed to fetch random article: {response.status_code}")
-            embed = embed_templates.error_fatal(interaction, text="Klarte ikke å søke etter en tilfeldig artikkel")
+            embed = embed_templates.error_fatal("Klarte ikke å søke etter en tilfeldig artikkel")
             return await interaction.followup.send(embed=embed)
 
         data = response.json()
@@ -204,10 +200,7 @@ class Viteboka(commands.Cog):
             title, url, text, image = await fetch_article(random_article_title)
         except VitebokaException as e:
             self.bot.logger.error(f"Failed to fetch article {random_article_title}: {e}")
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
 
         embed = viteboka_embed(title, url, text, image)
@@ -254,10 +247,7 @@ class ArticleButton(discord.ui.Button):
         try:
             title, url, text, image = await fetch_article(self.article_title)
         except VitebokaException as e:
-            embed = embed_templates.error_fatal(
-                interaction,
-                text=str(e),
-            )
+            embed = embed_templates.error_fatal(str(e))
             return await interaction.followup.send(embed=embed)
         else:
             embed = viteboka_embed(title, url, text, image)

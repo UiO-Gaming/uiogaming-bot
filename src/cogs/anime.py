@@ -12,12 +12,21 @@ from cogs.utils import embed_templates
 class Anime(commands.Cog):
     """View information about different media on Anilist"""
 
+    def __init__(self, bot: commands.Bot):
+        """
+        Parameters
+        ----------
+        bot (commands.Bot): The bot instance
+        """
+
+        self.anilist_logo = "https://anilist.co/img/logo_al.png"
+
     anilist = app_commands.Group(name="anilist", description="Hent informasjon fra Anilist")
     anilist_profile = app_commands.Group(
         parent=anilist, name="profil", description="Hent informasjon om en bruker på Anilist"
     )
 
-    def __convert_color(self, color: str) -> int:
+    def convert_color(self, color: str) -> int:
         """
         Converts anilist colors to hext
 
@@ -39,10 +48,9 @@ class Anime(commands.Cog):
             "green": 0x4CCA51,
             "gray": 0x677B94,
         }
-
         return colors.get(color, 0x677B94)
 
-    def __convert_media_format(self, media_format: str) -> str:
+    def convert_media_format(self, media_format: str) -> str:
         """
         Translates media format names into norwegian
 
@@ -67,7 +75,7 @@ class Anime(commands.Cog):
         }
         return media_formats.get(media_format, media_format)
 
-    def __convert_language_names(self, language_name: str) -> str:
+    def convert_language_names(self, language_name: str) -> str:
         """
         Translates language names into norwegian
 
@@ -92,10 +100,9 @@ class Anime(commands.Cog):
             "HEBREW": "Hebraisk",
             "HUNGARIAN": "Ungarsk",
         }
-
         return languages.get(language_name, language_name)
 
-    def __convert_role_names(self, role_name: str) -> str:
+    def onvert_role_names(self, role_name: str) -> str:
         """
         Translates role names into norwegian
 
@@ -114,7 +121,7 @@ class Anime(commands.Cog):
         except KeyError:
             return role_name
 
-    def __convert_status(self, status: str) -> str:
+    def convert_status(self, status: str) -> str:
         """
         Translates role names into norwegian
 
@@ -133,10 +140,9 @@ class Anime(commands.Cog):
             "NOT_YET_RELEASED": "Ikke utgitt enda",
             "CANCELLED": "Kansellert",
         }
-
         return statuses.get(status, status)
 
-    def __remove_html(self, text: str) -> str:
+    def remove_html(self, text: str) -> str:
         """
         Removes HTML tag elements
 
@@ -154,7 +160,7 @@ class Anime(commands.Cog):
 
         return clean_text
 
-    async def __request_anilist(
+    async def request_anilist(
         self, interaction: discord.Interaction, query: str, variables: dict, key: str
     ) -> tuple[dict, str] | tuple[None, None]:
         """
@@ -179,13 +185,13 @@ class Anime(commands.Cog):
             data = response["data"][key]
             url = data["siteUrl"]
         except TypeError:
-            embed = embed_templates.error_fatal(interaction, text="Kunne ikke finne det du søkte etter!")
+            embed = embed_templates.error_fatal("Kunne ikke finne det du søkte etter!")
             await interaction.response.send_message(embed=embed)
             return None, None
 
         return data, url
 
-    def __construct_favorite_media_string(self, media: list) -> str:
+    def construct_favorite_media_string(self, media: list) -> str:
         """
         Constructs a string with the user's favorite media
 
@@ -210,7 +216,7 @@ class Anime(commands.Cog):
 
         return "\n".join(favorite_media)
 
-    def __construct_favorite_entity_string(self, entities: list, studio: bool = False) -> str:
+    def construct_favorite_entity_string(self, entities: list, studio: bool = False) -> str:
         """
         Constructs a string with the user's favorite entities
 
@@ -238,7 +244,7 @@ class Anime(commands.Cog):
 
         return "\n".join(favortie_entities)
 
-    def __construct_release_schedule_string(self, numbers: dict) -> str:
+    def construct_release_schedule_string(self, numbers: dict) -> str:
         """
         Constructs a string with the media's release schedule
 
@@ -358,7 +364,7 @@ class Anime(commands.Cog):
         }
         """
         variables = {"name": bruker}
-        data, url = await self.__request_anilist(interaction, query, variables, "User")
+        data, url = await self.request_anilist(interaction, query, variables, "User")
 
         if not data:
             return
@@ -367,7 +373,7 @@ class Anime(commands.Cog):
         profile_pic = data["avatar"]["large"]
         days_watched = round(data["statistics"]["anime"]["minutesWatched"] / 1440, 1)
         chapters_read = data["statistics"]["manga"]["chaptersRead"]
-        color = self.__convert_color(data["options"]["profileColor"])
+        color = self.convert_color(data["options"]["profileColor"])
 
         anime_statuses = {
             status["status"]: {"count": status["count"]} for status in data["statistics"]["anime"]["statuses"]
@@ -385,14 +391,14 @@ class Anime(commands.Cog):
         except KeyError:
             manga_completed = 0
 
-        favourite_anime = self.__construct_favorite_media_string(data["favourites"]["anime"]["nodes"])
-        favourite_manga = self.__construct_favorite_media_string(data["favourites"]["manga"]["nodes"])
-        favourite_character = self.__construct_favorite_entity_string(data["favourites"]["characters"]["nodes"])
-        favourite_staff = self.__construct_favorite_entity_string(data["favourites"]["staff"]["nodes"])
-        favourite_studio = self.__construct_favorite_entity_string(data["favourites"]["studios"]["nodes"], studio=True)
+        favourite_anime = self.construct_favorite_media_string(data["favourites"]["anime"]["nodes"])
+        favourite_manga = self.construct_favorite_media_string(data["favourites"]["manga"]["nodes"])
+        favourite_character = self.construct_favorite_entity_string(data["favourites"]["characters"]["nodes"])
+        favourite_staff = self.construct_favorite_entity_string(data["favourites"]["staff"]["nodes"])
+        favourite_studio = self.construct_favorite_entity_string(data["favourites"]["studios"]["nodes"], studio=True)
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Antall dager sett", value=days_watched)
         embed.add_field(name="Antall anime sett", value=anime_completed)
@@ -460,7 +466,7 @@ class Anime(commands.Cog):
         }
         """
         variables = {"name": bruker}
-        data, url = await self.__request_anilist(interaction, query, variables, "User")
+        data, url = await self.request_anilist(interaction, query, variables, "User")
 
         if not data:
             return
@@ -469,7 +475,7 @@ class Anime(commands.Cog):
         profile_pic = data["avatar"]["large"]
         days_watched = round(data["statistics"]["anime"]["minutesWatched"] / 1440, 1)
         episodes_watched = data["statistics"]["anime"]["episodesWatched"]
-        color = self.__convert_color(data["options"]["profileColor"])
+        color = self.convert_color(data["options"]["profileColor"])
 
         statuses = {
             status["status"]: {"count": status["count"], "minutes": status["minutesWatched"]}
@@ -500,10 +506,10 @@ class Anime(commands.Cog):
             anime_mean_score = "**Ingen**"
 
         most_watched_genres = ", ".join([genre["genre"] for genre in data["statistics"]["anime"]["genres"]])
-        most_watched_studios = self.__construct_favorite_entity_string(data["statistics"]["anime"]["studios"])
+        most_watched_studios = self.construct_favorite_entity_string(data["statistics"]["anime"]["studios"])
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Gj.snittsvurdering gitt", value=anime_mean_score)
         embed.add_field(name="Antall dager sett", value=days_watched)
@@ -570,7 +576,7 @@ class Anime(commands.Cog):
         }
         """
         variables = {"name": bruker}
-        data, url = await self.__request_anilist(interaction, query, variables, "User")
+        data, url = await self.request_anilist(interaction, query, variables, "User")
 
         if not data:
             return
@@ -579,7 +585,7 @@ class Anime(commands.Cog):
         profile_pic = data["avatar"]["large"]
         chapters_read = round(data["statistics"]["manga"]["chaptersRead"] / 1440, 1)
         volumes_read = data["statistics"]["manga"]["volumesRead"]
-        color = self.__convert_color(data["options"]["profileColor"])
+        color = self.convert_color(data["options"]["profileColor"])
 
         statuses = {
             status["status"]: {"count": status["count"], "minutes": status["chaptersRead"]}
@@ -610,10 +616,10 @@ class Anime(commands.Cog):
             manga_mean_score = "**Ingen**"
 
         most_read_genres = ", ".join([genre["genre"] for genre in data["statistics"]["manga"]["genres"]])
-        most_read_staff = self.__construct_favorite_entity_string(data["statistics"]["manga"]["staff"])
+        most_read_staff = self.construct_favorite_entity_string(data["statistics"]["manga"]["staff"])
 
         embed = discord.Embed(title=user_name, color=color, url=url)
-        embed.set_author(name="Anilist", icon_url="https://anilist.co/img/logo_al.png")
+        embed.set_author(name="Anilist", icon_url=self.anilist_logo)
         embed.set_thumbnail(url=profile_pic)
         embed.add_field(name="Gj.snittsvurdering gitt", value=manga_mean_score)
         embed.add_field(name="Antall kapitler lest", value=chapters_read)
@@ -697,15 +703,15 @@ class Anime(commands.Cog):
         }
         """
         variables = {"search": navn, "isMain": True}
-        data, url = await self.__request_anilist(interaction, query, variables, "Media")
+        data, url = await self.request_anilist(interaction, query, variables, "Media")
 
         if not data:
             return
 
         nsfw = data["isAdult"]
         if nsfw:
-            embed = embed_templates.error_fatal(
-                interaction, text="Animen du søkte på er NSFW. " + "Gjør kommandoen i en NSFW-kanal i stedet"
+            embed = embed_templates.error_warning(
+                "Animen du søkte på er NSFW. Gjør kommandoen i en NSFW-kanal i stedet"
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -713,7 +719,7 @@ class Anime(commands.Cog):
         banner_image = data["bannerImage"]
         mean_score = data["meanScore"]
 
-        color = self.__convert_color(data["coverImage"]["color"])
+        color = self.convert_color(data["coverImage"]["color"])
 
         title_romaji = data["title"]["romaji"]
         title_native = data["title"]["native"]
@@ -721,9 +727,9 @@ class Anime(commands.Cog):
         titles = [title_romaji, title_native, title_english]
         title_romaji, title_native, title_english = [title if title else "" for title in titles]
 
-        description = self.__remove_html(data["description"]) if data["description"] else ""
+        description = self.remove_html(data["description"]) if data["description"] else ""
         genres = ", ".join(data["genres"])
-        studios_string = self.__construct_favorite_entity_string(data["studios"]["nodes"], studio=True)
+        studios_string = self.construct_favorite_entity_string(data["studios"]["nodes"], studio=True)
 
         staff = data["staff"]["edges"]
         director_string = ""
@@ -751,7 +757,7 @@ class Anime(commands.Cog):
             "end_year": data["endDate"].get("year") if data["endDate"].get("year") else "?",
         }
 
-        date = self.__construct_release_schedule_string(numbers)
+        date = self.construct_release_schedule_string(numbers)
 
         length_string = ""
         if numbers["duration"] == 1:
@@ -765,11 +771,11 @@ class Anime(commands.Cog):
 
         # Status
         status = data["status"]
-        status = self.__convert_status(status)
+        status = self.convert_status(status)
 
         # Format
         media_format = data["format"]
-        media_format = self.__convert_media_format(media_format)
+        media_format = self.convert_media_format(media_format)
 
         embed = discord.Embed(color=color, title=title_romaji, url=url, description=f"{title_native}\n{title_english}")
         embed.set_thumbnail(url=cover_image)
@@ -855,15 +861,15 @@ class Anime(commands.Cog):
             }
             """
         variables = {"search": navn}
-        data, url = await self.__request_anilist(interaction, query, variables, "Media")
+        data, url = await self.request_anilist(interaction, query, variables, "Media")
 
         if not data:
             return
 
         nsfw = data["isAdult"]
         if nsfw:
-            embed = embed_templates.error_fatal(
-                interaction, text="Mangaen du søkte på er NSFW. " + "Gjør kommandoen i en NSFW-kanal i stedet"
+            embed = embed_templates.error_warning(
+                "Mangaen du søkte på er NSFW. Gjør kommandoen i en NSFW-kanal i stedet"
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -871,7 +877,7 @@ class Anime(commands.Cog):
         banner_image = data["bannerImage"]
         mean_score = data["meanScore"]
 
-        color = self.__convert_color(data["coverImage"]["color"])
+        color = self.convert_color(data["coverImage"]["color"])
 
         title_romaji = data["title"]["romaji"]
         title_native = data["title"]["native"]
@@ -879,7 +885,7 @@ class Anime(commands.Cog):
         titles = [title_romaji, title_native, title_english]
         title_romaji, title_native, title_english = [title if title else "" for title in titles]
 
-        description = self.__remove_html(data["description"]) if data.get("description") else ""
+        description = self.remove_html(data["description"]) if data.get("description") else ""
         genres = ", ".join(data["genres"])
 
         staff = data["staff"]["edges"]
@@ -901,7 +907,7 @@ class Anime(commands.Cog):
             "end_month": data["endDate"].get("month") if data["endDate"].get("month") else "?",
             "end_year": data["endDate"].get("year") if data["endDate"].get("year") else "?",
         }
-        date = self.__construct_release_schedule_string(numbers)
+        date = self.construct_release_schedule_string(numbers)
 
         chapters_string = ""
         if numbers["chapters"] == 1:
@@ -910,10 +916,10 @@ class Anime(commands.Cog):
             chapters_string += "kapitler"
 
         status = data["status"]
-        status = self.__convert_status(status)
+        status = self.convert_status(status)
 
         media_format = data["format"]
-        media_format = self.__convert_media_format(media_format)
+        media_format = self.convert_media_format(media_format)
 
         embed = discord.Embed(color=color, title=title_romaji, url=url, description=f"{title_native}\n{title_english}")
         embed.set_thumbnail(url=cover_image)
@@ -982,7 +988,7 @@ class Anime(commands.Cog):
             }
             """
         variables = {"search": navn}
-        data, url = await self.__request_anilist(interaction, query, variables, "Character")
+        data, url = await self.request_anilist(interaction, query, variables, "Character")
 
         if not data:
             return
@@ -993,7 +999,7 @@ class Anime(commands.Cog):
         favourites = data["favourites"]
 
         if data["description"]:
-            description = self.__remove_html(data["description"])
+            description = self.remove_html(data["description"])
             if len(description) > 1024:
                 description = description[0:1020] + "..."
         else:
@@ -1005,10 +1011,10 @@ class Anime(commands.Cog):
             nsfwtag = "🔞" if media["node"]["isAdult"] else ""
             media_name = media["node"]["title"]["romaji"]
             media_url = media["node"]["siteUrl"]
-            media_role = self.__convert_role_names(media["characterRole"])
+            media_role = self.onvert_role_names(media["characterRole"])
             for voice_actor in media["voiceActors"]:
                 voice_actor_url = voice_actor["siteUrl"]
-                voice_actor_language = self.__convert_language_names(voice_actor["language"])
+                voice_actor_language = self.convert_language_names(voice_actor["language"])
                 voice_actor_name = voice_actor["name"]["full"]
                 if voice_actor["name"]["native"] != " " and voice_actor["name"]["native"] is not None:
                     voice_actor_name += f' ({voice_actor["name"]["native"]}'
@@ -1080,7 +1086,7 @@ class Anime(commands.Cog):
             }
             """
         variables = {"search": navn}
-        data, url = await self.__request_anilist(interaction, query, variables, "Staff")
+        data, url = await self.request_anilist(interaction, query, variables, "Staff")
 
         if not data:
             return
@@ -1091,7 +1097,7 @@ class Anime(commands.Cog):
         favourites = data["favourites"]
 
         if data["description"]:
-            description = self.__remove_html(data["description"])
+            description = self.remove_html(data["description"])
             if len(description) > 1024:
                 description = description[0:1020] + "..."
         else:
@@ -1160,7 +1166,7 @@ class Anime(commands.Cog):
                 }
             """
         variables = {"search": navn}
-        data, url = await self.__request_anilist(interaction, query, variables, "Studio")
+        data, url = await self.request_anilist(interaction, query, variables, "Studio")
 
         if not data:
             return
