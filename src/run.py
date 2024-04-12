@@ -66,6 +66,7 @@ class Bot(commands.Bot):
         self.presence = config["bot"].get("presence", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
+        self.cs2_settings = config.get("cs2", {})
 
     async def setup_hook(self):
         # Load cogs
