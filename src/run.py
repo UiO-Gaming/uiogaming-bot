@@ -11,6 +11,7 @@ from logger import BotLogger
 
 UIO_GAMING_GUILD_ID = 747542543750660178
 DATABASE_RELIANT_COGS = {
+    "autobalance.py",
     "birthday.py",
     "gullkorn.py",
     "mc_whitelist.py",
