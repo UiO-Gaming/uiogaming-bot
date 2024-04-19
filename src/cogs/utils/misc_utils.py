@@ -9,7 +9,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-MIDNIGHT = datetime.time(hour=19, minute=48, tzinfo=ZoneInfo("Europe/Oslo"))
+MIDNIGHT = datetime.time(hour=0, minute=0, tzinfo=ZoneInfo("Europe/Oslo"))
 
 
 class Paginator:
