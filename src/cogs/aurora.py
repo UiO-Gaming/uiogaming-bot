@@ -1,8 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
+from zoneinfo import ZoneInfo
 
 import discord
-import pytz
 import requests
 from discord.ext import commands
 from discord.ext import tasks
@@ -41,7 +41,7 @@ class Aurora(commands.Cog):
         valid_sightings = []
         for interval in data["shortIntervals"]:
             # Convert to datetime objects, convert timezone to utc and strip timezone info
-            start = datetime.fromisoformat(interval["start"]).astimezone(pytz.utc).replace(tzinfo=None)
+            start = datetime.fromisoformat(interval["start"]).astimezone(ZoneInfo("UTC")).replace(tzinfo=None)
 
             # If sighting is not in within the next 12 hours ignore
             if (start - datetime.now()) > timedelta(hours=12):

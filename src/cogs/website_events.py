@@ -1,8 +1,8 @@
 import asyncio
 import json
+from zoneinfo import ZoneInfo
 
 import discord
-import pytz
 import requests
 from discord.ext import commands
 
@@ -70,7 +70,7 @@ class WebsiteEvents(commands.Cog):
         # Convert timezone to Europe/Oslo
         # We need to set a timezone unit before being able to convert it to another timezone
         # That's why this line is so fucking weird
-        time = event.start_time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone("Europe/Oslo"))
+        time = event.start_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(ZoneInfo("Europe/Oslo"))
 
         document = {
             "_type": "event",
