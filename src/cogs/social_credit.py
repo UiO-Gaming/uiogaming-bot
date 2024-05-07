@@ -207,7 +207,7 @@ class SocialCredit(commands.Cog):
         self.cursor.execute(
             """
             SELECT * FROM social_credit
-            WHERE user_id = %s"
+            WHERE user_id = %s
             """,
             (bruker.id,),
         )
