@@ -149,6 +149,21 @@ class Fun(commands.Cog):
             "https://media.discordapp.net/attachments/811606213665357824/1188473225030680586/Screenshot_2023-12-24-14-28-01-33_a23b203fd3aafc6dcb84e438dda678b6.jpg"
         )
 
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def infosec(self, ctx: commands.Context):
+        """
+        infosec er gøy
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply(
+            "https://cdn.discordapp.com/attachments/816357444724457502/890547766181371954/Snapchat-1979489663.mp4"
+        )
+
 
 async def setup(bot: commands.Bot):
     """
