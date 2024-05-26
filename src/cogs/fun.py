@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -163,6 +164,20 @@ class Fun(commands.Cog):
         await ctx.reply(
             "https://cdn.discordapp.com/attachments/816357444724457502/890547766181371954/Snapchat-1979489663.mp4"
         )
+
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
+    async def edb(self, ctx: commands.Context):
+        """
+        edb er vanskelig
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        f = discord.File("./src/assets/edb.png")
+        await ctx.reply(file=f)
 
 
 async def setup(bot: commands.Bot):
