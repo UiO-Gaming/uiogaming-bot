@@ -18,6 +18,10 @@ database:
   username:
   password:
 
+# CS2 settings
+cs2:
+  faceit_api_key:
+
 # Minecraft server
 minecraft:
   rcon_password:

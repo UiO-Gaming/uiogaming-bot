@@ -11,6 +11,7 @@ from logger import BotLogger
 
 UIO_GAMING_GUILD_ID = 747542543750660178
 DATABASE_RELIANT_COGS = {
+    "autobalance.py",
     "birthday.py",
     "gullkorn.py",
     "mc_whitelist.py",
@@ -66,6 +67,7 @@ class Bot(commands.Bot):
         self.presence = config["bot"].get("presence", {})
         self.emoji = config.get("emoji", {})
         self.misc = config.get("misc", {})
+        self.cs2_settings = config.get("cs2", {})
 
     async def setup_hook(self):
         # Load cogs
