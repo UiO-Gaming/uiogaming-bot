@@ -52,22 +52,22 @@ class RepeatedMessages(commands.Cog):
 
         await channel.send("NU ÄR DET FREDAG!\n" + video)
 
-    @tasks.loop(time=misc_utils.MIDNIGHT)
-    async def mandag(self):
-        """
-        Sends a message on Monday at 00:00
-        """
+    # @tasks.loop(time=misc_utils.MIDNIGHT)
+    # async def mandag(self):
+    #     """
+    #     Sends a message on Monday at 00:00
+    #     """
 
-        if datetime.now().weekday() != 0:
-            return
+    #     if datetime.now().weekday() != 0:
+    #         return
 
-        guild = self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)
-        channel = guild.get_channel(self.general_channel)
-        await channel.send(
-            "ENDELIG MANDAG! Men det er også ferie, så kanskje ikke vits å si det?\n\n"
-            # + "https://cdn.discordapp.com/attachments/678396498089738250/862853827278929940/hvorfor_de_rike_br_spises.mp4"  # noqa: E501
-            # + "https://cdn.discordapp.com/attachments/678396498089738250/1168644637687283762/Snapchat-1787493720.mp4"  # noqa: E501
-        )
+    #     guild = self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)
+    #     channel = guild.get_channel(self.general_channel)
+    #     await channel.send(
+    #         "ENDELIG MANDAG! Men det er også ferie, så kanskje ikke vits å si det?\n\n"
+    #         # + "https://cdn.discordapp.com/attachments/678396498089738250/862853827278929940/hvorfor_de_rike_br_spises.mp4"  # noqa: E501
+    #         # + "https://cdn.discordapp.com/attachments/678396498089738250/1168644637687283762/Snapchat-1787493720.mp4"  # noqa: E501
+    #     )
 
     @tasks.loop(time=misc_utils.MIDNIGHT)
     async def new_year(self):
