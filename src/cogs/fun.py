@@ -111,6 +111,19 @@ class Fun(commands.Cog):
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
+    async def dustore(self, ctx: commands.Cotext):
+        """
+        dæven døtte sykkelstøtte
+
+        Parameters
+        ----------
+        ctx (commands.Context): Context object
+        """
+
+        await ctx.reply("https://x.com/vikingfotball/status/919622148599230465?mx=2")
+    
+    @commands.cooldown(1, 2, commands.BucketType.guild)
+    @commands.command()
     async def snake(self, ctx: commands.Context):
         """
         snake
