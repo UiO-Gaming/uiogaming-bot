@@ -111,7 +111,7 @@ class Fun(commands.Cog):
 
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
-    async def dustore(self, ctx: commands.Cotext):
+    async def dustore(self, ctx: commands.Context):
         """
         dæven døtte sykkelstøtte
 
@@ -120,7 +120,7 @@ class Fun(commands.Cog):
         ctx (commands.Context): Context object
         """
 
-        await ctx.reply("https://x.com/vikingfotball/status/919622148599230465?mx=2")
+        await ctx.reply("https://twitter.com/vikingfotball/status/919622148599230465")
     
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
