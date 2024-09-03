@@ -76,10 +76,14 @@ class Birthday(commands.Cog):
         channel = guild.get_channel(747542544291987597)
         for birthday in birthdays:
             user = await guild.fetch_member(birthday[0])
-            if user:
-                await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
-            else:
+            if not user:
                 self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
+                return
+
+            if user.id == 897206214205788162:
+                await channel.send(f"Gratulerer til med dagen {user.mention} 😎\nhttps://i.imgur.com/LRXcHhG.jpeg")
+            else:
+                await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
 
     async def cog_unload(self):
         self.bot.logger.info("Unloading cog")
