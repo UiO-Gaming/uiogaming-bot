@@ -121,7 +121,7 @@ class Fun(commands.Cog):
         """
 
         await ctx.reply("https://twitter.com/vikingfotball/status/919622148599230465")
-    
+
     @commands.cooldown(1, 2, commands.BucketType.guild)
     @commands.command()
     async def snake(self, ctx: commands.Context):
