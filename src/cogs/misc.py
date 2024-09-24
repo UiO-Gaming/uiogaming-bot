@@ -324,9 +324,9 @@ class Misc(commands.Cog):
         """
 
         random_result = random.randint(1, 100)  # We use 1 and not 0 to avoid a tie
-        if random_result >= 50:  # And by including 50 we avoid that tie
+        if random_result > 50:  # And by including 50 we avoid that tie
             outcome = "Kron"
-        elif random_result < 50:
+        elif random_result <= 50:
             outcome = "Mynt"
 
         await interaction.response.send_message(outcome)
