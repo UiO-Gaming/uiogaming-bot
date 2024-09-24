@@ -312,6 +312,25 @@ class Misc(commands.Cog):
 
         await interaction.response.send_message(random_link)
 
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="coinflip", description="Kron eller mynt?")
+    async def coinflip(self, interaction: discord.Interaction):
+        """
+        Flip a coin
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
+        random_result = random.randint(1, 100)  # We use 1 and not 0 to avoid a tie
+        if random_result >= 50:  # And by including 50 we avoid that tie
+            outcome = "Kron"
+        elif random_result < 50:
+            outcome = "Mynt"
+
+        await interaction.response.send_message(outcome)
+
 
 async def setup(bot: commands.Bot):
     """
