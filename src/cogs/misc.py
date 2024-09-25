@@ -306,6 +306,7 @@ class Misc(commands.Cog):
             "https://cdn.discordapp.com/attachments/747542544291987597/973603305467043850/unknown.png",
             "https://cdn.discordapp.com/attachments/811606213665357824/955206225681875015/73D1B4ED-BD2E-4BCB-9032-67BF9AEAF4B2.jpg",
             "https://cdn.discordapp.com/attachments/811606213665357824/987321261690605618/Snapchat-1438586183.jpg",
+            "https://cdn.discordapp.com/attachments/747542544291987599/1288403959299706901/unknown-171.png",
         ]
 
         random_link = random.choice(links)
