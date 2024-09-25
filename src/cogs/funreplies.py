@@ -28,6 +28,7 @@ class FunReplies(commands.Cog):
             "drikke": initial_datetime,
             "sivert": initial_datetime,
             "borgerlønn": initial_datetime,
+            "bærum": initial_datetime,
         }
 
     @commands.Cog.listener("on_message")
@@ -50,7 +51,8 @@ class FunReplies(commands.Cog):
             (r"(^|\W)olof palme(\W|$)", "Jeg vet hvem som drepte Olof Palme 👀", "olof palme"),
             (r"(^|\W)+ye+et($|\W)+", "<:Nei:826593267642662912>", "yeet"),
             (r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+", ":billed_cap:", "drikke"),
-            (r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", "Nei, jeg er Sivert Arntzen", "sivert"),
+            (r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", "Nei, jeg er Sivert Arntzen!", "sivert"),
+            (r"(^|\W)bærum(\W|$)", "Sa noen Bærum? 👀🍾 <@205741213050077185>", "bærum"),
         ]
 
         for trigger in triggers:
