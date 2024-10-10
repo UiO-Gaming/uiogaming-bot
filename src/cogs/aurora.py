@@ -24,6 +24,10 @@ class Aurora(commands.Cog):
         self.aurora_alarm.start()
         self.AURORA_CHANNEL = 747542544291987599
 
+    def cog_unload(self):
+        self.bot.logger.info("Unloading cog")
+        self.aurora_alarm.cancel()
+
     async def get_forecast(self) -> dict | None:
         """
         Get the current aurora and cloud cover forecast for Chateau Neuf
