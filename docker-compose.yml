@@ -7,3 +7,4 @@ services:
       - TZ=Europe/Oslo
     volumes:
       - ./logs:/app/logs
+    restart: unless-stopped
