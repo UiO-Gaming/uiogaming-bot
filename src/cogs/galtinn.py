@@ -96,6 +96,7 @@ class Galtinn(commands.Cog):
                     )
                 else:
                     embed = embed_templates.error_warning("Brukeren du forespurte finnes ikke")
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         user = data["results"][0]
         username = user["username"]
