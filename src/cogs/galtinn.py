@@ -63,7 +63,7 @@ class Galtinn(commands.Cog):
                 """
                 Du har ikke registrert din Discord-konto i Galtinn. Vi lar bare folk med brukere i Galtinn se data.
 
-                For å koble Galtinnbrukeren og Discordbrukeren din sammen kan du besøke [DNS sin Discord](https://discord.gg/SE2ChXjVeV) og skrive:
+                For å koble brukerene dine sammen kan du besøke [DNS sin Discord](https://discord.gg/SE2ChXjVeV) og skrive:
                 `/galtinn registrer`
                 """
             )
