@@ -28,6 +28,10 @@ sanity:
   project_id:
   dataset: production
 
+galtinn:
+  auth_token:
+  api_url: https://galtinn.neuf.no/api
+
 # Emoji
 emoji:
   online: <:online:516328785910431754>

@@ -19,6 +19,7 @@ DATABASE_RELIANT_COGS = {
     "user_facts.py",
     "word_cloud.py",
 }
+GALTINN_RELIANT_COGS = {"galtinn.py"}
 SANITY_RELIANT_COGS = {"website_events.py"}
 MINECRAFT_RELIANT_COGS = {"mc_whitelist.py"}
 
@@ -55,6 +56,9 @@ class Bot(commands.Bot):
 
         if self.check_credentials(config["sanity"], SANITY_RELIANT_COGS):
             self.sanity = config["sanity"]
+
+        if self.check_credentials(config["galtinn"], GALTINN_RELIANT_COGS):
+            self.galtinn = config["galtinn"]
 
         if self.check_credentials(config["minecraft"], MINECRAFT_RELIANT_COGS):
             self.mc_rcon_password = config["minecraft"]["rcon_password"]
