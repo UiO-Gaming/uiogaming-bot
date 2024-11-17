@@ -15,12 +15,12 @@ class RepeatedMessages(commands.Cog):
         self.general_channel = 747542544291987597
 
         self.fredag.start()
-        self.mandal.start()
+        self.mandag.start()
         self.new_year.start()
 
     def cog_unload(self):
         self.fredag.cancel()
-        self.mandal.cancel()
+        self.mandag.cancel()
         self.new_year.cancel()
 
     @tasks.loop(time=misc_utils.MIDNIGHT)
