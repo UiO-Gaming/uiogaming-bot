@@ -487,36 +487,44 @@ class Info(commands.Cog):
         )
         await interaction.response.send_message(embed=embed, view=view)
 
-    # NOTE: This command is implemented using the old command framework
-    # This is due to lack of emoji support in the new framework
-    # TODO: take a look at this command when/if the new framework supports emojis
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True)
-    @commands.cooldown(1, 2)
-    @commands.command(name="emoji", description="Hent informasjon om en emoji i serveren")
-    async def emoji(self, ctx: commands.Context, emoji: discord.Emoji):
+    @app_commands.checks.bot_has_permissions(embed_links=True)
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="emoji", description="Hent informasjon om en emoji i serveren")
+    async def emoji(self, interaction: discord.Interaction, emoji: str):
         """
         Get information about an emoji in the server
 
         Parameters
         ----------
-        ctx (commands.Context): Command context object
+        interaction (discord.Interaction): Slash command context object
         emoji (discord.Emoji): Emoji to fetch information about
         """
 
-        emoji = await emoji.guild.fetch_emoji(emoji.id)
+        emoji = discord.PartialEmoji.from_str(emoji)
+
+        if not emoji.is_custom_emoji():
+            embed = embed_templates.error_warning("Denne kommandoen støtter bare serveremoji")
+            return await interaction.response.send_message(embed=embed)
+
+        emoji = discord.utils.get(interaction.guild.emojis, name=emoji.name)
+        if not emoji:
+            embed = embed_templates.error_warning("Emoji kunne ikke hentes. Den er muligens fra en annen server")
+            return await interaction.response.send_message(embed=embed)
+
+        self.bot.logger.info(emoji)
         try:
             emoji_creator = f"{emoji.user.mention}\n{emoji.user.name}"
         except AttributeError:
             emoji_creator = "Jeg trenger `manage_emojis`-tillatelsen på serveren den er fra for å hente dette"
 
-        embed = discord.Embed(color=ctx.me.color, title=emoji.name, description=f"ID: {emoji.id}")
+        embed = discord.Embed(title=emoji.name, description=f"ID: {emoji.id}")
         embed.set_author(name=emoji.guild.name, icon_url=emoji.guild.icon)
         embed.add_field(name="Opprettet", value=discord.utils.format_dt(emoji.created_at, style="F"))
         embed.add_field(name="Animert", value="Ja" if emoji.animated else "Nei")
         embed.add_field(name="Lagt til av", value=emoji_creator)
         embed.set_image(url=emoji.url)
-        await ctx.reply(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     guild_oldest_group = app_commands.Group(
         name="eldst", description="Viser de eldste medlemmene på serveren", parent=guild_group
