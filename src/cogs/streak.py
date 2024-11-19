@@ -156,14 +156,15 @@ class Streak(commands.Cog):
         streaks = self.cursor.fetchall()
 
         for streak in streaks:
-            if (datetime.now(timezone.utc) - streak[2]).days >= 1:
-                self.cache.pop(streak[1])
+            if (datetime.now(timezone.utc) - streak[1]).days >= 1:
+                self.bot.logger.info(f"User {streak[0]} lost their streak")
+                self.streak_cache.pop(streak[0])
                 self.cursor.execute(
                     """
                     DELETE FROM streak
                     WHERE discord_id = %s;
                     """,
-                    (streak[1],),
+                    (streak[0],),
                 )
 
     @streak_check.after_loop
