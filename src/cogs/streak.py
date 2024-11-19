@@ -156,7 +156,7 @@ class Streak(commands.Cog):
         streaks = self.cursor.fetchall()
 
         for streak in streaks:
-            if (datetime.now(timezone.utc) - streak[2]).days > 1:
+            if (datetime.now(timezone.utc) - streak[2]).days >= 1:
                 self.cache.pop(streak[1])
                 self.cursor.execute(
                     """
