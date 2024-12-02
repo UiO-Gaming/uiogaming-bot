@@ -332,6 +332,29 @@ class Misc(commands.Cog):
 
         await interaction.response.send_message(outcome)
 
+    @app_commands.checks.cooldown(1, 2)
+    @app_commands.command(name="smellynerds", description="MAKE AN EXE FILE")
+    async def smellynerds(self, interaction: discord.Interaction):
+        """
+        Github copypasta
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        """
+
+        copypasta = (
+            "I DONT GIVE A FUCK ABOUT THE FUCKING CODE! i just want to download this stupid "
+            "fucking application and use it\n"
+            "WHY IS THERE CODE??? MAKE A FUCKING .EXE FILE AND GIVE IT TO ME. these dumbfucks "
+            "think that everyone is a developer and understands code. well i am not and i "
+            "don't understand it. I only know to download and install applications. SO WHY "
+            "THE FUCK IS THERE CODE? make an EXE file and give it to me. STUPID FUCKING SMELLY NERDS"
+        )
+
+        await interaction.response.send_message(copypasta)
+
+
 
 async def setup(bot: commands.Bot):
     """
