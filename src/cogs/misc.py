@@ -355,7 +355,6 @@ class Misc(commands.Cog):
         await interaction.response.send_message(copypasta)
 
 
-
 async def setup(bot: commands.Bot):
     """
     Add the cog to the bot on extension load
