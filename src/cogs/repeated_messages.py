@@ -62,7 +62,7 @@ class RepeatedMessages(commands.Cog):
         guild = self.bot.get_guild(self.bot.UIO_GAMING_GUILD_ID)
         channel = guild.get_channel(self.general_channel)
         await channel.send(
-            "ENDELIG MANDAG! Nå er det minusgrader som betyr at vi er nærme å oppleve dette\n\n"
+            "ENDELIG MANDAG!\n\n"
             + "https://cdn.discordapp.com/attachments/678396498089738250/1168644637687283762/Snapchat-1787493720.mp4"  # noqa: E501
         )
 
