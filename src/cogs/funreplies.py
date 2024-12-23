@@ -50,7 +50,11 @@ class FunReplies(commands.Cog):
             (r"(^|\W)borgerlønn(\W|$)", "@ sivert DE SNAKKER OM BORGERLØNN", "borgerlønn"),
             (r"(^|\W)olof palme(\W|$)", "Jeg vet hvem som drepte Olof Palme 👀", "olof palme"),
             (r"(^|\W)+ye+et($|\W)+", "<:Nei:826593267642662912>", "yeet"),
-            (r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+", ":billed_cap:", "drikke"),
+            (
+                r"(^|\W)skal? aldri drikke?[\w\s]*igjen($|\W)+",
+                ":billed_cap:\nhttps://cdn.discordapp.com/attachments/811606213665357824/1320756460321378396/v15044gf0000ctk1refog65kh5pqtpkg.mov",
+                "drikke",
+            ),
             (r"(^|\W)(jeg?|(e|æ)(g|j)?|i) er? sivert arntzen($|\W)+", "Nei, jeg er Sivert Arntzen!", "sivert"),
             (r"(^|\W)bærum(\W|$)", "Sa noen Bærum? 👀🍾 <@205741213050077185>", "bærum"),
         ]
