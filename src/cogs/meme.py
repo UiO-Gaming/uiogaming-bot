@@ -107,6 +107,47 @@ class Meme(commands.Cog):
         # Send image
         await interaction.followup.send(file=discord.File(output, "sivert_goodbad.jpg"))
 
+    @app_commands.checks.bot_has_permissions(embed_links=True, attach_files=True)
+    @app_commands.checks.cooldown(1, 5)
+    @app_commands.command(name="wojakpoint", description="Se hvor mye du matcher med en annen")
+    async def wojakpoint(self, interaction: discord.Interaction, file: discord.Attachment):
+        """
+        Make glorious UiO Gaming members point at your desired picture
+
+        Parameters
+        ----------
+        interaction (discord.Interaction): Slash command context object
+        file (discord.Attachment): The image to point at. Only supports png and jpg for now
+        """
+
+        await interaction.response.defer()
+
+        if file.content_type not in ["image/png", "image/jpeg"]:
+            embed = embed_templates.error_warning("Bildet må være i PNG- eller JPEG-format")
+            return await interaction.followup.send(embed=embed)
+
+        # Prepare template
+        template = Image.open("./src/assets/wojak_point.png").convert("RGBA")
+
+        provided_image = await discord_utils.get_file_bytesio(file)
+        provided_image = Image.open(provided_image).convert("RGBA").resize((template.width, template.height))
+
+        # Putting it all together
+        # We paste at the bottom of the image even though it's not necessary in this case
+        # Keeping it in case we want to change croppoing and sizing behaviour in the future
+        provided_image.paste(template, (0, provided_image.height - template.height), template)
+
+        # Save image
+        output = BytesIO()
+        provided_image.save(output, format="PNG")
+        output.seek(0)
+
+        # Send
+        f = discord.File(output, filename="uio_wojak.png")
+        embed = discord.Embed()
+        embed.set_image(url="attachment://uio_wojak.png")
+        await interaction.followup.send(embed=embed, file=f)
+
     @app_commands.checks.bot_has_permissions(attach_files=True)
     @app_commands.checks.cooldown(1, 60)
     @app_commands.command(name="crabrave", description="Generer en crab rave video basert på tekst")
