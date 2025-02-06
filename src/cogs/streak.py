@@ -143,6 +143,8 @@ class Streak(commands.Cog):
         Check if anyone has lost their streak
         """
 
+        self.bot.logger.info("Checking streaks")
+
         # Clear cache to make sure all streaks are up to date
         if self.streak_cache:
             await self.insert_cache()
@@ -156,7 +158,7 @@ class Streak(commands.Cog):
         streaks = self.cursor.fetchall()
 
         for streak in streaks:
-            if (datetime.now(timezone.utc) - streak[1]).days >= 1:
+            if (datetime.now() - streak[1]).days >= 1:
                 self.bot.logger.info(f"User {streak[0]} lost their streak")
                 self.streak_cache.pop(streak[0])
                 self.cursor.execute(
