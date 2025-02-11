@@ -1,4 +1,5 @@
 import asyncio
+import random
 from datetime import datetime
 
 import discord
@@ -76,10 +77,40 @@ class Birthday(commands.Cog):
         channel = guild.get_channel(747542544291987597)
         for birthday in birthdays:
             user = await guild.fetch_member(birthday[0])
-            if user:
-                await channel.send(f"Gratulerer med dagen {user.mention}! 🥳")
-            else:
+            if not user:
                 self.bot.logger.warning(f"Could not find user with ID {birthday[0]}")
+                continue
+
+            # Is it inefficent to define a list of greetings per iteration? Yes
+            # Am I hoping python somehow will automatically optimize my code? Yes
+            # Have I checked whether or not that's the case? No
+            # Do I bother to? No
+            greetings = [
+                f"Gratulerer med dagen {user.mention}! 🥳",
+                f"GRALLA BALLA!!! {user.mention}",
+                f"Hurra for deg som fyller år i dag! {user.mention}",
+                f"HOLY HECKIN' POGGERS legenden {user.mention} har bursdag i dag POG POG POG",
+                f"Cakes and candles brother! 🙏 {user.mention}",
+                "Som en AI-chatbot kan jeg ikke generere så personlige ting som bursdagshilsener for deg... "
+                + f"nei vent jeg er jo et menneske. Til lykke med dagen {user.mention}!",
+                f"{user.mention} har bursdag i dag! Sørg for å spise mye kake, is og oppvaskmaskinpølser.",
+                f"WOWOWOW {user.mention} har faktisk bursdag i dag! Kan dere tro det? Dette må feires!",
+                f"Hvorfor er det ingen som snakker om at det er selveste bursdagen til {user.mention} i dag? "
+                + "Håper dagen din blir fin!",
+                f"FOLKENS! I dag blir {user.mention} ett år eldre. Grattis!!!!!",
+                f"# AKKURAT NÅ! AKKURAT NÅ!\n{user.mention} fyller år i dag!\n# AKKURAT NÅ! AKKURAT NÅ!",
+                "χρόνια πολλά! जन्मदिन की शुभकामनाएँ! สุขสันต์วันเกิด! 生日快樂! з днем ​​народження! お誕生日おめでとう\n\n"
+                + f"Med andre ord: GRATULERER MED DAGEN {user.mention}!!!",
+            ]
+            message = random.choice(greetings)
+
+            if random.randint(0, 100) == 69:
+                message += (
+                    "\n\nDette må være lykkedagen din for du får nå en ekstra bursdagsvideo som man "
+                    + "bare har 1% sjanse å få!!!!\nhttps://youtu.be/mOyDlnvZwcg"
+                )
+
+            await channel.send(message)
 
     async def cog_unload(self):
         self.bot.logger.info("Unloading cog")
