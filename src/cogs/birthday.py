@@ -110,6 +110,9 @@ class Birthday(commands.Cog):
                     + "bare har 1% sjanse å få!!!!\nhttps://youtu.be/mOyDlnvZwcg"
                 )
 
+            if user.id == 170506717140877312:
+                message = f"Ett steg nærmere døden i dag broder,,, Ikkje bra,,, {user.mention}"
+
             await channel.send(message)
 
     async def cog_unload(self):
